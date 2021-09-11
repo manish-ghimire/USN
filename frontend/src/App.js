@@ -8,7 +8,7 @@ function App() {
 
   return (
     <div className='App'>
-      <Button onClick={funcMeaw}>Meaw Meaw</Button>
+      <Button onClick={funcMeaw}>Meaw Meaw Runqing</Button>
     </div>
   )
 }
