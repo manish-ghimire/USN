@@ -15,6 +15,7 @@ function App() {
     <Button className="tiffbutton" onClick={btnlogin} >Login to USN</Button>
     <Button className="bluebutton" onClick={btnregister} >Register</Button>
   </div>
+
 }
 
 export default App

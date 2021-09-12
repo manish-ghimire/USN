@@ -13,7 +13,3 @@ export const Button =({
         </button>
     )
 };
-
-
-
-
