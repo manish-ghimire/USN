@@ -1,11 +1,15 @@
-import React from 'react'
+import React from "react";
+import "./button.css";
 
-const Button = ({ children, onClick }) => {
-  return (
-    <div>
-      <button onClick={onClick}>{children}</button>
-    </div>
-  )
-}
 
-export default Button
+export const Button =({
+    children,
+    onClick,
+    className
+}) => {
+ return(
+        <button className={className} onClick={onClick}>
+            {children}
+        </button>
+    )
+};
