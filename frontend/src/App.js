@@ -1,18 +1,16 @@
-import './App.css';
-import {  BrowserRouter as Router,  Switch,  Route,  Redirect } from "react-router-dom";
-import Login from "./pages/login/Login";
-import Register from "./pages/register/Register";
+import './App.css'
+import Button from './components/Button'
+
 function App() {
-  return (
-      <Router>
-        <Switch>
-        // testing reg
-        <Route exact path="/" >{<Register />}</Route>
-          <Route path="/login">{<Login />}</Route>
-          <Route path="/register">{<Register />}</Route>
-        </Switch>
-      </Router>
-    );
+  const funcMeaw = () => {
+    console.log('console logging')
   }
+
+  return (
+    <div className='App'>
+      <Button onClick={funcMeaw}>Hi Manish</Button>
+    </div>
+  )
+}
 
 export default App
