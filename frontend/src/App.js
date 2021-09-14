@@ -1,14 +1,16 @@
 import './App.css'
-import Button from './components/Button'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import Register from './pages/Register/Register'
 
 function App() {
-  const funcMeaw = () => {
-    console.log('console logging')
-  }
-
   return (
     <div className='App'>
-      <Button onClick={funcMeaw}>Hi Manish</Button>
+      <Router>
+        <Switch>
+          <Route path='/register' component={Register} />
+          {/* <Route path='/login' component={} /> */}
+        </Switch>
+      </Router>
     </div>
   )
 }
