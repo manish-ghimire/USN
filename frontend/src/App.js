@@ -1,14 +1,16 @@
 import './App.css'
-import TopAppBar from './components/topAppBar/TopAppBar'
-
-
-
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import Register from './pages/Register/Register'
 
 function App() {
-
   return (
-    <div>
-      <TopAppBar/>
+    <div className='App'>
+      <Router>
+        <Switch>
+          <Route path='/register' component={Register} />
+          {/* <Route path='/login' component={} /> */}
+        </Switch>
+      </Router>
     </div>
   )
 

@@ -1,12 +1,13 @@
 import React from 'react'
-import USNLogo from '../../images/Logo.png'
+import WhatEver from '../../images/Logo.png'
 
-const topAppBar = () => {
+const TopAppBar = () => {
   return (
     <div>
-      <img src={USNLogo} alt='USN Logo' width='100px'/>
+      Hello USN Team
+      <img src={WhatEver} alt='Logo' width='100px' />
     </div>
   )
 }
 
-export default topAppBar
+export default TopAppBar
