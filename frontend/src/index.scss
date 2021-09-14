@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+
+/* Baby Blue
+#DBF5F0
+
+Tiffany Blue
+#A4E5E0
+
+Blue Green
+#37BEB0
+
+Midnight Blue
+#0C6170 */
+$primary: #0C6170;
+$secondary:#37BEB0;
+$third-color:#A4E5E0;
+$whitish: #DBF5F0;
