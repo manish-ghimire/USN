@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
-
+const jwt = require("jsonwebtoken");
 //Register
 // https://reqbin.com/
 // post--> http://localhost:5000/api/auth/register
@@ -57,9 +57,16 @@ router.post("/register", (req, res) => {
   }
 });
 
+
+
+
+
+
 //Login
 // https://reqbin.com/
 // post--> http://localhost:5000/api/auth/login
+// store refresh token in mongodb
+let refreshTokens = [];
 router.post("/login", (req, res) => {
   try {
     // check if username or email
@@ -102,8 +109,11 @@ router.post("/login", (req, res) => {
           if(validPassword){
             console.log("workingusername");
             const { password, ...others } = validUser._doc;
-            res.status(200).json(others);
-
+            //  access token
+            const accessToken = jwt.sign({id: validUser.id}, "mySecretKey", { expiresIn: "30s" });
+              const refreshToken = jwt.sign({id: validUser.id}, "myRefreshSecretKey");
+              refreshTokens.push(refreshToken);
+            res.json({username: validUser.username, accessToken, refreshToken});
           }else {
               console.log("Invalid Credentials");
               res.status(500).json("Invalid Credentials");
@@ -121,5 +131,63 @@ router.post("/login", (req, res) => {
   }
 });
 
+// refresh token
+// https://reqbin.com/
+// http://localhost:5000/api/auth/refresh/
+
+router.post("/refresh", (req, res) => {
+  const refreshToken = req.body.token;
+
+  if (!refreshToken) {
+    return res.status(401).json("Not authenticated!")
+  }
+  if(!refreshTokens.includes(refreshToken)){
+    return res.status(403).json("Not valid token!")
+  }
+  jwt.verify(refreshToken, "myRefreshSecretKey", (err, user) => {
+    console.log(err);
+    refreshTokens  = refreshTokens.filter((token) => token !== refreshToken);
+
+    const newAccessToken = jwt.sign({id: user.id}, "mySecretKey", { expiresIn: "15m" });
+    const newRefreshToken = jwt.sign({id: user.id}, "myRefreshSecretKey", { expiresIn: "15m" });
+
+    refreshTokens.push(newRefreshToken);
+
+    res.status(200).json({
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    });
+});
+});
+
+const verify = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader){
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, "mySecretKey", (err, payLoad) => {
+      if (err){
+        return res.status(403).json("Token is not valid");
+      }
+req.user = payLoad;
+next();
+    });
+  }
+  else{
+    res.status(401).json("Not authenticated!");
+  }
+}
+router.delete("/api/users/:userId", verify, (req, res) => {
+if (req.user.id == req.params.userId){
+  res.status(200).json("user has been deleted");
+}else{
+  res.status(403).json("you are not allowed");
+}
+});
+
+router.post("/logout", verify, (req, res) => {
+const refreshToken = req.body.token;
+refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+res.status(200).json("Logged Out Success!");
+});
 
 module.exports = router;
