@@ -1,13 +1,14 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import Image from '../../images/Login_page_image.jpg'
 import Grid from '@material-ui/core/Grid'
 import { Box, Button, TextField, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles((theme) => ({
-  imageoverlay: {
-    color: 'linear-gradient(rgb(72,0,72,0.8), rgb(192,72,72,0.8))',
-    backgroundSize: 'cover',
+  test: {
+    color: 'red',
+    bgcolor: 'blue',
   },
 }))
 
@@ -59,6 +60,13 @@ const Login = () => {
               <Button variant='contained' color='primary'>
                 Login !
               </Button>
+            </Box>
+            <Box pt={5}>
+              <Typography>
+                <Link to='/register'>
+                  No account yet? Click here to register
+                </Link>
+              </Typography>
             </Box>
           </Box>
         </Box>

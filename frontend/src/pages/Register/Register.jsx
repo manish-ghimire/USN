@@ -2,18 +2,8 @@ import React from 'react'
 import Image from '../../images/Register_page_image.jpg'
 import Grid from '@material-ui/core/Grid'
 import { Box, Button, TextField, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-
-const useStyles = makeStyles((theme) => ({
-  imageoverlay: {
-    color: 'linear-gradient(rgb(72,0,72,0.8), rgb(192,72,72,0.8))',
-    backgroundSize: 'cover',
-  },
-}))
 
 const Register = () => {
-  const classes = useStyles()
-
   return (
     <Grid container>
       <Grid item xs={8}>
