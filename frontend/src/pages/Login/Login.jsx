@@ -1,20 +1,11 @@
 import React from 'react'
+import './Login.scss'
 import { Link } from 'react-router-dom'
 import Image from '../../images/Login_page_image.jpg'
 import Grid from '@material-ui/core/Grid'
 import { Box, Button, TextField, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-
-const useStyles = makeStyles((theme) => ({
-  test: {
-    color: 'red',
-    bgcolor: 'blue',
-  },
-}))
 
 const Login = () => {
-  const classes = useStyles()
-
   return (
     <Grid container>
       <Grid item xs={8}>
@@ -57,13 +48,13 @@ const Login = () => {
               />
             </Box>
             <Box pt={5}>
-              <Button variant='contained' color='primary'>
+              <Button variant='contained' color='secondary'>
                 Login !
               </Button>
             </Box>
             <Box pt={5}>
-              <Typography>
-                <Link to='/register'>
+              <Typography variant='secondary'>
+                <Link to='/register' className='links'>
                   No account yet? Click here to register
                 </Link>
               </Typography>

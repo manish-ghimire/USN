@@ -65,7 +65,7 @@ const Register = () => {
               />
             </Box>
             <Box pt={5}>
-              <Button variant='contained' color='primary'>
+              <Button variant='contained' color='secondary'>
                 Register !
               </Button>
             </Box>

@@ -10,7 +10,6 @@ import Badge from '@material-ui/core/Badge'
 import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
 import MenuIcon from '@material-ui/icons/Menu'
-import SearchIcon from '@material-ui/icons/Search'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import MailIcon from '@material-ui/icons/Mail'
 import NotificationsIcon from '@material-ui/icons/Notifications'
@@ -30,16 +29,6 @@ const Search = styled('div')(({ theme }) => ({
     marginLeft: theme.spacing(3),
     width: 'auto',
   },
-}))
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
 }))
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -98,7 +87,8 @@ export default function PrimarySearchAppBar() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
     </Menu>
   )
 
@@ -120,7 +110,7 @@ export default function PrimarySearchAppBar() {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-        <IconButton size='large' aria-label='show 4 new mails' color='inherit'>
+        <IconButton size='medium' aria-label='show 4 new mails' color='inherit'>
           <Badge badgeContent={4} color='error'>
             <MailIcon />
           </Badge>
@@ -129,7 +119,7 @@ export default function PrimarySearchAppBar() {
       </MenuItem>
       <MenuItem>
         <IconButton
-          size='large'
+          size='medium'
           aria-label='show 17 new notifications'
           color='inherit'
         >
@@ -141,7 +131,7 @@ export default function PrimarySearchAppBar() {
       </MenuItem>
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
-          size='large'
+          size='medium'
           aria-label='account of current user'
           aria-controls='primary-search-account-menu'
           aria-haspopup='true'
@@ -159,7 +149,7 @@ export default function PrimarySearchAppBar() {
       <AppBar position='static'>
         <Toolbar>
           <IconButton
-            size='large'
+            size='medium'
             edge='start'
             color='inherit'
             aria-label='open drawer'
@@ -188,7 +178,7 @@ export default function PrimarySearchAppBar() {
 
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton
-              size='large'
+              size='medium'
               aria-label='show 4 new mails'
               color='inherit'
             >
@@ -197,7 +187,7 @@ export default function PrimarySearchAppBar() {
               </Badge>
             </IconButton>
             <IconButton
-              size='large'
+              size='medium'
               aria-label='show 17 new notifications'
               color='inherit'
             >
@@ -206,7 +196,7 @@ export default function PrimarySearchAppBar() {
               </Badge>
             </IconButton>
             <IconButton
-              size='large'
+              size='medium'
               edge='end'
               aria-label='account of current user'
               aria-controls={menuId}
@@ -219,7 +209,7 @@ export default function PrimarySearchAppBar() {
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
-              size='large'
+              size='medium'
               aria-label='show more'
               aria-controls={mobileMenuId}
               aria-haspopup='true'
