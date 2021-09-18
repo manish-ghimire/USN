@@ -81,12 +81,15 @@ router.post("/login", (req, res) => {
         try{
         bcrypt.compare(req.body.password, validUser.password).then((validPassword) => {
           if(validPassword){
-              console.log("workingemail");
-              const { password, ...others } = validUser._doc;
-              res.status(200).json(others);
-          }
-          else {
-                      console.log("Invalid Credentials");
+            console.log("workingemail");
+            const { password, ...user } = validUser._doc;
+            // token stuff
+            const accessToken = jwt.sign({id: validUser.id}, "mySecretKey", { expiresIn: "15m" });
+              const refreshToken = jwt.sign({id: validUser.id}, "myRefreshSecretKey");
+              refreshTokens.push(refreshToken);
+            res.json({user, accessToken, refreshToken});
+          }else {
+              console.log("Invalid Credentials");
               res.status(500).json("Invalid Credentials");
           }
         });
@@ -108,12 +111,12 @@ router.post("/login", (req, res) => {
         bcrypt.compare(req.body.password, validUser.password).then((validPassword) => {
           if(validPassword){
             console.log("workingusername");
-            const { password, ...others } = validUser._doc;
+            const { password, ...user } = validUser._doc;
             //  access token
-            const accessToken = jwt.sign({id: validUser.id}, "mySecretKey", { expiresIn: "30s" });
+            const accessToken = jwt.sign({id: validUser.id}, "mySecretKey", { expiresIn: "15m" });
               const refreshToken = jwt.sign({id: validUser.id}, "myRefreshSecretKey");
               refreshTokens.push(refreshToken);
-            res.json({username: validUser.username, accessToken, refreshToken});
+            res.json({user, accessToken, refreshToken});
           }else {
               console.log("Invalid Credentials");
               res.status(500).json("Invalid Credentials");
@@ -130,6 +133,35 @@ router.post("/login", (req, res) => {
     res.status(500).json(err)
   }
 });
+
+const verify = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader){
+    const token = authHeader.split(" ")[1];
+    // console.log(token);
+    jwt.verify(token, "mySecretKey", (err, user) => {
+      if (err){
+        return res.status(403).json("Token is not valid");
+      }
+      req.user = user;
+      next();
+    });
+  }
+  else{
+    res.status(401).json("Not authenticated!");
+  }
+}
+// Delete User
+// https://reqbin.com/
+// http://localhost:5000/api/auth/users/:userId/
+router.delete("/users/:userId", verify, (req, res) => {
+if (req.user.id == req.params.userId){
+  res.status(200).json("user has been deleted");
+}else{
+  res.status(403).json("you are not allowed");
+}
+});
+
 
 // refresh token
 // https://reqbin.com/
@@ -158,30 +190,6 @@ router.post("/refresh", (req, res) => {
       refreshToken: newRefreshToken,
     });
 });
-});
-
-const verify = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (authHeader){
-    const token = authHeader.split(" ")[1];
-    jwt.verify(token, "mySecretKey", (err, payLoad) => {
-      if (err){
-        return res.status(403).json("Token is not valid");
-      }
-req.user = payLoad;
-next();
-    });
-  }
-  else{
-    res.status(401).json("Not authenticated!");
-  }
-}
-router.delete("/api/users/:userId", verify, (req, res) => {
-if (req.user.id == req.params.userId){
-  res.status(200).json("user has been deleted");
-}else{
-  res.status(403).json("you are not allowed");
-}
 });
 
 router.post("/logout", verify, (req, res) => {
