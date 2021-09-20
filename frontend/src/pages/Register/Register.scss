@@ -1,43 +1,69 @@
 @import '../../index.scss';
 
-.register-container{
+.register-container {
+  display: flex;
+  .leftDiv {
+    width: 60%;
+    height: 100vh;
+    background-color: $primary;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(1, 1, 1, 0.3)),
+      url('../../images/Register_page_image.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    justify-content: center;
     display: flex;
-    .leftDiv{
-        width: 60%;
-        height:100vh;
-        background-color:$primary ;
-        background-image: linear-gradient(rgba(0,0,0,0.5),rgba(1,1,1,0.3)),url('../../images/Register_page_image.jpg') ;
-        background-repeat: no-repeat;
-        background-size: cover;
-        justify-content: center;
-        display: flex;
+  }
+  .rightDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    height: 100vh;
+    background: linear-gradient(
+      190deg,
+      rgba(134, 177, 255, 1) 0%,
+      rgba(190, 235, 255, 1) 20%,
+      rgba(232, 240, 255, 1) 50%,
+      rgba(190, 235, 255, 1) 80%,
+      rgba(134, 177, 255, 1) 100%
+    );
+
+    .slogan-form-box {
+      width: 350px;
     }
-    .rightDiv{
-        width: 40%;
-        height:100vh;
-        background: linear-gradient(190deg, rgba(134,177,255,1) 0%, rgba(190,235,255,1) 20%, rgba(232,240,255,1) 50%, rgba(190,235,255,1) 80%, rgba(134,177,255,1) 100%);
-        justify-content: center;
+  }
+
+  .slogen {
+    text-align: center;
+    font-size: 60px;
+    color: $primary;
+    font-family: 'Reem Kufi';
+  }
+
+  @media (max-width: 992px) {
+    .leftDiv {
+      display: none;
     }
 
-    .slogen{
-        margin: auto;
-        width:80%;
-        text-align: center;
-        margin-top: 20%;
-        font-size: 60px;
-        color: $primary;
-        font-family: 'Reem Kufi';
+    .rightDiv {
+      width: 100%;
+      background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(1, 1, 1, 0.3)),
+        url('../../images/Register_page_image.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+
+      .slogan-form-box {
+        width: 400px;
+        padding: 30px;
+        border-radius: 20px;
+        background-color: #fff;
+      }
     }
+  }
 }
 .center {
-    display: block;
-    margin: auto;
-    width: 300px;
-    justify-content: center;
-  }
-.register_form{
-    width: 100%;
-    display: flex;
-   
-    justify-content: center;
+  display: block;
+  margin: auto;
+  width: 300px;
+  justify-content: center;
 }
