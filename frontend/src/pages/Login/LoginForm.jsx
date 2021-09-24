@@ -5,8 +5,7 @@ import {
   makeStyles,
 } from '@material-ui/core/styles'
 
-import AddIcon from '@material-ui/icons/Add'
-import './Register.scss'
+import './Login.scss'
 
 import { React, useRef } from 'react'
 import axios from 'axios'
@@ -35,32 +34,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export default function RegisterForm() {
+export default function LoginForm() {
   const classes = useStyles()
-
   const history = useHistory()
-
-  const username = useRef()
-  const email = useRef()
+  const usernameOrEmail = useRef()
   const password = useRef()
-  const confirm_password = useRef()
 
   const submit_form = async (e) => {
     e.preventDefault()
 
-    if (confirm_password.current.value !== password.current.value) {
-      confirm_password.current.setCustomValidity('Two passwords not the same!')
-    } else {
-      const user = {
-        username: username.current.value,
-        email: email.current.value,
-        password: password.current.value,
-      }
-      try {
-        const register = await axios.post('/auth/register', user)
-      } catch (error) {
-        console.log(error)
-      }
+    const user = {
+      usernameOrEmail: usernameOrEmail.current.value,
+      password: password.current.value,
+    }
+    try {
+      await axios.post('/auth/login', user)
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -69,38 +59,17 @@ export default function RegisterForm() {
       <form noValidate autoComplete='off' onSubmit={submit_form}>
         <TextField
           required
-          inputRef={username}
-          label='Username'
+          inputRef={usernameOrEmail}
+          label='Username / Email'
           variant='outlined'
           margin='normal'
           className={classes.textField}
         />
-        <br />
-        <TextField
-          required
-          inputRef={email}
-          type='email'
-          label='Email'
-          variant='outlined'
-          margin='normal'
-          className={classes.textField}
-        />
-        <br />
         <TextField
           required
           inputRef={password}
           type='password'
           label='Password'
-          variant='outlined'
-          margin='normal'
-          className={classes.textField}
-        />
-        <br />
-        <TextField
-          required
-          inputRef={confirm_password}
-          type='password'
-          label='Confirm-password'
           variant='outlined'
           margin='normal'
           className={classes.textField}
@@ -114,9 +83,8 @@ export default function RegisterForm() {
             size='large'
             className={classes.button}
             onClick={submit_form}
-            startIcon={<AddIcon color='secondary' />}
           >
-            Create Account
+            Login
           </Button>
         </div>
         {/* END - Register Button */}
@@ -128,10 +96,10 @@ export default function RegisterForm() {
             size='large'
             className={classes.button}
             onClick={(e) => {
-              history.push('/')
+              history.push('/register')
             }}
           >
-            Back to Login
+            No account yet?
           </Button>
         </div>
       </form>
