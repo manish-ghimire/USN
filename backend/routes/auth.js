@@ -7,6 +7,10 @@ const jwt = require("jsonwebtoken");
 // post--> http://localhost:5000/api/auth/register
 router.post("/register", (req, res) => {
   try {
+    if(!req.body.username || !req.body.email || !req.body.password){
+          console.log({errors: "All fields are required"});
+      return res.status(422).json({error:"All fields are required"});
+    } else{
     // find email or username
     User.findOne({
             $or: [{
@@ -25,7 +29,7 @@ router.post("/register", (req, res) => {
                     errors.email = "Email already exists";
                 }
                 console.log({errors:errors});
-                return res.status(500).json(errors);
+                return res.status(500).json(user);
 
             } else {
               // fetch user from body
@@ -52,6 +56,7 @@ router.post("/register", (req, res) => {
                 error: err
             });
         });
+      }
   } catch (err) {
     res.status(500).json(err);
   }
