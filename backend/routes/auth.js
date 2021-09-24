@@ -78,7 +78,8 @@ router.post('/login', (req, res) => {
       User.findOne({ email: req.body.username }).then((validUser) => {
         if (!validUser) {
           console.log('Invalid Credentials')
-          res.status(500).json('Invalid Credentials')
+          throw new Error('this is the worst error ever')
+          // res.status(500).json('Invalid Credentials')
         } else {
           try {
             bcrypt
