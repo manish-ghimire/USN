@@ -72,14 +72,13 @@ let refreshTokens = []
 router.post('/login', (req, res) => {
   try {
     // check if username or email
-    if (req.body.username.indexOf('@') > -1) {
+    if (req.body.usernameOrEmail.indexOf('@') > -1) {
       console.log('@here')
       // email login stuff
-      User.findOne({ email: req.body.username }).then((validUser) => {
+      User.findOne({ email: req.body.usernameOrEmail }).then((validUser) => {
         if (!validUser) {
           console.log('Invalid Credentials')
-          throw new Error('this is the worst error ever')
-          // res.status(500).json('Invalid Credentials')
+          res.status(500).send('Invalid Credentialsssssss')
         } else {
           try {
             bcrypt
@@ -116,7 +115,7 @@ router.post('/login', (req, res) => {
       User.findOne({ username: req.body.username }).then((validUser) => {
         if (!validUser) {
           console.log('Invalid Credentials')
-          res.status(500).json('Invalid Credentials')
+          res.status(500).json('Invalid Credentials from username')
         } else {
           try {
             bcrypt
@@ -149,7 +148,8 @@ router.post('/login', (req, res) => {
       })
     }
   } catch (err) {
-    res.status(500).json(err)
+    // res.status(400).json(err)
+    res.status(404).send('Worst error ever')
   }
 })
 

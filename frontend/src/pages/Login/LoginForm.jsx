@@ -50,7 +50,9 @@ export default function LoginForm() {
     try {
       await axios.post('/auth/login', user)
     } catch (error) {
-      console.log(error)
+      // console.log(error.response)
+      let realError = error.response
+      console.log(realError.data, realError.status)
     }
   }
 
