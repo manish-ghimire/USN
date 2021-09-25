@@ -72,10 +72,10 @@ let refreshTokens = []
 router.post('/login', (req, res) => {
   try {
     // check if username or email
-    if (req.body.usernameOrEmail.indexOf('@') > -1) {
+    if (req.body.username.indexOf('@') > -1) {
       console.log('@here')
       // email login stuff
-      User.findOne({ email: req.body.usernameOrEmail }).then((validUser) => {
+      User.findOne({ email: req.body.username }).then((validUser) => {
         if (!validUser) {
           console.log('Invalid Credentials')
           res.status(500).send('Invalid Credentialsssssss')
@@ -98,10 +98,10 @@ router.post('/login', (req, res) => {
                     'myRefreshSecretKey'
                   )
                   refreshTokens.push(refreshToken)
-                  res.json({ user, accessToken, refreshToken })
+                  res.status(200).json({ user, accessToken, refreshToken })
                 } else {
                   console.log('Invalid Credentials')
-                  res.status(500).json('Invalid Credentials')
+                  res.status(500).json('Invalid Credentials');
                 }
               })
           } catch (err) {
@@ -115,7 +115,7 @@ router.post('/login', (req, res) => {
       User.findOne({ username: req.body.username }).then((validUser) => {
         if (!validUser) {
           console.log('Invalid Credentials')
-          res.status(500).json('Invalid Credentials from username')
+          res.status(500).json('Invalid Credentials from usernameeeeeee')
         } else {
           try {
             bcrypt
@@ -135,7 +135,7 @@ router.post('/login', (req, res) => {
                     'myRefreshSecretKey'
                   )
                   refreshTokens.push(refreshToken)
-                  res.json({ user, accessToken, refreshToken })
+                  res.status(200).json({ user, accessToken, refreshToken })
                 } else {
                   console.log('Invalid Credentials')
                   res.status(500).json('Invalid Credentials')
