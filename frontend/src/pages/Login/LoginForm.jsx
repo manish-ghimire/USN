@@ -1,117 +1,112 @@
-import { Button, TextField } from '@material-ui/core'
-import {
-  createTheme,
-  ThemeProvider,
-  makeStyles,
-} from '@material-ui/core/styles'
-
+import { React, useState, useRef } from 'react'
+import { useHistory } from 'react-router-dom'
+import axios from 'axios'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import Backdrop from '@mui/material/Backdrop'
+import CircularProgress from '@mui/material/CircularProgress'
+import Snackbar from '@mui/material/Snackbar'
+import Alert from '@mui/material/Alert'
 import './Login.scss'
 
-import { React, useRef } from 'react'
-import axios from 'axios'
-import { useHistory } from 'react-router-dom'
-
-const form_theme = createTheme({
-  palette: {
-    primary: {
-      main: '#0C6170', //'#37BEB0',
-    },
-    secondary: {
-      main: '#37BEB0', //'#0C6170',
-    },
-  },
-})
-
-const useStyles = makeStyles((theme) => ({
-  button: {
-    margin: theme.spacing(0),
-    marginTop: '20px',
-    width: '100%',
-  },
-  textField: {
-    width: '100%',
-    borderColor: 'white',
-  },
-}))
-
 export default function LoginForm() {
-  const classes = useStyles()
+  const [circle, setCircle] = useState(false)
+  const [snackbar, setSnackbar] = useState(true)
 
   const history = useHistory()
-
   const username = useRef()
   const password = useRef()
 
   const submit_form = async (e) => {
     e.preventDefault()
 
-      const user = {
-        username: username.current.value,
-        password: password.current.value,
-      }
+    const user = {
+      username: username.current.value,
+      password: password.current.value,
+    }
 
+    if (!username.current.value || !password.current.value) {
+      alert('Both fields are mandatory')
+      // Write code to display a popup saying both fields are mandatory
+    } else {
+      setCircle(true)
       try {
         const success = await axios.post('/auth/login', user)
-        localStorage.setItem('refreshToken', success.data.refreshToken);
-        localStorage.setItem('accessToken', success.data.accessToken);
-
-
+        localStorage.setItem('refreshToken', success.data.refreshToken)
+        localStorage.setItem('accessToken', success.data.accessToken)
+        setCircle(false)
       } catch (error) {
         console.log(error)
       }
-    
+    }
   }
 
   return (
-    <ThemeProvider theme={form_theme}>
+    <>
       <form noValidate autoComplete='off' onSubmit={submit_form}>
         <TextField
           required
+          fullWidth
           inputRef={username}
           label='Username / Email'
           variant='outlined'
           margin='normal'
-          className={classes.textField}
         />
         <TextField
           required
+          fullWidth
           inputRef={password}
           type='password'
           label='Password'
           variant='outlined'
           margin='normal'
-          className={classes.textField}
         />
-        <br />
-        {/* START - Register Button */}
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Button
-            variant='contained'
-            color='primary'
-            size='large'
-            className={classes.button}
-            onClick={submit_form}
-          >
-            Login !
-          </Button>
-        </div>
-        {/* END - Register Button */}
+        <Button
+          sx={{ my: 2 }}
+          fullWidth
+          variant='contained'
+          color='primary'
+          size='large'
+          onClick={submit_form}
+        >
+          Login !
+        </Button>
 
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Button
-            variant='contained'
-            color='primary'
-            size='large'
-            className={classes.button}
-            onClick={(e) => {
-              history.push('/register')
-            }}
-          >
-            No account yet?
-          </Button>
-        </div>
+        <Button
+          fullWidth
+          variant='contained'
+          color='primary'
+          size='large'
+          onClick={(e) => {
+            history.push('/register')
+          }}
+        >
+          No account yet?
+        </Button>
       </form>
-   
-    </ThemeProvider>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={circle}
+      >
+        <CircularProgress color='inherit' />
+      </Backdrop>
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        open={snackbar}
+        autoHideDuration={10000}
+        onClose={() => setSnackbar(false)}
+      >
+        <Alert
+          onClose={() => setSnackbar(false)}
+          severity='error'
+          sx={{ width: '100%' }}
+        >
+          WRONG CREDENTIALS
+        </Alert>
+      </Snackbar>
+    </>
   )
 }

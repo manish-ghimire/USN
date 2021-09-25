@@ -1,42 +1,16 @@
-import { Backdrop, Button, CircularProgress, TextField } from '@material-ui/core'
-import {
-  createTheme,
-  ThemeProvider,
-  makeStyles,
-} from '@material-ui/core/styles'
-
-import AddIcon from '@material-ui/icons/Add'
-import './Register.scss'
-
 import { React, useRef, useState} from 'react'
-import axios from 'axios'
 import { useHistory } from 'react-router-dom'
+import TextField from '@mui/material/TextField';
+import AddIcon from '@mui/icons-material/Add'
+import './Register.scss'
+import axios from 'axios'
+import { Button } from '@mui/material';
 
-const form_theme = createTheme({
-  palette: {
-    primary: {
-      main: '#0C6170', //'#37BEB0',
-    },
-    secondary: {
-      main: '#37BEB0', //'#0C6170',
-    },
-  },
-})
 
-const useStyles = makeStyles((theme) => ({
-  button: {
-    margin: theme.spacing(0),
-    marginTop: '20px',
-    width: '100%',
-  },
-  textField: {
-    width: '100%',
-    borderColor: 'white',
-  },
-}))
+
+
 
 export default function RegisterForm() {
-  const classes = useStyles()
   const history = useHistory()
 
   const [open, setOpen] = useState(false);
@@ -70,84 +44,68 @@ export default function RegisterForm() {
   }
 
   return (
-    <ThemeProvider theme={form_theme}>
+    <>
       <form noValidate autoComplete='off' onSubmit={submit_form}>
+      
         <TextField
           required
+          fullWidth 
           inputRef={username}
           label='Username'
           variant='outlined'
           margin='normal'
-          className={classes.textField}
         />
-        <br />
         <TextField
           required
+          fullWidth 
           inputRef={email}
           type='email'
           label='Email'
           variant='outlined'
           margin='normal'
-          className={classes.textField}
         />
-        <br />
         <TextField
           required
+          fullWidth 
           inputRef={password}
           type='password'
           label='Password'
           variant='outlined'
           margin='normal'
-          className={classes.textField}
         />
-        <br />
         <TextField
           required
+          fullWidth 
           inputRef={confirm_password}
           type='password'
           label='Confirm password'
           variant='outlined'
           margin='normal'
-          className={classes.textField}
         />
-        <br />
-        {/* START - Register Button */}
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Button
+          <Button sx={{ my: 2 }}
+          fullWidth 
             variant='contained'
             color='primary'
             size='large'
-            className={classes.button}
             onClick={submit_form}
             startIcon={<AddIcon color='secondary' />}
           >
             Create Account
           </Button>
-        </div>
-        {/* END - Register Button */}
 
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Button
+            fullWidth
             variant='contained'
             color='primary'
             size='large'
-            className={classes.button}
             onClick={(e) => {
               history.push('/')
             }}
           >
             Back to Login
           </Button>
-        </div>
       </form>
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={open}
-        // onClick={handleClose}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
-    </ThemeProvider>
-    
+   
+    </>
   )
 }
