@@ -1,4 +1,4 @@
-import { Button, TextField } from '@material-ui/core'
+import { Backdrop, Button, CircularProgress, TextField } from '@material-ui/core'
 import {
   createTheme,
   ThemeProvider,
@@ -8,7 +8,7 @@ import {
 import AddIcon from '@material-ui/icons/Add'
 import './Register.scss'
 
-import { React, useRef } from 'react'
+import { React, useRef, useState} from 'react'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom'
 
@@ -37,9 +37,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function RegisterForm() {
   const classes = useStyles()
-
   const history = useHistory()
 
+  const [open, setOpen] = useState(false);
   const username = useRef()
   const email = useRef()
   const password = useRef()
@@ -48,8 +48,13 @@ export default function RegisterForm() {
   const submit_form = async (e) => {
     e.preventDefault()
 
+    setOpen(true)
     if (confirm_password.current.value !== password.current.value) {
-      confirm_password.current.setCustomValidity('Two passwords not the same!')
+      alert("Passwrods are not same")
+      // Write code to display a popup of password not same
+    }else if(email.current.value.indexOf('@') === -1){
+      alert("Email address is not valid")
+      // Write code to display a popup of Email is not valid
     } else {
       const user = {
         username: username.current.value,
@@ -57,7 +62,7 @@ export default function RegisterForm() {
         password: password.current.value,
       }
       try {
-        const register = await axios.post('/auth/register', user)
+        await axios.post('/auth/register', user)
       } catch (error) {
         console.log(error)
       }
@@ -100,7 +105,7 @@ export default function RegisterForm() {
           required
           inputRef={confirm_password}
           type='password'
-          label='Confirm-password'
+          label='Confirm password'
           variant='outlined'
           margin='normal'
           className={classes.textField}
@@ -135,6 +140,14 @@ export default function RegisterForm() {
           </Button>
         </div>
       </form>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+        // onClick={handleClose}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </ThemeProvider>
+    
   )
 }
