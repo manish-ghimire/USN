@@ -92,7 +92,7 @@ router.post("/login", (req, res) => {
             const accessToken = jwt.sign({id: validUser.id}, "mySecretKey", { expiresIn: "15m" });
               const refreshToken = jwt.sign({id: validUser.id}, "myRefreshSecretKey");
               refreshTokens.push(refreshToken);
-            res.json({user, accessToken, refreshToken});
+            res.status(200).json({user, accessToken, refreshToken});
           }else {
               console.log("Invalid Credentials");
               res.status(500).json("Invalid Credentials");

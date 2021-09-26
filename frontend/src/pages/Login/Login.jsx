@@ -7,11 +7,13 @@ const Login = () => {
   return (
     <div className='login-container'>
       <div className='leftDiv'>
-        <img src={Logo} alt='USN logo' className='center' width='100px' />
+        <img src={Logo} alt='USN logo' width='100px' />
+        <div className='left-slogan'>Bla bla blaaa !</div>
       </div>
       <div className='rightDiv'>
         <div className='slogan-form-box'>
-          <div className='slogen'>LogiNow!</div>
+          <img src={Logo} alt='USN logo' width='200px' />
+          <div className='slogan'>Join USNow!</div>
           <LoginForm></LoginForm>
         </div>
       </div>

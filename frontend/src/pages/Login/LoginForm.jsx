@@ -36,24 +36,30 @@ const useStyles = makeStyles((theme) => ({
 
 export default function LoginForm() {
   const classes = useStyles()
+
   const history = useHistory()
-  const usernameOrEmail = useRef()
+
+  const username = useRef()
   const password = useRef()
 
   const submit_form = async (e) => {
     e.preventDefault()
 
-    const user = {
-      usernameOrEmail: usernameOrEmail.current.value,
-      password: password.current.value,
-    }
-    try {
-      await axios.post('/auth/login', user)
-    } catch (error) {
-      // console.log(error.response)
-      let realError = error.response
-      console.log(realError.data, realError.status)
-    }
+      const user = {
+        username: username.current.value,
+        password: password.current.value,
+      }
+
+      try {
+        const success = await axios.post('/auth/login', user)
+        localStorage.setItem('refreshToken', success.data.refreshToken);
+        localStorage.setItem('accessToken', success.data.accessToken);
+
+
+      } catch (error) {
+        console.log(error)
+      }
+    
   }
 
   return (
@@ -61,7 +67,7 @@ export default function LoginForm() {
       <form noValidate autoComplete='off' onSubmit={submit_form}>
         <TextField
           required
-          inputRef={usernameOrEmail}
+          inputRef={username}
           label='Username / Email'
           variant='outlined'
           margin='normal'
@@ -86,7 +92,7 @@ export default function LoginForm() {
             className={classes.button}
             onClick={submit_form}
           >
-            Login
+            Login !
           </Button>
         </div>
         {/* END - Register Button */}
@@ -105,6 +111,7 @@ export default function LoginForm() {
           </Button>
         </div>
       </form>
+   
     </ThemeProvider>
   )
 }
