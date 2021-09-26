@@ -2,13 +2,14 @@ const mongoose = require("mongoose");
 
 const PostSchema = new mongoose.Schema(
 {
-  username: {
+  userId: {
     type: String,
     required: true,
   },
   desc: {
     type: String,
     max: 500,
+    required: true
   },
   img: {
     type: String,
@@ -17,7 +18,7 @@ const PostSchema = new mongoose.Schema(
     type: Array,
     default: [],
   },
-  roles: {
+  role: {
     type: Array,
     default: [],
     required: false,
