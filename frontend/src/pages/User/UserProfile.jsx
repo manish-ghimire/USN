@@ -7,24 +7,26 @@ const UserProfile = () => {
   const { userID } = useParams()
   const accessToken = localStorage.getItem('accessToken')
 
-  // useEffect(() => {
-  //   if (userID) {
-  //     const fetchData = async () => {
-  //       try {
-  //         // const success = await axios.get(`/users/${userID}`)
-  //         console.log('UserProfile Successful')
-  //       } catch (error) {
-  //         console.log('UserProfile Failed')
-  //       }
-  //     }
-  //     fetchData()
-  //   } else if (accessToken) {
-  //     console.log('AccessToken exists')
-  //   } else {
-  //     console.log('Im here')
-  //     history.push('/login', { text: 'hellooooooo' })
-  //   }
-  // }, [])
+  useEffect(() => {
+    if (userID) {
+      const fetchData = async () => {
+        try {
+          // const success = await axios.get(`/users/${userID}`)
+          // console.log(success)
+          // Fetch data - Need API route first
+          console.log('UserProfile Successful')
+        } catch (error) {
+          console.log('UserProfile Failed')
+        }
+      }
+      fetchData()
+    } else if (accessToken) {
+      console.log('AccessToken exists')
+    } else {
+      console.log('Im here')
+      history.push('/login', { text: 'hellooooooo' })
+    }
+  }, [history, userID, accessToken])
 
   return <div>This is UserProfile page</div>
 }

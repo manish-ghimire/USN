@@ -29,6 +29,7 @@ function App() {
   const [circle, setCircle] = useState(false)
   const [snackbar, setSnackbar] = useState({
     show: false,
+    severity: 'error',
     text: 'helloo',
   })
 
@@ -47,7 +48,16 @@ function App() {
                 />
               )}
             />
-            <Route exact path='/register' component={Register} />
+            <Route
+              exact
+              path='/register'
+              component={() => (
+                <Register
+                  setCircle={(value) => setCircle(value)}
+                  setSnackbar={(value) => setSnackbar(value)}
+                />
+              )}
+            />
             <Route exact path='/' component={UserProfile} />
             <Route exact path='/user/:userID' component={UserProfile} />
             <Route exact path='/error' component={Error} />
@@ -66,12 +76,12 @@ function App() {
           horizontal: 'center',
         }}
         open={snackbar.show}
-        autoHideDuration={5000}
+        autoHideDuration={10000}
         onClose={() => setSnackbar(false)}
       >
         <Alert
           onClose={() => setSnackbar(false)}
-          severity='error'
+          severity={snackbar.severity}
           sx={{ width: '100%' }}
         >
           {snackbar.text}

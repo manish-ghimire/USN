@@ -35,6 +35,11 @@ const Login = ({ setCircle, setSnackbar }) => {
         localStorage.setItem('refreshToken', success.data.refreshToken)
         localStorage.setItem('accessToken', success.data.accessToken)
         setCircle(false)
+        setSnackbar({
+          show: true,
+          sevirity: 'success',
+          text: 'Login Successful',
+        })
         history.push(`/user/${userID}`)
       } catch (error) {
         console.log(error)
