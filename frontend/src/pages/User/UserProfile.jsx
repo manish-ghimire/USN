@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
+import Navbar from '../../components/Navbar/Navbar'
 
 const UserProfile = () => {
   const history = useHistory()
@@ -28,7 +29,11 @@ const UserProfile = () => {
     }
   }, [history, userID, accessToken])
 
-  return <div>This is UserProfile page</div>
+  return (
+    <>
+      <Navbar />
+    </>
+  )
 }
 
 export default UserProfile
