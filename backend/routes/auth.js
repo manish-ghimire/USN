@@ -2,6 +2,7 @@ const router = require("express").Router();
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const verify = require("./verify");
 //Register
 // https://reqbin.com/
 // post--> http://localhost:5000/api/auth/register
@@ -89,8 +90,8 @@ router.post("/login", (req, res) => {
             console.log("workingemail");
             const { password, ...user } = validUser._doc;
             // token stuff
-            const accessToken = jwt.sign({id: validUser.id}, "mySecretKey", { expiresIn: "15m" });
-              const refreshToken = jwt.sign({id: validUser.id}, "myRefreshSecretKey");
+            const accessToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "mySecretKey", { expiresIn: "15m" });
+              const refreshToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "myRefreshSecretKey");
               refreshTokens.push(refreshToken);
             res.status(200).json({user, accessToken, refreshToken});
           }else {
@@ -118,8 +119,8 @@ router.post("/login", (req, res) => {
             console.log("workingusername");
             const { password, ...user } = validUser._doc;
             //  access token
-            const accessToken = jwt.sign({id: validUser.id}, "mySecretKey", { expiresIn: "15m" });
-              const refreshToken = jwt.sign({id: validUser.id}, "myRefreshSecretKey");
+            const accessToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "mySecretKey", { expiresIn: "15m" });
+              const refreshToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "myRefreshSecretKey");
               refreshTokens.push(refreshToken);
             res.status(200).json({user, accessToken, refreshToken});
           }else {
@@ -139,33 +140,33 @@ router.post("/login", (req, res) => {
   }
 });
 
-const verify = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (authHeader){
-    const token = authHeader.split(" ")[1];
-    // console.log(token);
-    jwt.verify(token, "mySecretKey", (err, user) => {
-      if (err){
-        return res.status(403).json("Token is not valid");
-      }
-      req.user = user;
-      next();
-    });
-  }
-  else{
-    res.status(401).json("Not authenticated!");
-  }
-}
-// Delete User
-// https://reqbin.com/
-// http://localhost:5000/api/auth/users/:userId/
-router.delete("/users/:userId", verify, (req, res) => {
-if (req.user.id == req.params.userId){
-  res.status(200).json("user has been deleted");
-}else{
-  res.status(403).json("you are not allowed");
-}
-});
+// const verify = (req, res, next) => {
+//   const authHeader = req.headers.authorization;
+//   if (authHeader){
+//     const token = authHeader.split(" ")[1];
+//     // console.log(token);
+//     jwt.verify(token, "mySecretKey", (err, user) => {
+//       if (err){
+//         return res.status(403).json("Token is not valid");
+//       }
+//       req.user = user;
+//       next();
+//     });
+//   }
+//   else{
+//     res.status(401).json("Not authenticated!");
+//   }
+// }
+// // Delete User
+// // https://reqbin.com/
+// // http://localhost:5000/api/auth/users/:userId/
+// router.delete("/users/:userId", verify, (req, res) => {
+// if (req.user.userid == req.params.userId){
+//   res.status(200).json("user has been deleted");
+// }else{
+//   res.status(403).json("you are not allowed");
+// }
+// });
 
 
 // refresh token
@@ -185,8 +186,8 @@ router.post("/refresh", (req, res) => {
     console.log(err);
     refreshTokens  = refreshTokens.filter((token) => token !== refreshToken);
 
-    const newAccessToken = jwt.sign({id: user.id}, "mySecretKey", { expiresIn: "15m" });
-    const newRefreshToken = jwt.sign({id: user.id}, "myRefreshSecretKey", { expiresIn: "15m" });
+    const newAccessToken = jwt.sign({id: user.id, isAdmin: user.isAdmin}, "mySecretKey", { expiresIn: "15m" });
+    const newRefreshToken = jwt.sign({id: user.id, isAdmin: user.isAdmin}, "myRefreshSecretKey", { expiresIn: "15m" });
 
     refreshTokens.push(newRefreshToken);
 
