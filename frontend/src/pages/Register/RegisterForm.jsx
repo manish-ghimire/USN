@@ -1,19 +1,15 @@
-import { React, useRef, useState} from 'react'
+import { React, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import TextField from '@mui/material/TextField';
+import TextField from '@mui/material/TextField'
 import AddIcon from '@mui/icons-material/Add'
 import './Register.scss'
 import axios from 'axios'
-import { Button } from '@mui/material';
-
-
-
-
+import { Button } from '@mui/material'
 
 export default function RegisterForm() {
   const history = useHistory()
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   const username = useRef()
   const email = useRef()
   const password = useRef()
@@ -22,12 +18,12 @@ export default function RegisterForm() {
   const submit_form = async (e) => {
     e.preventDefault()
 
-    setOpen(true)
+    setOpen(open)
     if (confirm_password.current.value !== password.current.value) {
-      alert("Passwrods are not same")
+      alert('Passwrods are not same')
       // Write code to display a popup of password not same
-    }else if(email.current.value.indexOf('@') === -1){
-      alert("Email address is not valid")
+    } else if (email.current.value.indexOf('@') === -1) {
+      alert('Email address is not valid')
       // Write code to display a popup of Email is not valid
     } else {
       const user = {
@@ -46,10 +42,9 @@ export default function RegisterForm() {
   return (
     <>
       <form noValidate autoComplete='off' onSubmit={submit_form}>
-      
         <TextField
           required
-          fullWidth 
+          fullWidth
           inputRef={username}
           label='Username'
           variant='outlined'
@@ -57,7 +52,7 @@ export default function RegisterForm() {
         />
         <TextField
           required
-          fullWidth 
+          fullWidth
           inputRef={email}
           type='email'
           label='Email'
@@ -66,7 +61,7 @@ export default function RegisterForm() {
         />
         <TextField
           required
-          fullWidth 
+          fullWidth
           inputRef={password}
           type='password'
           label='Password'
@@ -75,37 +70,37 @@ export default function RegisterForm() {
         />
         <TextField
           required
-          fullWidth 
+          fullWidth
           inputRef={confirm_password}
           type='password'
           label='Confirm password'
           variant='outlined'
           margin='normal'
         />
-          <Button sx={{ my: 2 }}
-          fullWidth 
-            variant='contained'
-            color='primary'
-            size='large'
-            onClick={submit_form}
-            startIcon={<AddIcon color='secondary' />}
-          >
-            Create Account
-          </Button>
+        <Button
+          sx={{ my: 2 }}
+          fullWidth
+          variant='contained'
+          color='primary'
+          size='large'
+          onClick={submit_form}
+          startIcon={<AddIcon color='secondary' />}
+        >
+          Create Account
+        </Button>
 
-          <Button
-            fullWidth
-            variant='contained'
-            color='primary'
-            size='large'
-            onClick={(e) => {
-              history.push('/')
-            }}
-          >
-            Back to Login
-          </Button>
+        <Button
+          fullWidth
+          variant='contained'
+          color='primary'
+          size='large'
+          onClick={(e) => {
+            history.push('/login')
+          }}
+        >
+          Back to Login
+        </Button>
       </form>
-   
     </>
   )
 }
