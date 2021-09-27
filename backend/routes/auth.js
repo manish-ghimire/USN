@@ -78,7 +78,6 @@ router.post('/login', (req, res) => {
     if (req.body.username.indexOf('@') > -1) {
       console.log('@here')
       // email login stuff
-<<<<<<< HEAD
      User.findOne({ email: req.body.username }).then((validUser) => {
         if(!validUser){
                 console.log("Invalid Credentials");
@@ -97,45 +96,11 @@ router.post('/login', (req, res) => {
           }else {
               console.log("Invalid Credentials");
               res.status(500).json("Invalid Credentials");
-=======
-      User.findOne({ email: req.body.username }).then((validUser) => {
-        if (!validUser) {
-          console.log('Invalid Credentials')
-          res.status(500).json('Invalid Credentials')
-        } else {
-          try {
-            bcrypt
-              .compare(req.body.password, validUser.password)
-              .then((validPassword) => {
-                if (validPassword) {
-                  console.log('workingemail')
-                  const { password, ...user } = validUser._doc
-                  // token stuff
-                  const accessToken = jwt.sign(
-                    { id: validUser.id },
-                    'mySecretKey',
-                    { expiresIn: '15m' }
-                  )
-                  const refreshToken = jwt.sign(
-                    { id: validUser.id },
-                    'myRefreshSecretKey'
-                  )
-                  refreshTokens.push(refreshToken)
-                  res.status(200).json({ user, accessToken, refreshToken })
-                } else {
-                  console.log('Invalid Credentials')
-                  res.status(500).json('Invalid Credentials')
-                }
-              })
-          } catch (err) {
-            res.status(500).json(err)
->>>>>>> 4f227ad8d202078b51b91b5a40df98c5859d87a6
           }
         }
       })
     } else {
       // username login stuff
-<<<<<<< HEAD
             console.log("no@");
     User.findOne({ username: req.body.username }).then((validUser) => {
         if(!validUser){
@@ -155,40 +120,6 @@ router.post('/login', (req, res) => {
           }else {
               console.log("Invalid Credentials");
               res.status(500).json("Invalid Credentials");
-=======
-      console.log('no@')
-      User.findOne({ username: req.body.username }).then((validUser) => {
-        if (!validUser) {
-          console.log('Invalid Credentials')
-          res.status(500).json('Invalid Credentials')
-        } else {
-          try {
-            bcrypt
-              .compare(req.body.password, validUser.password)
-              .then((validPassword) => {
-                if (validPassword) {
-                  console.log('workingusername')
-                  const { password, ...user } = validUser._doc
-                  //  access token
-                  const accessToken = jwt.sign(
-                    { id: validUser.id },
-                    'mySecretKey',
-                    { expiresIn: '15m' }
-                  )
-                  const refreshToken = jwt.sign(
-                    { id: validUser.id },
-                    'myRefreshSecretKey'
-                  )
-                  refreshTokens.push(refreshToken)
-                  res.status(200).json({ user, accessToken, refreshToken })
-                } else {
-                  console.log('Invalid Credentials')
-                  res.status(500).json('Invalid Credentials')
-                }
-              })
-          } catch (err) {
-            res.status(500).json(err)
->>>>>>> 4f227ad8d202078b51b91b5a40df98c5859d87a6
           }
         }
       })
@@ -227,35 +158,6 @@ router.post('/login', (req, res) => {
 // }
 // });
 
-=======
-const verify = (req, res, next) => {
-  const authHeader = req.headers.authorization
-  if (authHeader) {
-    const token = authHeader.split(' ')[1]
-    // console.log(token);
-    jwt.verify(token, 'mySecretKey', (err, user) => {
-      if (err) {
-        return res.status(403).json('Token is not valid')
-      }
-      req.user = user
-      next()
-    })
-  } else {
-    res.status(401).json('Not authenticated!')
-  }
-}
-// Delete User
-// https://reqbin.com/
-// http://localhost:5000/api/auth/users/:userId/
-router.delete('/users/:userId', verify, (req, res) => {
-  if (req.user.id == req.params.userId) {
-    res.status(200).json('user has been deleted')
-  } else {
-    res.status(403).json('you are not allowed')
-  }
-})
->>>>>>> 4f227ad8d202078b51b91b5a40df98c5859d87a6
-
 // refresh token
 // https://reqbin.com/
 // http://localhost:5000/api/auth/refresh/
@@ -271,19 +173,10 @@ router.post('/refresh', (req, res) => {
   }
   jwt.verify(refreshToken, 'myRefreshSecretKey', (err, user) => {
     console.log(err)
-    refreshTokens = refreshTokens.filter((token) => token !== refreshToken)
-
-<<<<<<< HEAD
+    refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+    
     const newAccessToken = jwt.sign({id: user.id, isAdmin: user.isAdmin}, "mySecretKey", { expiresIn: "15m" });
     const newRefreshToken = jwt.sign({id: user.id, isAdmin: user.isAdmin}, "myRefreshSecretKey", { expiresIn: "15m" });
-=======
-    const newAccessToken = jwt.sign({ id: user.id }, 'mySecretKey', {
-      expiresIn: '15m',
-    })
-    const newRefreshToken = jwt.sign({ id: user.id }, 'myRefreshSecretKey', {
-      expiresIn: '15m',
-    })
->>>>>>> 4f227ad8d202078b51b91b5a40df98c5859d87a6
 
     refreshTokens.push(newRefreshToken)
 
