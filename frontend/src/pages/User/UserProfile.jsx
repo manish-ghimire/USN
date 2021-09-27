@@ -32,6 +32,7 @@ const UserProfile = () => {
   return (
     <>
       <Navbar />
+      <div></div>
     </>
   )
 }
