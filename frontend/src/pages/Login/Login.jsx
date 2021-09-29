@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 import React, { useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import Logo from '../../images/Logo.png'
@@ -108,35 +107,6 @@ const Login = ({ setCircle, setSnackbar }) => {
       </div>
     </div>
   )
-=======
-import React from 'react'
-import './Login.scss'
-import Logo from '../../images/Logo.png'
-// import LoginForm from './LoginForm.jsx'
-
-const Login = () => {
-  
-  return(
-    <div className="login-container">
-    <div className='leftDiv'>
-      
-      <img src={Logo} alt="USN logo" className='center' width='100px'/>
-    
-    <div className='rightDiv'>
-      <div className='slogen'>
-        Welcome to USN!
-      </div>
-      <div>
-       {/* <LoginForm></LoginForm> */}
-      </div>
-
-    </div>
- 
-</div>  
-</div>
-  )
- 
->>>>>>> Stashed changes
 }
 
 export default Login
