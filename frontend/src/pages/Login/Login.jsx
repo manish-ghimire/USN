@@ -40,7 +40,7 @@ const Login = ({ setCircle, setSnackbar }) => {
           severity: 'success',
           text: 'Login Successful',
         })
-        history.push(`/user/${userID}`)
+        history.push(`/users/${userID}`)
       } catch (error) {
         console.log(error)
         setCircle(false)

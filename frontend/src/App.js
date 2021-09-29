@@ -59,7 +59,7 @@ function App() {
               )}
             />
             <Route exact path='/' component={UserProfile} />
-            <Route exact path='/user/:userID' component={UserProfile} />
+            <Route exact path='/users/:userID' component={UserProfile} />
             <Route exact path='/error' component={Error} />
           </Switch>
         </Router>
