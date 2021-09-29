@@ -2,7 +2,7 @@ const router = require("express").Router();
 const Post = require("../models/Post");
 const User = require("../models/User");
 const verify = require("./verify");
-// creat post
+// create post
 // post http://localhost:5000/api/posts
 // {
 // "userId": "{userId}",
@@ -39,7 +39,6 @@ router.put("/:id", verify, async (req, res) => {
 
     if (post.userId === req.body.userId) {
       if (req.body.desc.trim() != ''){
-      // if (!req.body.desc){
       try{
         const updatedPost = await Post.findByIdAndUpdate(
           req.params.id,
@@ -53,10 +52,6 @@ router.put("/:id", verify, async (req, res) => {
       catch (err){
         res.status(500).json(err);
       }
-    // }
-      // else{
-      //
-      // }
     } else {
       res.status(403).json("Post descripton is empty!");
     }
@@ -111,12 +106,12 @@ router.get("/:id", async (req, res) => {
 });
 //Get All Post
 router.get("/", async (req, res) => {
-const username = req.query.user;
+const userId = req.query.userId;
 const role = req.query.role;
 try{
 let posts;
-if (username){
-  posts = await Post.find({userId: username});
+if (userId){
+  posts = await Post.find({userId: userId});
 }else if (role){
     posts = await Post.find({role: {
       $in: [role],
