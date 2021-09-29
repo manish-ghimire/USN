@@ -8,6 +8,10 @@ const UserSchema = new mongoose.Schema({
     max: 20,
     unique: true,
   },
+  isAdmin:{
+    type: Boolean,
+    default: false,
+  },
   email: {
     type: String,
     require: true,
@@ -31,7 +35,7 @@ const UserSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
-  followings: {
+  following: {
     type: Array,
     default: [],
   },
