@@ -1,23 +1,15 @@
 const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
-  username:{
+const UniSchema = new mongoose.Schema({
+  UniName:{
     type: String,
     require: true,
-    min: 3,
-    max: 20,
     unique: true,
   },
   email: {
     type: String,
-    require: true,
     min: 50,
     unique: true,
-  },
-  password:{
-    type: String,
-    require: true,
-    min: 6,
   },
   profilePicture: {
     type: String,
@@ -35,21 +27,13 @@ const UserSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
-  role: {
-    type: Array,
-    default: [],
-  },
   desc: {
     type: String,
     max: 50,
   },
-  currentCity: {
-    type: String,
-    max: 50,
-  },
-  isFrom: {
-    type: String,
-    max: 50,
+  uniAdmin: {
+    type: Array,
+    default: [],
   },
 },
 { timestamps: true });

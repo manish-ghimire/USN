@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const Post = require("../models/Post");
 const User = require("../models/User");
+const verify = require("./verify");
 // creat post
 // post http://localhost:5000/api/posts
 // {
@@ -18,8 +19,13 @@ const User = require("../models/User");
 router.post("/", async (req, res) => {
   const newPost = new Post(req.body);
   try {
+    if (!newPost){
+    res.status(422).json({error: "Post is Empty"});
+  }
+  else{
     const savedPost = await newPost.save();
     res.status(200).json(savedPost);
+  }
   }
   catch (err) {
     res.status(500).json(err);
@@ -27,11 +33,13 @@ router.post("/", async (req, res) => {
 });
 //update a post
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", verify, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
     if (post.userId === req.body.userId) {
+      if (req.body.desc.trim() != ''){
+      // if (!req.body.desc){
       try{
         const updatedPost = await Post.findByIdAndUpdate(
           req.params.id,
@@ -43,11 +51,19 @@ router.put("/:id", async (req, res) => {
          res.status(200).json(updatedPost);
       }
       catch (err){
-res.status(500).json(err);
+        res.status(500).json(err);
       }
+    // }
+      // else{
+      //
+      // }
     } else {
-      res.status(403).json("you can update only your post");
+      res.status(403).json("Post descripton is empty!");
     }
+  }
+  else {
+      res.status(403).json("You can update only your post!");
+  }
 
   } catch (err) {
     res.status(500).json(err);
@@ -55,11 +71,11 @@ res.status(500).json(err);
 });
 //delete a post
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verify, (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = Post.findById(req.params.id);
     if (post.userId === req.body.userId) {
-      await post.delete();
+       post.delete();
       res.status(200).json("The post has been deleted!");
     } else {
       res.status(401).json("You can delete only your post!");
@@ -94,16 +110,16 @@ router.get("/:id", async (req, res) => {
   }
 });
 //Get All Post
-router.get("/:id", async (req, res) => {
+router.get("/", async (req, res) => {
 const username = req.query.user;
 const role = req.query.role;
 try{
 let posts;
 if (username){
-  posts = await Post.find({username});
+  posts = await Post.find({userId: username});
 }else if (role){
-    posts = await Post.find({role:{
-      $in:[role],
+    posts = await Post.find({role: {
+      $in: [role],
     },
   });
 }
