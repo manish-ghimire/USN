@@ -1,4 +1,5 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 import { styled, alpha } from '@mui/material/styles'
 import WhiteLogo from '../../images/USN_Logo_White.png'
 import AppBar from '@mui/material/AppBar'
@@ -18,6 +19,7 @@ import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import MoreIcon from '@mui/icons-material/MoreVert'
 import { Link } from '@mui/material'
+import axios from 'axios'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -60,6 +62,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }))
 
 const Navbar = () => {
+  const history = useHistory()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null)
 
@@ -83,6 +86,24 @@ const Navbar = () => {
     setMobileMoreAnchorEl(event.currentTarget)
   }
 
+  const handleDeleteMe = () => {
+    console.log('delete me')
+    const success = axios.delete('/users/61540cb78590d344d83dee4b', {
+      headers: {
+        Authorization:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTQwY2I3ODU5MGQzNDRkODNkZWU0YiIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2MzI4OTg2MTcsImV4cCI6MTYzMjg5OTUxN30.44iipES1-2UcCs7kyFuytDaDrmnRZ7FHOXVvOqaDOF8',
+      },
+    })
+
+    console.log(success)
+  }
+  const handleLogout = () => {
+    console.log('log me out')
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('accessToken')
+    history.push('/login')
+  }
+
   const menuId = 'primary-search-account-menu'
   const renderMenu = (
     <Menu
@@ -102,7 +123,8 @@ const Navbar = () => {
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem onClick={handleDeleteMe}>Delete me</MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   )
 
