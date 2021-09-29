@@ -1,14 +1,17 @@
+import { Button } from '@mui/material'
 import axios from 'axios'
 import React, { useEffect } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import Navbar from '../../components/Navbar/Navbar'
+import FormDialog from '../../components/FormDialog/FormDialog'
 
-const UserProfile = () => {
+const UserProfile = ({ setCircle, setSnackbar }) => {
   const history = useHistory()
   const { userID } = useParams()
   const accessToken = localStorage.getItem('accessToken')
 
   useEffect(() => {
+    setCircle(true);
     if (userID) {
       const fetchData = async () => {
         try {
@@ -27,12 +30,18 @@ const UserProfile = () => {
       console.log('Im here')
       history.push('/login', { text: 'hellooooooo' })
     }
+    setCircle(false);
   }, [history, userID, accessToken])
 
   return (
     <>
-      <Navbar />
-      <div></div>
+      <Navbar/>
+      <div>
+      <FormDialog/>
+      </div>
+      <div>
+
+      </div>
     </>
   )
 }

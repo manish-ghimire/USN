@@ -58,7 +58,12 @@ function App() {
                 />
               )}
             />
-            <Route exact path='/' component={UserProfile} />
+            <Route exact path='/'  component={() => (
+                <UserProfile
+                  setCircle={(value) => setCircle(value)}
+                  setSnackbar={(value) => setSnackbar(value)}
+                />
+              )}/>
             <Route exact path='/user/:userID' component={UserProfile} />
             <Route exact path='/error' component={Error} />
           </Switch>
