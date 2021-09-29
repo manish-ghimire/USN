@@ -8,9 +8,9 @@ const verify = require("./verify");
 // post--> http://localhost:5000/api/auth/register
 router.post("/register", (req, res) => {
   try {
-    if(!req.body.username || !req.body.email || !req.body.password){
-          console.log({errors: "All fields are required"});
-      return res.status(422).json({error:"All fields are required"});
+    if(!req.body.username || !req.body.email || !req.body.password || req.body.password.length < 6){
+          console.log({errors: "All fields are required or password length is less then 6"});
+      return res.status(422).json({error:"All fields are required or password length is less then 6"});
     } else{
     // find email or username
     User.findOne({
@@ -30,7 +30,7 @@ router.post("/register", (req, res) => {
                     errors.email = "Email already exists";
                 }
                 console.log({errors:errors});
-                return res.status(500).json(user);
+                return res.status(500).json(errors);
 
             } else {
               // fetch user from body
