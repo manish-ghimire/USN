@@ -12,11 +12,7 @@ router.get("/:id", verify, async (req, res) => {
         if (!usern){
       const user = await User.findById(req.params.id);
       try {
-          const {
-              password,
-              updatedAt,
-              ...other
-          } = user._doc;
+          const { password, updatedAt, ...other } = user._doc;
           res.status(200).json(other);
       } catch (err) {
           res.status(500).json(err);
@@ -24,11 +20,7 @@ router.get("/:id", verify, async (req, res) => {
         }
         else{
           try {
-              const {
-                  password,
-                  updatedAt,
-                  ...other
-              } = usern._doc;
+              const { password, updatedAt, ...other } = user._doc;
               res.status(200).json(other);
           } catch (err) {
               res.status(500).json(err);
@@ -62,11 +54,37 @@ router.get("/:id", verify, async (req, res) => {
 //Update User
 // https://reqbin.com/
 // put--> http://localhost:5000/api/users/:id
+// {
+// "userId":"id",
+// update stuff
+// }
 router.put("/:id", verify, async (req, res) => {
 const reqUser = await User.findById(req.body.userId);
-if (reqUser._doc.isAdmin){
-console.log("just admin");
-}
+console.log(reqUser._doc);
+// if (reqUser._doc.isAdmin){
+//   try {
+//       const updatedUser = await User.findByIdAndUpdate(req.params.id, {
+//           $set: req.body,
+//       }, {
+//           new: true
+//       });
+//       res.status(200).json(updatedUser);
+//   } catch (err) {
+//       res.status(500).json(err);
+//   }
+// }
+// else if (!reqUser._doc.isAdmin && req.body.userId !== req.params.id || !reqUser._doc.isAdmin && req.body.userId === req.params.id ){
+//  try {
+//      const updatedUser = await User.findByIdAndUpdate(req.params.id, {
+//          $set: {"isAdmin": false},
+//      }, {
+//          new: true
+//      });
+//      res.status(401).json("Can not update!!!");
+//  } catch (err) {
+//      res.status(500).json(err);
+//  }
+// }
   if (req.body.userId === req.params.id || reqUser._doc.isAdmin){
         if (req.body.password) {
           try{
@@ -87,18 +105,7 @@ console.log("just admin");
             res.status(500).json(err);
         }
     }
-    else if(!reqUser._doc.isAdmin){
-      try {
-          const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-              $unset: {isAdmin: req.body.isAdmin},
-          }, {
-              new: true
-          });
-          res.status(401).json("Can not update!");
-      } catch (err) {
-          res.status(500).json(err);
-      }
-    }
+
     else {
        res.status(401).json("Can not update!");
    }
@@ -117,26 +124,92 @@ console.log("just admin");
 });
 
 // Delete User
-// router.delete("/:id", verify, async (req, res) => {
-//     if (req.body.userId === req.params.id) {
-//         try {
-//             const user = await User.findById(req.params.id)
-//             try {
-//                 //delete all post from user
-//                 await Post.deleteMany({
-//                     username: user.username
-//                 });
-//                 await User.findByIdAndDelete(req.params.id);
-//                 res.status(200).json("User deleted!");
-//             } catch (err) {
-//                 res.status(500).json(err);
-//             }
-//         } catch (err) {
-//             res.status(404).json("User not found")
-//         }
-//     } else {
-//         res.status(401).json("Can not delete!");
-//     }
-// });
+router.delete("/:id", verify, (req, res) => {
+  // const reqUser =  User.findById(req.body.userId);
+  // console.log(reqUser);
+    if (req.body.userId === req.params.id) {
+        try {
+            const user =  User.findById(req.params.id)
+            try {
+                //delete all post from user
+                 Post.deleteMany({
+                    username: user.username
+                });
+                 User.findByIdAndDelete(req.params.id);
+                res.status(200).json("User deleted!");
+            } catch (err) {
+                res.status(500).json(err);
+            }
+        } catch (err) {
+            res.status(404).json("User not found")
+        }
+    } else {
+        res.status(401).json("Can not delete!");
+    }
+});
+
+// Get followers
+router.get("/followers/:userId", verify, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    const followers = await Promise.all(
+      user.following.map((followersId) => {
+        return User.findById(followersId);
+      })
+    );
+    let followersList = [];
+    followers.map((follower) => {
+      const { _id, username, profilePicture } = follower;
+      followersList.push({ _id, username, profilePicture });
+    });
+    res.status(200).json(friendList)
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+//follow
+
+router.put("/:id/follow", verify, async (req, res) => {
+  if (req.body.userId !== req.params.id) {
+    try {
+      const user = await User.findById(req.params.id);
+      const currentUser = await User.findById(req.body.userId);
+      if (!user.followers.includes(req.body.userId)) {
+        await user.updateOne({ $push: { followers: req.body.userId } });
+        await currentUser.updateOne({ $push: { following: req.params.id } });
+        res.status(200).json("user has been followed");
+      } else {
+        res.status(403).json("you already follow this user");
+      }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  } else {
+    res.status(403).json("you cant follow yourself");
+  }
+});
+
+//unfollow
+
+router.put("/:id/unfollow", verify, async (req, res) => {
+  if (req.body.userId !== req.params.id) {
+    try {
+      const user = await User.findById(req.params.id);
+      const currentUser = await User.findById(req.body.userId);
+      if (user.followers.includes(req.body.userId)) {
+        await user.updateOne({ $pull: { followers: req.body.userId } });
+        await currentUser.updateOne({ $pull: { following: req.params.id } });
+        res.status(200).json("user has been unfollowed");
+      } else {
+        res.status(403).json("you dont follow this user");
+      }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  } else {
+    res.status(403).json("you cant unfollow yourself");
+  }
+});
 
 module.exports = router;
