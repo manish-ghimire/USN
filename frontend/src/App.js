@@ -4,7 +4,7 @@ import './App.css'
 import Register from './pages/Register/Register'
 import Login from './pages/Login/Login'
 import Error from './pages/Error/Error'
-import UserProfile from './pages/User/UserProfile'
+import UserProfile from './pages/UserProfile/UserProfile'
 import {
   Alert,
   Backdrop,

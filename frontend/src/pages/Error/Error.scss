@@ -1,0 +1,53 @@
+.fullpage {
+  background-image: url('../../images/404.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  font: 400 15px/1.8 'Lato', sans-serif;
+}
+
+.bgimg-1,
+.bgimg-2,
+.bgimg-3 {
+  position: relative;
+  opacity: 0.65;
+}
+.bgimg-1 {
+  height: 30%;
+}
+
+.caption {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+  color: #000;
+}
+
+.caption span.errorcode {
+  // background-color: #111;
+  color: #fff;
+  padding: 28px;
+  font-size: 60px;
+  letter-spacing: 10px;
+}
+
+.caption span.border {
+  // background-color: #111;
+  color: #fff;
+  padding: 28px;
+  font-size: 30px;
+  letter-spacing: 10px;
+}
+
+@media screen and (max-width: 992px) {
+  .caption span.border {
+    // background-color: #111;
+    color: #fff;
+    padding: 28px;
+    font-size: 20px;
+    letter-spacing: 10px;
+  }
+}
