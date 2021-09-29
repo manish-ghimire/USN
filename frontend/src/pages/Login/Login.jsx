@@ -23,7 +23,7 @@ const Login = ({ setCircle, setSnackbar }) => {
     if (!username.current.value || !password.current.value) {
       setSnackbar({
         show: true,
-        text: 'Both fields are mandatory',
+        text: 'All fields are mandatory',
       })
       console.log('im hereeeeeee')
     } else {
