@@ -7,7 +7,6 @@ import axios from 'axios'
 import { Button } from '@mui/material'
 import Logo from '../../images/Logo.png'
 
-<<<<<<< Updated upstream
 const Register = ({ setCircle, setSnackbar }) => {
   const history = useHistory()
 
@@ -51,9 +50,6 @@ const Register = ({ setCircle, setSnackbar }) => {
       }
     }
   }
-=======
-const Register = () => {
->>>>>>> Stashed changes
 
   return (
     <div className='register-container'>
@@ -129,10 +125,6 @@ const Register = () => {
       </div>
     </div>
   )
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 }
 
 export default Register

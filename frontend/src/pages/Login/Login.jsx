@@ -38,7 +38,7 @@ const Login = ({ setCircle, setSnackbar }) => {
         setCircle(false)
         setSnackbar({
           show: true,
-          sevirity: 'success',
+          severity: 'success',
           text: 'Login Successful',
         })
         history.push(`/user/${userID}`)

@@ -17,6 +17,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle'
 import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import MoreIcon from '@mui/icons-material/MoreVert'
+import { Link } from '@mui/material'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -100,7 +101,8 @@ const Navbar = () => {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
     </Menu>
   )
 
@@ -160,7 +162,7 @@ const Navbar = () => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position='static'>
         <Toolbar>
-          <IconButton
+          {/* <IconButton
             size='large'
             edge='start'
             color='inherit'
@@ -168,7 +170,7 @@ const Navbar = () => {
             sx={{ mr: 2 }}
           >
             <HomeIcon />
-          </IconButton>
+          </IconButton> */}
           {/* <Typography
             variant='h6'
             noWrap
@@ -177,7 +179,9 @@ const Navbar = () => {
           >
             University Social Network
           </Typography> */}
-          <img src={WhiteLogo} alt='' height='30px' />
+          <Link href='/'>
+            <img src={WhiteLogo} alt='' height='30px' />
+          </Link>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ flexGrow: 2 }}>
             <Search>
@@ -185,6 +189,7 @@ const Navbar = () => {
                 <SearchIcon />
               </SearchIconWrapper>
               <StyledInputBase
+                fullWidth
                 placeholder='Search…'
                 inputProps={{ 'aria-label': 'search' }}
               />
