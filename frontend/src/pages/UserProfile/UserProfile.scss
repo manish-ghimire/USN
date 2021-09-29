@@ -1,0 +1,60 @@
+@import '../../index.scss';
+
+
+
+
+.sideBar{
+    background-color: $secondary;
+    overflow-wrap: break-word;
+    height:auto;
+    float: left;
+    padding-top: 10px;
+    color: white;
+    height: 91.5vh;
+    text-align: center;
+
+    #userIcon{
+        width:100%;
+        max-width: 128px;
+    }
+    
+    .userInfo{
+        padding: 10px;
+        text-align: left;
+        line-height: 30px;
+        background: red;
+        
+       p{
+        text-align: left;
+        background-color: green;
+       }
+   } 
+}
+
+.postsContainer{
+    background-color:white;
+}
+
+@media (max-width: 600px) {
+    
+.sideBar{
+    text-align:center;
+    height: auto;
+    
+    .userInfo{
+        text-align: center;
+    }
+ }   
+}
+@media (min-width: 600px) and (max-width:900px){
+    
+    .sideBar{
+        text-align:center;
+        height:91.5;
+        
+        .userInfo{
+            text-align: center;
+            margin-top: -30vh;
+        }
+     }   
+}
