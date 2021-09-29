@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 
 const UniSchema = new mongoose.Schema({
-  UniName:{
+  uniName:{
     type: String,
     require: true,
     unique: true,
   },
   email: {
     type: String,
-    min: 50,
+    max: 255,
     unique: true,
   },
   profilePicture: {
@@ -29,7 +29,7 @@ const UniSchema = new mongoose.Schema({
   },
   desc: {
     type: String,
-    max: 50,
+    max: 255,
   },
   uniAdmin: {
     type: Array,
@@ -38,4 +38,4 @@ const UniSchema = new mongoose.Schema({
 },
 { timestamps: true });
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("Uni", UniSchema);

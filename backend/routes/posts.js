@@ -16,7 +16,7 @@ const verify = require("./verify");
 // }
 // get post http://localhost:5000/api/posts/{post id}
 
-router.post("/", async (req, res) => {
+router.post("/", verify, async (req, res) => {
   const newPost = new Post(req.body);
   try {
     if (!newPost){
@@ -37,7 +37,7 @@ router.put("/:id", verify, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
-    if (post.userId === req.body.userId) {
+    if (post.userId === req.user.id) {
       if (req.body.desc.trim() != ''){
       try{
         const updatedPost = await Post.findByIdAndUpdate(
@@ -69,7 +69,7 @@ router.put("/:id", verify, async (req, res) => {
 router.delete("/:id", verify, (req, res) => {
   try {
     const post = Post.findById(req.params.id);
-    if (post.userId === req.body.userId) {
+    if (post.userId === req.user.id) {
        post.delete();
       res.status(200).json("The post has been deleted!");
     } else {
@@ -84,11 +84,11 @@ router.delete("/:id", verify, (req, res) => {
 router.put("/:id/like", async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post.likes.includes(req.body.userId)) {
-      await post.updateOne({ $push: { likes: req.body.userId } });
+    if (!post.likes.includes(req.user.id)) {
+      await post.updateOne({ $push: { likes: req.user.id } });
       res.status(200).json("The post has been liked");
     } else {
-      await post.updateOne({ $pull: { likes: req.body.userId } });
+      await post.updateOne({ $pull: { likes: req.user.id } });
       res.status(200).json("The post has been unliked");
     }
   } catch (err) {
@@ -106,12 +106,12 @@ router.get("/:id", async (req, res) => {
 });
 //Get All Post
 router.get("/", async (req, res) => {
-const userId = req.query.userId;
+const username = req.query.user;
 const role = req.query.role;
 try{
 let posts;
-if (userId){
-  posts = await Post.find({userId: userId});
+if (username){
+  posts = await Post.find({userId: username})
 }else if (role){
     posts = await Post.find({role: {
       $in: [role],
