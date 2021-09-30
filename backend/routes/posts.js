@@ -106,12 +106,12 @@ router.get("/:id", async (req, res) => {
 });
 //Get All Post
 router.get("/", async (req, res) => {
-const username = req.query.user;
+const userId = req.query.user;
 const role = req.query.role;
 try{
 let posts;
-if (username){
-  posts = await Post.find({userId: username})
+if (userId){
+  posts = await Post.find({userId})
 }else if (role){
     posts = await Post.find({role: {
       $in: [role],

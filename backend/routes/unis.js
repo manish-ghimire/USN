@@ -81,12 +81,17 @@ router.put("/:uniName", verify, async (req, res) => {
             console.log({uniId: uniName._id});
             console.log({uniadmin: uniName.uniAdmin});
               if (uniName.uniAdmin.includes(req.user.id) || req.user.isAdmin){
-                const updatedUni = await Uni.findByIdAndUpdate(uniName._id, {
-                    $set: req.body,
-                }, {
-                    new: true
-                });
-                res.status(200).json(updatedUni);
+                if (req.body.uniAdmin !== req.user.id){
+                  const updatedUniAdmin = await uniName.updateOne({ $push: {uniAdmin: req.body.uniAdmin}});
+                  const {uniAdmin, ...other } = req.body;
+                  const updatedUni = await uniName.updateOne({ $set: other});
+                return res.status(200).json(req.body);
+                }else{
+    const {uniAdmin, ...other } = req.body;
+            const updatedUni = await uniName.updateOne({ $set: other});
+            return res.status(200).json(req.body);
+                }
+
           } else{
               return res.status(401).json("Not authenticated!");
           }
