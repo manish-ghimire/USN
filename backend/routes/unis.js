@@ -1,16 +1,17 @@
 const router = require("express").Router();
 const User = require("../models/User");
 const Uni = require("../models/Uni");
+const Post = require("../models/Post");
 const verify = require("./verify");
 const bcrypt = require("bcrypt");
 // Get Uni
+// http://localhost:5000/api/unis/:uniName
 router.get("/:uniName", verify, async (req, res) => {
-
     try {
-
         const uniName = await Uni.findOne({uniName: req.params.uniName});
-        console.log(req.user.uniAdmin);
-            console.log(uniName.uniAdmin);
+        console.log(req.user.id);
+            console.log(uniName);
+            console.log({uniadmin: uniName.uniAdmin});
         if (!uniName){
       const uniId = await Uni.findById(req.params.uniName);
       try {
@@ -35,7 +36,7 @@ router.get("/:uniName", verify, async (req, res) => {
 });
 
 // create Uni
-// find email or username
+// http://localhost:5000/api/unis/register
 router.post("/register", verify, (req, res) => {
   try{
 Uni.findOne({ uniName: req.body.uniName }).then(uni => {
@@ -60,7 +61,7 @@ Uni.findOne({ uniName: req.body.uniName }).then(uni => {
                    return res.status(200).json(newUni);
                  }
 
-                 // need to update user 
+                 // need to update user
     });
   }
   catch(err){
@@ -72,47 +73,43 @@ Uni.findOne({ uniName: req.body.uniName }).then(uni => {
 
 //Update User
 // https://reqbin.com/
-// post--> http://localhost:5000/api/users/:id
-router.put("/:uniName", verify, (req, res) => {
-    const uniAdmin = Uni.findOne({uniAdmin: req.params.uniName});
-        const user = req.user.uniAdmin;
-        console.log(user);
-        console.log(uniName.uniAdmin);
-  if (req.user.id === req.params.id  ) {
-    try {
-      const updatedUser = Uni.findByIdAndUpdate(req.params.id, {
-          "$set": req.body,
-        },{ new: true }
-      );
-      res.status(200).json(updatedUser);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  } else {
-    res.status(401).json("Can not update!");
-  }
+// put--> http://localhost:5000/api/unis/:uniName
+router.put("/:uniName", verify, async (req, res) => {
+
+        const uniName = await Uni.findOne({uniName: req.params.uniName});
+        console.log({userid:req.user.id});
+            console.log({uniId: uniName._id});
+            console.log({uniadmin: uniName.uniAdmin});
+              if (uniName.uniAdmin.includes(req.user.id) || req.user.isAdmin){
+                const updatedUni = await Uni.findByIdAndUpdate(uniName._id, {
+                    $set: req.body,
+                }, {
+                    new: true
+                });
+                res.status(200).json(updatedUni);
+          } else{
+              return res.status(401).json("Not authenticated!");
+          }
 });
 
-// Delete User
-// router.delete("/:id", verify, async (req, res) => {
-//   if (req.user.id === req.params.id) {
-//   try {
-//     const user = await User.findById(req.params.id)
-//     try {
-//       //delete all post from user
-//       await Post.deleteMany({username: user.username});
-//       await User.findByIdAndDelete(req.params.id);
-//       res.status(200).json("User deleted!");
-//     } catch (err) {
-//       res.status(500).json(err);
-//     }
-//   }
-//     catch (err){
-//       res.status(404).json("User not found")
-//     }
-//   } else {
-//     res.status(401).json("Can not delete!");
-//   }
-// });
-
+// Delete Unis
+// https://reqbin.com/
+// delete--> http://localhost:5000/api/unis/:uniName
+router.delete("/:uniName", verify, async (req, res) => {
+        const uniName = await Uni.findOne({uniName: req.params.uniName});
+            if (uniName){
+              console.log({userid:req.user.id});
+                  console.log({uniId: uniName._id});
+                  console.log({uniadmin: uniName.uniAdmin});
+              if (uniName.uniAdmin.includes(req.user.id) || req.user.isAdmin ){
+                 await Post.deleteMany({userId: uniName._id});
+                await User.findByIdAndDelete(uniName._id);
+                  res.status(200).json("Uni deleted!");
+          } else{
+              return res.status(401).json("Not authenticated!");
+          }
+        }else{
+          res.status(404).json("Uni not found");
+        }
+});
 module.exports = router;
