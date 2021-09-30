@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const RoleSchema = new mongoose.Schema(
 {
   role: {
-    type: String,
-    required: true,
+    type: Array,
+    default: [],
   },
 },
 { timestamps: true });

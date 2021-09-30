@@ -1,14 +1,9 @@
 const mongoose = require("mongoose");
 
 const UniSchema = new mongoose.Schema({
-  uniName:{
+  studyName:{
     type: String,
     require: true,
-    unique: true,
-  },
-  email: {
-    type: String,
-    max: 255,
     unique: true,
   },
   profilePicture: {
@@ -19,19 +14,15 @@ const UniSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  followers: {
-    type: Array,
-    default: [],
-  },
-  followings: {
-    type: Array,
-    default: [],
-  },
   desc: {
     type: String,
     max: 255,
   },
-  uniAdmin: {
+  studyAdmin: {
+    type: Array,
+    default: [],
+  },
+  studyMember: {
     type: Array,
     default: [],
   },
