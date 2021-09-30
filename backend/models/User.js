@@ -12,6 +12,18 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  uniAdmin:{
+    type: Array,
+    default: [],
+  },
+  clubAdmin:{
+    type: Array,
+    default: [],
+  },
+  studyAdmin:{
+    type: Array,
+    default: [],
+  },
   email: {
     type: String,
     require: true,

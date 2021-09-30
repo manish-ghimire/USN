@@ -19,7 +19,7 @@ router.post("/register", (req, res) => {
             }, {
                 username: req.body.username
             }]
-        }).then(user => {
+        }).then((user) => {
             if (user) {
               // backend error stuff
                 let errors = {};
@@ -173,7 +173,7 @@ router.post("/login", (req, res) => {
 // https://reqbin.com/
 // http://localhost:5000/api/auth/refresh/
 
-router.post("/refresh", (req, res) => {
+router.post("/refresh", verify, (req, res) => {
   const refreshToken = req.body.token;
 
   if (!refreshToken) {
