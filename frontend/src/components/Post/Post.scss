@@ -1,0 +1,35 @@
+@import '../../index.scss';
+
+.post-box {
+  margin: 20px 30px;
+  padding: 20px;
+  border: 1px solid rgb(235, 235, 235);
+  border-radius: 8px;
+  background-color: rgb(255, 255, 255);
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.post-text {
+  padding-bottom: 15px;
+}
+
+.react-links {
+  padding-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+
+  .lefthalf {
+    flex: 1;
+  }
+
+  .righthalf {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .share .like .comment {
+    margin: 0 15px;
+  }
+}

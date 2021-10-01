@@ -18,7 +18,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle'
 import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import MoreIcon from '@mui/icons-material/MoreVert'
-import { Link } from '@mui/material'
+import { Link } from 'react-router-dom'
 import axios from 'axios'
 
 const Search = styled('div')(({ theme }) => ({
@@ -201,7 +201,7 @@ const Navbar = () => {
           >
             University Social Network
           </Typography> */}
-          <Link href='/'>
+          <Link to='/'>
             <img src={WhiteLogo} alt='' height='30px' />
           </Link>
           <Box sx={{ flexGrow: 1 }} />

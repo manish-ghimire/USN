@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import './App.css'
+import './App.scss'
 import Register from './pages/Register/Register'
 import Login from './pages/Login/Login'
 import Error from './pages/Error/Error'
@@ -68,7 +68,16 @@ function App() {
                 />
               )}
             />
-            <Route exact path='/user/:userID' component={UserProfile} />
+            <Route
+              exact
+              path='/user/:userID'
+              component={() => (
+                <UserProfile
+                  setCircle={(value) => setCircle(value)}
+                  setSnackbar={(value) => setSnackbar(value)}
+                />
+              )}
+            />
             <Route exact path='/error' component={Error} />
           </Switch>
         </Router>
@@ -85,7 +94,7 @@ function App() {
           horizontal: 'center',
         }}
         open={snackbar.show}
-        autoHideDuration={10000}
+        autoHideDuration={5000}
         onClose={() => setSnackbar(false)}
       >
         <Alert
