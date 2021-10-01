@@ -51,7 +51,7 @@ Uni.findOne({ uniName: req.body.uniName }).then(uni => {
 
         } else {
           const newUni = new Uni({
-                         uniName: req.body.uniName,
+                         uniName: req.body.uniName.replaceAll(/\s/g,''),
                          email: req.body.email,
                          uniAdmin: req.user.id
                      });
