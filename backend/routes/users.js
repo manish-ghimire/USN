@@ -97,19 +97,18 @@ router.put("/:id", verify, async (req, res) => {
           }
         }
         try {
-                  if (req.body.isAdmin === req.user.isAdmin){
+                  if (req.body.isAdmin === req.user.isAdmin || req.user.isAdmin){
                         const user = await User.findById(req.params.id);
                     // const updatedAdmin = await uniName.updateOne({ $push: {uniAdmin: req.body.uniAdmin}});
-                        const updatedUser = await user.updateOne({ $set: req.body});
-                  return res.status(200).json(user);
-                }else {
+                  const updatedUser = await User.findByIdAndUpdate(req.params.id, { $set: req.body}, {new: true});
+                  return res.status(200).json(updatedUser);
+                }else if (req.body.isAdmin !== req.user.isAdmin) {
                     const user = await User.findById(req.params.id);
                   const {isAdmin, ...other } = req.body;
-                  const updatedUser = await user.updateOne({ $set: other});
-                  console.log('here');
+                  const updatedUser = await User.findByIdAndUpdate(req.params.id, { $set: other}, {new: true});
 
 
-              return res.status(200).json(user);
+              return res.status(200).json(updatedUser);
                   }
         } catch (err) {
             res.status(500).json(err);
