@@ -53,7 +53,7 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: Array,
-    default: [],
+    default: ["general"],
   },
   desc: {
     type: String,
