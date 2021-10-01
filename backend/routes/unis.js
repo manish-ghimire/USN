@@ -48,7 +48,7 @@ router.post('/register', verify, (req, res) => {
         return res.status(500).json(errors)
       } else {
         const newUni = new Uni({
-          uniName: req.body.uniName,
+          uniName: req.body.uniName.replaceAll(/\s/g, ''),
           email: req.body.email,
           uniAdmin: req.user.id,
         })
