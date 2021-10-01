@@ -1,9 +1,7 @@
-import { Button } from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import Navbar from '../../components/Navbar/Navbar'
-import FormDialog from '../../components/FormDialog/FormDialog'
 import Grid from '@mui/material/Grid'
 import PostingBox from '../../components/PostingBox/PostingBox.jsx'
 import Post from '../../components/Post/Post.jsx'
@@ -41,17 +39,17 @@ const UserProfile = ({ setCircle, setSnackbar }) => {
       history.push('/login', { text: 'hellooooooo' })
     }
     setCircle(false)
-  }, [history, userID, accessToken])
+  }, [history, userID, accessToken, setCircle])
 
   return (
     <div className='mainContainer'>
       <Navbar />
       <Grid container className='bodyContainer'>
-        <Grid container className='sideBar' md={3} sm={4} xs={12}>
-          <Grid md={5} sm={12} xs={12}>
-            <img id='userIcon' src={DefaultIcon} />
+        <Grid item className='sideBar' xs={12} md={3}>
+          <Grid item md={5} sm={12} xs={12}>
+            <img id='userIcon' src={DefaultIcon} alt='Default user' />
           </Grid>
-          <Grid md={7} sm={12} xs={12}>
+          <Grid item md={7} sm={12} xs={12}>
             <div className='userInfo'>
               Username
               <br />
@@ -66,7 +64,7 @@ const UserProfile = ({ setCircle, setSnackbar }) => {
           </Grid>
         </Grid>
 
-        <Grid md={9} sm={8} xs={12}>
+        <Grid item xs={12} md={9}>
           <div className='postingContainer'>
             <PostingBox />
           </div>

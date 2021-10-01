@@ -15,7 +15,7 @@ const PostingBox = () => {
         fullWidth
         id='outlined-multiline-static'
         multiline
-        rows={4}
+        rows={3}
         placeholder='Write your thoughts...'
         onChange={(e) => setContent(e.target.value)}
       />

@@ -5,6 +5,10 @@ import Register from './pages/Register/Register'
 import Login from './pages/Login/Login'
 import Error from './pages/Error/Error'
 import UserProfile from './pages/UserProfile/UserProfile'
+import UniProfile from './pages/UniProfile/UniProfile'
+import Club from './pages/Club/Club'
+import StudyGroup from './pages/StudyGroup/StudyGroup'
+import Market from './pages/Market/Market'
 import {
   Alert,
   Backdrop,
@@ -73,6 +77,56 @@ function App() {
               path='/user/:userID'
               component={() => (
                 <UserProfile
+                  setCircle={(value) => setCircle(value)}
+                  setSnackbar={(value) => setSnackbar(value)}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/uni/:uniID'
+              component={() => (
+                <UniProfile
+                  setCircle={(value) => setCircle(value)}
+                  setSnackbar={(value) => setSnackbar(value)}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/club/:clubID'
+              component={() => (
+                <Club
+                  setCircle={(value) => setCircle(value)}
+                  setSnackbar={(value) => setSnackbar(value)}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/studygroup/:studygroupID'
+              component={() => (
+                <StudyGroup
+                  setCircle={(value) => setCircle(value)}
+                  setSnackbar={(value) => setSnackbar(value)}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/market'
+              component={() => (
+                <Market
+                  setCircle={(value) => setCircle(value)}
+                  setSnackbar={(value) => setSnackbar(value)}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/market/:itemID'
+              component={() => (
+                <Market
                   setCircle={(value) => setCircle(value)}
                   setSnackbar={(value) => setSnackbar(value)}
                 />

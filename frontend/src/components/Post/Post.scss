@@ -2,34 +2,65 @@
 
 .post-box {
   margin: 20px 30px;
-  padding: 20px;
+  padding: 15px;
   border: 1px solid rgb(235, 235, 235);
-  border-radius: 8px;
+  border-radius: 12px;
   background-color: rgb(255, 255, 255);
   font-size: 15px;
   line-height: 20px;
-}
+  box-shadow: 0 0 10px rgb(210, 210, 210);
 
-.post-text {
-  padding-bottom: 15px;
-}
-
-.react-links {
-  padding-top: 20px;
-  display: flex;
-  justify-content: flex-end;
-
-  .lefthalf {
-    flex: 1;
+  &:hover {
+    box-shadow: 0 0 10px rgb(170, 170, 170);
   }
 
-  .righthalf {
-    flex: 1;
+  .avatar-area {
+    padding-bottom: 10px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
+    justify-content: flex-start;
+    img {
+      width: 35px;
+      clip-path: circle();
+    }
+    .details {
+      padding-left: 10px;
+      padding-top: 4px;
+      color: grey;
+      line-height: 14px;
+      .name {
+        font-weight: bold;
+      }
+      .org {
+        font-size: 12px;
+      }
+    }
   }
 
-  .share .like .comment {
-    margin: 0 15px;
+  .post-text {
+    margin: 15px 0;
+    font-weight: 300;
+    color: rgb(71, 71, 71);
+  }
+
+  .react-links {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+
+    .lefthalf {
+      flex: 1;
+    }
+
+    .righthalf {
+      flex: 1;
+    }
+
+    .share {
+      text-align: right;
+      span {
+        margin: 0 20px;
+      }
+    }
   }
 }
