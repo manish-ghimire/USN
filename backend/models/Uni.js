@@ -4,12 +4,15 @@ const UniSchema = new mongoose.Schema({
   uniName:{
     type: String,
     require: true,
+  },
+  uniDisplayName:{
+    type: String,
+    require: true,
     unique: true,
   },
   email: {
     type: String,
     max: 255,
-    unique: true,
   },
   profilePicture: {
     type: String,

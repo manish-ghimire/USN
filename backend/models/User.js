@@ -8,21 +8,17 @@ const UserSchema = new mongoose.Schema({
     max: 20,
     unique: true,
   },
+  fName: {
+    type: String,
+    default: "",
+  },
+  lName: {
+    type: String,
+    default: "",
+  },
   isAdmin:{
     type: Boolean,
     default: false,
-  },
-  uniAdmin:{
-    type: Array,
-    default: [],
-  },
-  clubAdmin:{
-    type: Array,
-    default: [],
-  },
-  studyAdmin:{
-    type: Array,
-    default: [],
   },
   email: {
     type: String,
@@ -57,15 +53,23 @@ const UserSchema = new mongoose.Schema({
   },
   desc: {
     type: String,
-    max: 50,
+    default: "",
   },
   currentCity: {
     type: String,
-    max: 50,
+    default: "",
   },
   isFrom: {
     type: String,
-    max: 50,
+    default: "",
+  },
+  placeOfStudy: {
+    type: String,
+    default: "",
+  },
+  classOf: {
+    type: String,
+    default: "",
   },
 },
 { timestamps: true });

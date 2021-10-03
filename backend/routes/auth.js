@@ -6,20 +6,20 @@ const verify = require("./verify");
 //Register
 // https://reqbin.com/
 // post--> http://localhost:5000/api/auth/register
-router.post("/register", (req, res) => {
+router.post("/register", async (req, res) => {
   try {
     if(!req.body.username || !req.body.email || !req.body.password || req.body.password.length < 6){
           console.log({errors: "All fields are required or password length is less then 6"});
       return res.status(422).json({error:"All fields are required or password length is less then 6"});
     } else{
     // find email or username
-    User.findOne({
+  const user = await User.findOne({
             $or: [{
                 email: req.body.email
             }, {
                 username: req.body.username
             }]
-        }).then((user) => {
+        });
             if (user) {
               // backend error stuff
                 let errors = {};
@@ -51,12 +51,6 @@ router.post("/register", (req, res) => {
                              });
                          });
                      }
-        })
-        .catch((err) => {
-            return res.status(500).json({
-                error: err
-            });
-        });
       }
   } catch (err) {
     res.status(500).json(err);
@@ -90,7 +84,7 @@ router.post("/login", (req, res) => {
             console.log("workingemail");
             const { password, ...user } = validUser._doc;
             // token stuff
-            const accessToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "mySecretKey", { expiresIn: "15m" });
+            const accessToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "mySecretKey", { expiresIn: "1d" });
               const refreshToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "myRefreshSecretKey");
               refreshTokens.push(refreshToken);
             res.status(200).json({user, accessToken, refreshToken});
@@ -119,7 +113,7 @@ router.post("/login", (req, res) => {
             console.log("workingusername");
             const { password, ...user } = validUser._doc;
             //  access token
-            const accessToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "mySecretKey", { expiresIn: "15m" });
+            const accessToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "mySecretKey", { expiresIn: "1d" });
               const refreshToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "myRefreshSecretKey");
               refreshTokens.push(refreshToken);
             res.status(200).json({user, accessToken, refreshToken});
@@ -186,8 +180,8 @@ router.post("/refresh", verify, (req, res) => {
     console.log(err);
     refreshTokens  = refreshTokens.filter((token) => token !== refreshToken);
 
-    const newAccessToken = jwt.sign({id: user.id, isAdmin: user.isAdmin}, "mySecretKey", { expiresIn: "15m" });
-    const newRefreshToken = jwt.sign({id: user.id, isAdmin: user.isAdmin}, "myRefreshSecretKey", { expiresIn: "15m" });
+    const newAccessToken = jwt.sign({id: user.id, isAdmin: user.isAdmin}, "mySecretKey", { expiresIn: "1d" });
+    const newRefreshToken = jwt.sign({id: user.id, isAdmin: user.isAdmin}, "myRefreshSecretKey", { expiresIn: "1d" });
 
     refreshTokens.push(newRefreshToken);
 
@@ -199,8 +193,8 @@ router.post("/refresh", verify, (req, res) => {
 });
 
 router.post("/logout", verify, (req, res) => {
-const refreshToken = req.body.token;
-refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+// const refreshToken = req.body.token;
+// refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
 res.status(200).json("Logged Out Success!");
 });
 
