@@ -22,26 +22,26 @@ import {
 } from '@mui/material'
 import Card from '../../components/Card/Card'
 
-// const posts = [
-//   {
-//     _id: 1,
-//     text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
-//     shares: 10,
-//     likes: 52,
-//   },
-//   {
-//     _id: 2,
-//     text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
-//     shares: 10,
-//     likes: 52,
-//   },
-// ]
+const posts = [
+  {
+    _id: 1,
+    text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
+    shares: 10,
+    likes: 52,
+  },
+  {
+    _id: 2,
+    text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
+    shares: 10,
+    likes: 52,
+  },
+]
 
 const UserProfile = ({ setCircle, setSnackbar }) => {
   const history = useHistory()
   const { userID } = useParams()
   const [user, setUser] = useState({})
-  const [posts, setPosts] = useState({})
+  // const [posts, setPosts] = useState({})
 
   const accessToken = localStorage.getItem('accessToken')
   useEffect(() => {
@@ -57,13 +57,13 @@ const UserProfile = ({ setCircle, setSnackbar }) => {
           console.log(successUser)
           setUser(successUser.data)
 
-          const successPost = await axios.get(`/post/user=${userID}`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-          console.log(successPost)
-          setUser(successPost.data)
+          // const successPost = await axios.get(`/post/user=${userID}`, {
+          //   headers: {
+          //     Authorization: `Bearer ${accessToken}`,
+          //   },
+          // })
+          // console.log(successPost)
+          // setUser(successPost.data)
         } catch (error) {
           // console.log(error)
         }
