@@ -49,14 +49,15 @@ router.post('/register', verify, async (req, res) => {
         })
       } else {
         // find email or username
-        const uniDisplayName = req.body.uniName
+        // console.log(req.body.uniName.replace(/\s+/g, ''));
+        const uniDisplayName = req.body.uniName.replace(/\s+/g, '')
+
         const uni = await Uni.findOne({
-          uniName: req.body.uniName,
+          uniDisplayName: uniDisplayName,
         })
-        console.log(uni)
+
         if (uni) {
           // backend error stuff
-          console.log(uni.email)
           let errors = {}
           if (uni.email === req.body.email) {
             errors.email = 'Email already exists'
@@ -70,8 +71,22 @@ router.post('/register', verify, async (req, res) => {
           })
           return res.status(403).json(errors)
         } else {
-          const uniDisplayName = req.body.uniName.replace(/\s+/g, '')
+          console.log({ uniName: req.body.uniName })
+
+          const uniDisplayName = await req.body.uniName.replace(/\s+/g, '')
           // const newUni = new Uni({req.body},  uniDisplayName: uniDisplayName,);
+          console.log(
+            { uniDisplayName },
+            { uniname: req.body.uniName },
+            { email: req.body.email },
+            { id: req.user.id }
+          )
+          // const newUni = new Uni({
+          //   uniName: req.body.uniName,
+          //   uniDisplayName: uniDisplayName,
+          //   email: req.body.email,
+          //   uniAdmin: req.user.id
+          // });
 
           const newUni = new Uni({
             uniName: req.body.uniName,
@@ -80,8 +95,9 @@ router.post('/register', verify, async (req, res) => {
             uniAdmin: req.user.id,
           })
           // //
+          // console.log(newUni);
           const savedUni = await newUni.save()
-          // console.log();
+
           return res.status(200).json(savedUni)
           console.log(savedUni)
         }
@@ -146,9 +162,9 @@ router.post('/register', verify, async (req, res) => {
 //Update User
 // https://reqbin.com/
 // put--> http://localhost:5000/api/unis/:uniName
-router.put('/:uniName', verify, async (req, res) => {
+router.put('/:uniDisplayName', verify, async (req, res) => {
   const uniName = await Uni.findOne({
-    uniName: req.params.uniName,
+    uniDisplayName: req.params.uniDisplayName,
   })
   console.log({
     userid: req.user.id,
@@ -186,9 +202,9 @@ router.put('/:uniName', verify, async (req, res) => {
 // Delete Unis
 // https://reqbin.com/
 // delete--> http://localhost:5000/api/unis/:uniName
-router.delete('/:uniName', verify, async (req, res) => {
+router.delete('/:uniDisplayName', verify, async (req, res) => {
   const uniName = await Uni.findOne({
-    uniName: req.params.uniName,
+    uniDisplayName: req.params.uniDisplayName,
   })
   if (uniName) {
     console.log({
