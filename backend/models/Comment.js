@@ -8,7 +8,6 @@ const CommentSchema = new mongoose.Schema(
   },
   desc: {
     type: String,
-    max: 500,
     required: true,
   },
   img: {
@@ -20,8 +19,7 @@ const CommentSchema = new mongoose.Schema(
     default: [],
   },
   commentToId: {
-    type: Array,
-    default : [],
+    type: String,
     required: true,
   }
 

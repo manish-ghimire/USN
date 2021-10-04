@@ -3,6 +3,7 @@ const app = express();
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const authRoute = require("./routes/auth");
+const searchRoute = require("./routes/search");
 const userRoute = require("./routes/users");
 const postRoute = require("./routes/posts");
 const roleRoute = require("./routes/roles");
@@ -20,6 +21,7 @@ mongoose.connect(process.env.MONGO_URL, {useNewUrlParser: true, useUnifiedTopolo
   );
 
 app.use("/api/auth", authRoute);
+app.use("/api/search", searchRoute);
 app.use("/api/user", userRoute);
 app.use("/api/post", postRoute);
 app.use("/api/role", roleRoute);
