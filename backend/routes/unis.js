@@ -53,40 +53,10 @@ router.post("/register", verify, async (req, res) => {
           error: "uniName or email field is required"
         });
       } else {
-
-
-        //   try{
-        // Uni.findOne({ uniDisplayName: req.body.uniName.replace(/\s+/g, '') }).then((uni) => {
-        //         if (uni) {
-        //           // backend error stuff
-        //             let errors = {};
-        //             if (study.studyDisplayName === req.body.studyName.replace(/\s+/g, '') ){
-        //                 errors.studyName = "study or email already exists";
-        //             }
-        //         } else {
-        //           const newUni = new Uni({
-        //                          uniName: req.body.uniName,
-        //                          uniDisplayName: req.body.uniName.replace(/\s+/g, ''),
-        //                          uniAdmin: req.user.id
-        //                      });
-        //
-        //                             newUni.save();
-        //
-        //                    return res.status(200).json(newUni);
-        //                  }
-        //
-        //                  // need to update user
-        //     });
-        //   }
-        //   catch(err){
-        //     return res.status(500).json({
-        //         error: err
-        //     });
-        //   }
-//         // find email or username
-//         // console.log(req.body.uniName.replace(/\s+/g, ''));
+        // find email or username
+        // console.log(req.body.uniName.replace(/\s+/g, ''));
         const uniDisplayName = req.body.uniName.replace(/\s+/g, '');
-//
+
         const uni = await Uni.findOne({
 uniDisplayName: uniDisplayName
 });
