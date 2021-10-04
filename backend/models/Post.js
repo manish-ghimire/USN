@@ -9,10 +9,11 @@ const PostSchema = new mongoose.Schema(
   desc: {
     type: String,
     max: 500,
-    required: true
+    required: true,
   },
   img: {
     type: String,
+    default: "",
   },
   likes: {
     type: Array,
@@ -20,7 +21,7 @@ const PostSchema = new mongoose.Schema(
   },
   role: {
     type: Array,
-    default: [],
+    default : [],
     required: false,
   },
 },
