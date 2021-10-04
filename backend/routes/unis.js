@@ -28,6 +28,15 @@ router.get('/:uniDisplayName', verify, async (req, res) => {
   }
 })
 
+router.get('/', verify, async (req, res) => {
+  try {
+    const uni = await Uni.find()
+    res.status(200).json(uni)
+  } catch (err) {
+    return res.status(401).json("Can't find uni")
+  }
+})
+
 // create Uni
 // http://localhost:5000/api/unis/register
 router.post('/register', verify, async (req, res) => {
