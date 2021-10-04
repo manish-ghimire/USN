@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const Post = require("../models/Post");
+const Market = require("../models/Market");
 const User = require("../models/User");
 const verify = require("./verify");
 // create post
@@ -17,7 +17,7 @@ const verify = require("./verify");
 // get post http://localhost:5000/api/post/{post id}
 // http://localhost:5000/api/post/
 router.post("/", verify, async (req, res) => {
-  const newPost = new Post(req.body);
+  const newPost = new Market(req.body);
   try {
     if (!newPost){
     res.status(422).json({error: "Post is Empty"});
@@ -35,12 +35,12 @@ router.post("/", verify, async (req, res) => {
 
 router.put("/:id", verify, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Market.findById(req.params.id);
 
     if (post.userId === req.user.id) {
       if (req.body.desc.trim() != ''){
       try{
-        const updatedPost = await Post.findByIdAndUpdate(
+        const updatedPost = await Market.findByIdAndUpdate(
           req.params.id,
           {
             $set: req.body,
@@ -68,7 +68,7 @@ router.put("/:id", verify, async (req, res) => {
 
 router.delete("/:id", verify, (req, res) => {
   try {
-    const post = Post.findById(req.params.id);
+    const post = Market.findById(req.params.id);
     if (post.userId === req.user.id) {
        post.delete();
       res.status(200).json("The post has been deleted!");
@@ -83,7 +83,7 @@ router.delete("/:id", verify, (req, res) => {
 
 router.put("/:id/like", verify, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Market.findById(req.params.id);
     if (!post.likes.includes(req.user.id)) {
       await post.updateOne({ $push: { likes: req.user.id } });
       res.status(200).json("The post has been liked");
@@ -106,32 +106,25 @@ router.put("/:id/like", verify, async (req, res) => {
 // });
 //Get All Post
 // http://localhost:5000/api/post/?user=:id&?=role=:role
-router.get("/find", verify, async (req, res) => {
+router.get("/item", verify, async (req, res) => {
 const role = req.query.role;
 const userPosts = req.query.user;
-const uniPosts = req.query.uni;
-const clubPosts = req.query.club;
 // try{
 console.log(userPosts);
 let posts;
 if (userPosts){
-  posts = await Post.find({userId:userPosts});
+  posts = await Market.find({userId:userPosts});
   res.status(200).json(posts);
 }else if (role){
-    posts = await Post.find({role: {
+    posts = await Market.find({role: {
       $in: [role],
     },
   });
     res.status(200).json(posts);
-}else if (uniPosts){
-  posts = await Post.find({postTo: {
-    $in: [uniPosts],
-  },
-});
-res.status(200).json(posts);
 }
 else{
-  res.status(404).json("cant find post");
+  post = await Market.find();
+  res.status(200).json(posts);
 }
 // }
 // catch (err){

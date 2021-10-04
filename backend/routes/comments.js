@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Post = require("../models/Post");
+const Comment = require("../models/Comment");
 const User = require("../models/User");
 const verify = require("./verify");
 // create post
@@ -32,10 +33,10 @@ router.post("/", verify, async (req, res) => {
   }
 });
 //update a post
-
-router.put("/:id", verify, async (req, res) => {
+//http://localhost:5000/api/comment/:postId
+router.put("/:postId", verify, async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.postId);
 
     if (post.userId === req.user.id) {
       if (req.body.desc.trim() != ''){

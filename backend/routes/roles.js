@@ -31,8 +31,8 @@ else{
 router.get("/", verify, async (req, res) => {
   if (req.user.isAdmin){
   try {
-  const  dbRolesId = "6159a45cdc7ce0db11feea7d";
-  const roles = await Role.findById(dbRolesId);
+  // const  dbRolesId = "6159a45cdc7ce0db11feea7d";
+  const roles = await Role.find();
     console.log(roles);
     return res.status(200).json(roles);
   } catch (err) {
@@ -46,8 +46,8 @@ router.get("/", verify, async (req, res) => {
 router.delete("/", verify, async (req, res) => {
     if (req.user.isAdmin){
   try {
-    const  dbRolesId = "6159a45cdc7ce0db11feea7d";
-    const roles = await Role.findById(dbRolesId);
+    // const  dbRolesId = "6159a45cdc7ce0db11feea7d";
+    const roles = await Role.find();
 await roles.updateOne({ $pull: { roles: req.body.role } });
   return res.status(200).json("roles has been deleted");
   } catch (err) {

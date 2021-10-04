@@ -101,58 +101,58 @@ router.post('/register', verify, async (req, res) => {
           return res.status(200).json(savedUni)
           console.log(savedUni)
         }
-        // else {
-        // const uniDisplayName = req.body.uniName.replace(/\s+/g, '');
-        // const newUni =  new Uni({
-        //                uniName: req.body.uniName,
-        //                uniDisplayName: uniDisplayName,
-        //                email: req.body.email,
-        //                uniAdmin: req.user.id
-        //            });
-        // //
-        //                              newUni.save();
-        // // console.log( newUni);
-        //          return res.status(200).json(newUni);
-        //          console.log("here");
-        //        }
-
-        // .then((uni) => {
-        //          if (uni) {
-        //            const uniName = req.body.uniName;
-        //            // backend error stuff
-        //              console.log({"test111": uniNamez});
-        //              let errors = {};
-        //              if (uni.uniDisplayName === uniName.replaceAll(/\s/g,'')) {
-        //                  errors.uniName = "Uni name already exists";
-        //              }
-        //              if (uni.email === req.body.email){
-        //                  errors.email = "";
-        //              }
-        //              console.log({errors:errors});
-        //              return res.status(500).json(errors);
-        //
-        //          } else {
-        //            console.log({"here":req.body.uniName})
-        //              const uniDisplayName = req.body.uniName.replaceAll(/\s/g,'');
-        //
-        //            const newUni = new Uni({
-        //                           uniName: req.body.uniName,
-        //                           uniDisplayName: uniDisplayName,
-        //                           email: req.body.email,
-        //                           uniAdmin: req.user.id
-        //                       });
-        //
-        //                              newUni.save();
-        //
-        //                     return res.status(200).json(newUni);
-        //
-        //                   }
-        //      }).catch((err) => {
-        //          return res.status(500).json({
-        //              error: err
-        //          });
-        //      });
       }
+      // else {
+      // const uniDisplayName = req.body.uniName.replace(/\s+/g, '');
+      // const newUni =  new Uni({
+      //                uniName: req.body.uniName,
+      //                uniDisplayName: uniDisplayName,
+      //                email: req.body.email,
+      //                uniAdmin: req.user.id
+      //            });
+      // //
+      //                              newUni.save();
+      // // console.log( newUni);
+      //          return res.status(200).json(newUni);
+      //          console.log("here");
+      //        }
+
+      // .then((uni) => {
+      //          if (uni) {
+      //            const uniName = req.body.uniName;
+      //            // backend error stuff
+      //              console.log({"test111": uniNamez});
+      //              let errors = {};
+      //              if (uni.uniDisplayName === uniName.replaceAll(/\s/g,'')) {
+      //                  errors.uniName = "Uni name already exists";
+      //              }
+      //              if (uni.email === req.body.email){
+      //                  errors.email = "";
+      //              }
+      //              console.log({errors:errors});
+      //              return res.status(500).json(errors);
+      //
+      //          } else {
+      //            console.log({"here":req.body.uniName})
+      //              const uniDisplayName = req.body.uniName.replaceAll(/\s/g,'');
+      //
+      //            const newUni = new Uni({
+      //                           uniName: req.body.uniName,
+      //                           uniDisplayName: uniDisplayName,
+      //                           email: req.body.email,
+      //                           uniAdmin: req.user.id
+      //                       });
+      //
+      //                              newUni.save();
+      //
+      //                     return res.status(200).json(newUni);
+      //
+      //                   }
+      //      }).catch((err) => {
+      //          return res.status(500).json({
+      //              error: err
+      //          });
+      //      });
     }
   } catch (err) {
     res.status(500).json(err)

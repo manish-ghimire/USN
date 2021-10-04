@@ -1,7 +1,12 @@
 const mongoose = require("mongoose");
 
-const UniSchema = new mongoose.Schema({
+const StudySchema = new mongoose.Schema({
   studyName:{
+    type: String,
+    require: true,
+    unique: true,
+  },
+  studyDisplayName:{
     type: String,
     require: true,
     unique: true,
@@ -21,12 +26,15 @@ const UniSchema = new mongoose.Schema({
   studyAdmin: {
     type: Array,
     default: [],
+    required: true,
+      unique: true,
   },
-  studyMember: {
+  studyMembers: {
     type: Array,
     default: [],
+    unique: true,
   },
 },
 { timestamps: true });
 
-module.exports = mongoose.model("Uni", UniSchema);
+module.exports = mongoose.model("Study", StudySchema);

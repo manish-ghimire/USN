@@ -181,7 +181,7 @@ router.get('/followers/:userId', verify, async (req, res) => {
 
 //follow
 // http://localhost:5000/api/users/:id/follow
-router.put('/:id/follow', verify, async (req, res) => {
+router.put("/:id/follow", verify, async (req, res) => {
   if (req.user.id !== req.params.id) {
     try {
       const user = await User.findById(req.params.id)

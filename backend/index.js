@@ -7,6 +7,9 @@ const userRoute = require("./routes/users");
 const postRoute = require("./routes/posts");
 const roleRoute = require("./routes/roles");
 const uniRoute = require("./routes/unis");
+const studyRoute = require("./routes/studies");
+const marketRoute = require("./routes/markets");
+const commentRoute = require("./routes/comments");
 const jwt = require("jsonwebtoken");
 dotenv.config();
 app.use(express.json());
@@ -17,10 +20,13 @@ mongoose.connect(process.env.MONGO_URL, {useNewUrlParser: true, useUnifiedTopolo
   );
 
 app.use("/api/auth", authRoute);
-app.use("/api/users", userRoute);
-app.use("/api/posts", postRoute);
-app.use("/api/roles", roleRoute);
-app.use("/api/unis", uniRoute);
+app.use("/api/user", userRoute);
+app.use("/api/post", postRoute);
+app.use("/api/role", roleRoute);
+app.use("/api/uni", uniRoute);
+app.use("/api/study", studyRoute);
+app.use("/api/market", marketRoute);
+app.use("/api/comment", commentRoute);
 
 
 app.listen(5000, () => {
