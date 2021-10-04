@@ -1,5 +1,14 @@
 const mongoose = require("mongoose");
-
+const childUserSchema = new mongoose.Schema({
+  uniName: {
+    type: String,
+    default: "",
+  },
+  classOf: {
+    type: String,
+    default: "",
+  },
+});
 const UserSchema = new mongoose.Schema({
   username:{
     type: String,
@@ -63,15 +72,9 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  placeOfStudy: {
-    type: String,
-    default: "",
-  },
-  classOf: {
-    type: String,
-    default: "",
-  },
+  studyAt: [childUserSchema],
 },
 { timestamps: true });
+
 
 module.exports = mongoose.model("User", UserSchema);

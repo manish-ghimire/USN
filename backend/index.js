@@ -8,6 +8,8 @@ const postRoute = require("./routes/posts");
 const roleRoute = require("./routes/roles");
 const uniRoute = require("./routes/unis");
 const studyRoute = require("./routes/studies");
+const marketRoute = require("./routes/markets");
+const commentRoute = require("./routes/comments");
 const jwt = require("jsonwebtoken");
 dotenv.config();
 app.use(express.json());
@@ -23,6 +25,8 @@ app.use("/api/post", postRoute);
 app.use("/api/role", roleRoute);
 app.use("/api/uni", uniRoute);
 app.use("/api/study", studyRoute);
+app.use("/api/market", marketRoute);
+app.use("/api/comment", commentRoute);
 
 
 app.listen(5000, () => {
