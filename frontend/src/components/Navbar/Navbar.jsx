@@ -1,23 +1,22 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 import { styled, alpha } from '@mui/material/styles'
 import WhiteLogo from '../../images/USN_Logo_White.png'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
 import InputBase from '@mui/material/InputBase'
 import Badge from '@mui/material/Badge'
 import MenuItem from '@mui/material/MenuItem'
 import Menu from '@mui/material/Menu'
-import MenuIcon from '@mui/icons-material/Menu'
-import HomeIcon from '@mui/icons-material/Home'
 import SearchIcon from '@mui/icons-material/Search'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import MoreIcon from '@mui/icons-material/MoreVert'
-import { Link } from '@mui/material'
+import { Link } from 'react-router-dom'
+import { Divider } from '@mui/material'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -60,6 +59,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }))
 
 const Navbar = () => {
+  const history = useHistory()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null)
 
@@ -83,6 +83,13 @@ const Navbar = () => {
     setMobileMoreAnchorEl(event.currentTarget)
   }
 
+  const handleLogout = () => {
+    console.log('log me out')
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('accessToken')
+    history.push('/login')
+  }
+
   const menuId = 'primary-search-account-menu'
   const renderMenu = (
     <Menu
@@ -100,9 +107,17 @@ const Navbar = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}>My Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      <Divider />
+      <MenuItem onClick={() => history.push('/user/1')}>UserProfile</MenuItem>
+      <MenuItem onClick={() => history.push('/uni/1')}>UniProfile</MenuItem>
+      <MenuItem onClick={() => history.push('/club/1')}>Club</MenuItem>
+      <MenuItem onClick={() => history.push('/studygroup/1')}>
+        StudyGroup
+      </MenuItem>
+      <MenuItem onClick={() => history.push('/market')}>Marketplace</MenuItem>
     </Menu>
   )
 
@@ -179,7 +194,7 @@ const Navbar = () => {
           >
             University Social Network
           </Typography> */}
-          <Link href='/'>
+          <Link to='/'>
             <img src={WhiteLogo} alt='' height='30px' />
           </Link>
           <Box sx={{ flexGrow: 1 }} />
