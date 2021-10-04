@@ -1,7 +1,8 @@
 const router = require("express").Router();
 const Post = require("../models/Post");
 const User = require("../models/User");
-// creat post
+const verify = require("./verify");
+// create post
 // post http://localhost:5000/api/posts
 // {
 // "userId": "{userId}",
@@ -15,11 +16,16 @@ const User = require("../models/User");
 // }
 // get post http://localhost:5000/api/posts/{post id}
 
-router.post("/", async (req, res) => {
+router.post("/", verify, async (req, res) => {
   const newPost = new Post(req.body);
   try {
+    if (!newPost){
+    res.status(422).json({error: "Post is Empty"});
+  }
+  else{
     const savedPost = await newPost.save();
     res.status(200).json(savedPost);
+  }
   }
   catch (err) {
     res.status(500).json(err);
@@ -27,11 +33,12 @@ router.post("/", async (req, res) => {
 });
 //update a post
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", verify, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
-    if (post.userId === req.body.userId) {
+    if (post.userId === req.user.id) {
+      if (req.body.desc.trim() != ''){
       try{
         const updatedPost = await Post.findByIdAndUpdate(
           req.params.id,
@@ -43,11 +50,15 @@ router.put("/:id", async (req, res) => {
          res.status(200).json(updatedPost);
       }
       catch (err){
-res.status(500).json(err);
+        res.status(500).json(err);
       }
     } else {
-      res.status(403).json("you can update only your post");
+      res.status(403).json("Post descripton is empty!");
     }
+  }
+  else {
+      res.status(403).json("You can update only your post!");
+  }
 
   } catch (err) {
     res.status(500).json(err);
@@ -55,11 +66,11 @@ res.status(500).json(err);
 });
 //delete a post
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verify, (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
-    if (post.userId === req.body.userId) {
-      await post.delete();
+    const post = Post.findById(req.params.id);
+    if (post.userId === req.user.id) {
+       post.delete();
       res.status(200).json("The post has been deleted!");
     } else {
       res.status(401).json("You can delete only your post!");
@@ -70,14 +81,14 @@ router.delete("/:id", async (req, res) => {
 });
 //like / unlike a post
 
-router.put("/:id/like", async (req, res) => {
+router.put("/:id/like", verify, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post.likes.includes(req.body.userId)) {
-      await post.updateOne({ $push: { likes: req.body.userId } });
+    if (!post.likes.includes(req.user.id)) {
+      await post.updateOne({ $push: { likes: req.user.id } });
       res.status(200).json("The post has been liked");
     } else {
-      await post.updateOne({ $pull: { likes: req.body.userId } });
+      await post.updateOne({ $pull: { likes: req.user.id } });
       res.status(200).json("The post has been unliked");
     }
   } catch (err) {
@@ -94,16 +105,16 @@ router.get("/:id", async (req, res) => {
   }
 });
 //Get All Post
-router.get("/:id", async (req, res) => {
-const username = req.query.user;
+router.get("/", async (req, res) => {
+const userId = req.query.user;
 const role = req.query.role;
 try{
 let posts;
-if (username){
-  posts = await Post.find({username});
+if (userId){
+  posts = await Post.find({userId})
 }else if (role){
-    posts = await Post.find({role:{
-      $in:[role],
+    posts = await Post.find({role: {
+      $in: [role],
     },
   });
 }

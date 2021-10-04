@@ -2,23 +2,24 @@ const router = require("express").Router();
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const verify = require("./verify");
 //Register
 // https://reqbin.com/
 // post--> http://localhost:5000/api/auth/register
-router.post("/register", (req, res) => {
+router.post("/register", async (req, res) => {
   try {
-    if(!req.body.username || !req.body.email || !req.body.password){
-          console.log({errors: "All fields are required"});
-      return res.status(422).json({error:"All fields are required"});
+    if(!req.body.username || !req.body.email || !req.body.password || req.body.password.length < 6){
+          console.log({errors: "All fields are required or password length is less then 6"});
+      return res.status(422).json({error:"All fields are required or password length is less then 6"});
     } else{
     // find email or username
-    User.findOne({
+  const user = await User.findOne({
             $or: [{
                 email: req.body.email
             }, {
                 username: req.body.username
             }]
-        }).then(user => {
+        });
             if (user) {
               // backend error stuff
                 let errors = {};
@@ -29,7 +30,7 @@ router.post("/register", (req, res) => {
                     errors.email = "Email already exists";
                 }
                 console.log({errors:errors});
-                return res.status(500).json(user);
+                return res.status(500).json(errors);
 
             } else {
               // fetch user from body
@@ -50,12 +51,6 @@ router.post("/register", (req, res) => {
                              });
                          });
                      }
-        })
-        .catch((err) => {
-            return res.status(500).json({
-                error: err
-            });
-        });
       }
   } catch (err) {
     res.status(500).json(err);
@@ -89,8 +84,8 @@ router.post("/login", (req, res) => {
             console.log("workingemail");
             const { password, ...user } = validUser._doc;
             // token stuff
-            const accessToken = jwt.sign({id: validUser.id}, "mySecretKey", { expiresIn: "15m" });
-              const refreshToken = jwt.sign({id: validUser.id}, "myRefreshSecretKey");
+            const accessToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "mySecretKey", { expiresIn: "1d" });
+              const refreshToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "myRefreshSecretKey");
               refreshTokens.push(refreshToken);
             res.status(200).json({user, accessToken, refreshToken});
           }else {
@@ -118,8 +113,8 @@ router.post("/login", (req, res) => {
             console.log("workingusername");
             const { password, ...user } = validUser._doc;
             //  access token
-            const accessToken = jwt.sign({id: validUser.id}, "mySecretKey", { expiresIn: "15m" });
-              const refreshToken = jwt.sign({id: validUser.id}, "myRefreshSecretKey");
+            const accessToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "mySecretKey", { expiresIn: "1d" });
+              const refreshToken = jwt.sign({id: validUser.id, isAdmin: validUser.isAdmin}, "myRefreshSecretKey");
               refreshTokens.push(refreshToken);
             res.status(200).json({user, accessToken, refreshToken});
           }else {
@@ -139,40 +134,40 @@ router.post("/login", (req, res) => {
   }
 });
 
-const verify = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (authHeader){
-    const token = authHeader.split(" ")[1];
-    // console.log(token);
-    jwt.verify(token, "mySecretKey", (err, user) => {
-      if (err){
-        return res.status(403).json("Token is not valid");
-      }
-      req.user = user;
-      next();
-    });
-  }
-  else{
-    res.status(401).json("Not authenticated!");
-  }
-}
-// Delete User
-// https://reqbin.com/
-// http://localhost:5000/api/auth/users/:userId/
-router.delete("/users/:userId", verify, (req, res) => {
-if (req.user.id == req.params.userId){
-  res.status(200).json("user has been deleted");
-}else{
-  res.status(403).json("you are not allowed");
-}
-});
+// const verify = (req, res, next) => {
+//   const authHeader = req.headers.authorization;
+//   if (authHeader){
+//     const token = authHeader.split(" ")[1];
+//     // console.log(token);
+//     jwt.verify(token, "mySecretKey", (err, user) => {
+//       if (err){
+//         return res.status(403).json("Token is not valid");
+//       }
+//       req.user = user;
+//       next();
+//     });
+//   }
+//   else{
+//     res.status(401).json("Not authenticated!");
+//   }
+// }
+// // Delete User
+// // https://reqbin.com/
+// // http://localhost:5000/api/auth/users/:userId/
+// router.delete("/users/:userId", verify, (req, res) => {
+// if (req.user.userid == req.params.userId){
+//   res.status(200).json("user has been deleted");
+// }else{
+//   res.status(403).json("you are not allowed");
+// }
+// });
 
 
 // refresh token
 // https://reqbin.com/
 // http://localhost:5000/api/auth/refresh/
 
-router.post("/refresh", (req, res) => {
+router.post("/refresh", verify, (req, res) => {
   const refreshToken = req.body.token;
 
   if (!refreshToken) {
@@ -185,8 +180,8 @@ router.post("/refresh", (req, res) => {
     console.log(err);
     refreshTokens  = refreshTokens.filter((token) => token !== refreshToken);
 
-    const newAccessToken = jwt.sign({id: user.id}, "mySecretKey", { expiresIn: "15m" });
-    const newRefreshToken = jwt.sign({id: user.id}, "myRefreshSecretKey", { expiresIn: "15m" });
+    const newAccessToken = jwt.sign({id: user.id, isAdmin: user.isAdmin}, "mySecretKey", { expiresIn: "1d" });
+    const newRefreshToken = jwt.sign({id: user.id, isAdmin: user.isAdmin}, "myRefreshSecretKey", { expiresIn: "1d" });
 
     refreshTokens.push(newRefreshToken);
 
@@ -198,8 +193,8 @@ router.post("/refresh", (req, res) => {
 });
 
 router.post("/logout", verify, (req, res) => {
-const refreshToken = req.body.token;
-refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+// const refreshToken = req.body.token;
+// refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
 res.status(200).json("Logged Out Success!");
 });
 

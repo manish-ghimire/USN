@@ -6,6 +6,7 @@
   height: 100vh;
   background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(1, 1, 1, 0.3)),
     url('../../images/Register_page_image.jpg');
+  background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   display: flex;
@@ -26,15 +27,12 @@
     }
   }
   .rightDiv {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     img {
       display: none;
     }
     .slogan-form-box {
-      padding:50px 60px;
+      max-width: 500px;
+      padding: 70px 50px;
       margin-left: 10px;
       border-radius: 20px;
       background-color: #fff;
@@ -49,17 +47,19 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .leftDiv {
     display: none;
   }
 
   .rightDiv {
     .slogan-form-box {
+      margin: 0 10px;
       img {
         display: block;
+        margin: 0 auto;
         margin-bottom: 20px;
-        width: 300px;
+        max-width: 300px;
       }
     }
   }
