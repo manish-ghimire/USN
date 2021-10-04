@@ -4,6 +4,7 @@ const UniSchema = new mongoose.Schema({
   uniName:{
     type: String,
     require: true,
+      unique: true,
   },
   uniDisplayName:{
     type: String,
@@ -13,6 +14,7 @@ const UniSchema = new mongoose.Schema({
   email: {
     type: String,
     max: 255,
+      unique: true,
   },
   profilePicture: {
     type: String,
