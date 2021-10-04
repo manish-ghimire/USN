@@ -5,6 +5,7 @@ const Club = () => {
   return (
     <div>
       <Navbar />
+      This is club page
     </div>
   )
 }

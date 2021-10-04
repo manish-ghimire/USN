@@ -16,7 +16,7 @@ import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import MoreIcon from '@mui/icons-material/MoreVert'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
+import { Divider } from '@mui/material'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -83,17 +83,6 @@ const Navbar = () => {
     setMobileMoreAnchorEl(event.currentTarget)
   }
 
-  const handleDeleteMe = () => {
-    console.log('delete me')
-    const success = axios.delete('/users/61540cb78590d344d83dee4b', {
-      headers: {
-        Authorization:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNTQwY2I3ODU5MGQzNDRkODNkZWU0YiIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2MzI4OTg2MTcsImV4cCI6MTYzMjg5OTUxN30.44iipES1-2UcCs7kyFuytDaDrmnRZ7FHOXVvOqaDOF8',
-      },
-    })
-
-    console.log(success)
-  }
   const handleLogout = () => {
     console.log('log me out')
     localStorage.removeItem('refreshToken')
@@ -118,10 +107,17 @@ const Navbar = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}>My Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
-      <MenuItem onClick={handleDeleteMe}>Delete me</MenuItem>
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      <Divider />
+      <MenuItem onClick={() => history.push('/user/1')}>UserProfile</MenuItem>
+      <MenuItem onClick={() => history.push('/uni/1')}>UniProfile</MenuItem>
+      <MenuItem onClick={() => history.push('/club/1')}>Club</MenuItem>
+      <MenuItem onClick={() => history.push('/studygroup/1')}>
+        StudyGroup
+      </MenuItem>
+      <MenuItem onClick={() => history.push('/market')}>Marketplace</MenuItem>
     </Menu>
   )
 

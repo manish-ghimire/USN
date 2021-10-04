@@ -1,50 +1,63 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import Navbar from '../../components/Navbar/Navbar'
 import Grid from '@mui/material/Grid'
 import PostingBox from '../../components/PostingBox/PostingBox.jsx'
 import Post from '../../components/Post/Post.jsx'
-
 import './UserProfile.scss'
 import DefaultIcon from '../../images/128pxUser.png'
 
+const posts = [
+  {
+    _id: 1,
+    text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
+    shares: 10,
+    likes: 52,
+  },
+  {
+    _id: 2,
+    text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
+    shares: 10,
+    likes: 52,
+  },
+]
+
 const UserProfile = ({ setCircle, setSnackbar }) => {
   const history = useHistory()
-  const { userID } = useParams()
   const accessToken = localStorage.getItem('accessToken')
 
-  const [uniHist, setUniHist] = useState([])
-
   useEffect(() => {
+    const token = localStorage.getItem('accessToken')
     setCircle(true)
-    if (userID) {
+    if (accessToken) {
       const fetchData = async () => {
         try {
-          // const success = await axios.get(`/users/${userID}`)
-          // console.log(success)
+          const success = await axios.get(`/users/6124bee645e6d377f039326f`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          console.log(success.data.username)
           // Fetch data - Need API route first
           console.log('UserProfile Successful')
-          // const success = axios.get('url')
-          // setUniHist(success.blabla)
         } catch (error) {
-          console.log('UserProfile Failed')
+          // console.log(error)
         }
       }
       fetchData()
-    } else if (accessToken) {
-      console.log('AccessToken exists')
     } else {
       console.log('Im here')
       history.push('/login', { text: 'hellooooooo' })
     }
     setCircle(false)
-  }, [history, userID, accessToken, setCircle])
+  }, [history, setCircle, accessToken])
 
   return (
-    <div className='mainContainer'>
+    <>
       <Navbar />
       <Grid container className='bodyContainer'>
+        {/* SIDEBAR STARTS HERE */}
         <Grid item className='sideBar' xs={12} md={3}>
           <Grid item md={5} sm={12} xs={12}>
             <img id='userIcon' src={DefaultIcon} alt='Default user' />
@@ -58,49 +71,19 @@ const UserProfile = ({ setCircle, setSnackbar }) => {
               Lorem, ipsum dolor sit amet consectetur adipisicing elit.
               {/*58 chars allowed for Short Discription*/}
             </div>
-            {uniHist.map((item) => {
-              return <li>{item.name}</li>
-            })}
           </Grid>
         </Grid>
-
+        {/* BODY STARTS HERE */}
         <Grid item xs={12} md={9}>
           <div className='postingContainer'>
             <PostingBox />
           </div>
           <div className='postsContainer'>
-            <Post />
-          </div>
-          <div className='postsContainer'>
-            <Post />
-          </div>
-          <div className='postsContainer'>
-            <Post />
-          </div>
-          <div className='postsContainer'>
-            <Post />
-          </div>
-          <div className='postsContainer'>
-            <Post />
-          </div>
-          <div className='postsContainer'>
-            <Post />
-          </div>
-          <div className='postsContainer'>
-            <Post />
-          </div>
-          <div className='postsContainer'>
-            <Post />
-          </div>
-          <div className='postsContainer'>
-            <Post />
-          </div>
-          <div className='postsContainer'>
-            <Post />
+            <Post posts={posts} />
           </div>
         </Grid>
       </Grid>
-    </div>
+    </>
   )
 }
 

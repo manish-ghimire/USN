@@ -5,6 +5,7 @@ const StudyGroup = () => {
   return (
     <div>
       <Navbar />
+      This is study group
     </div>
   )
 }

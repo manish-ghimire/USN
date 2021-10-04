@@ -1,55 +1,29 @@
 @import '../../index.scss';
 
-.mainContainer {
-  // background-color: hotpink;
-  .bodyContainer {
-    height: 100%;
-    background-color: rgb(250, 250, 250);
+.bodyContainer {
+  background-color: rgb(250, 250, 250);
+}
+.sideBar {
+  overflow-wrap: break-word;
+  float: left;
+  padding-top: 10px;
+  color: rgb(43, 53, 204);
+  text-align: center;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 5px 0px 10px rgb(209, 209, 209);
+
+  #userIcon {
+    width: 100%;
+    max-width: 128px;
   }
-  .sideBar {
-    overflow-wrap: break-word;
-    float: left;
-    padding-top: 10px;
-    color: rgb(43, 53, 204);
-    text-align: center;
-    background-color: rgb(255, 255, 255);
-    box-shadow: 5px 0px 10px rgb(209, 209, 209);
 
-    #userIcon {
-      width: 100%;
-      max-width: 128px;
-    }
-
-    .userInfo {
-      padding: 10px;
+  .userInfo {
+    padding: 10px;
+    text-align: left;
+    line-height: 30px;
+    p {
       text-align: left;
-      line-height: 30px;
-      p {
-        text-align: left;
-        background-color: green;
-      }
+      background-color: green;
     }
   }
 }
-
-// @media (max-width: 600px) {
-//   .sideBar {
-//     text-align: center;
-//     height: auto;
-
-//     .userInfo {
-//       text-align: center;
-//     }
-//   }
-// }
-// @media (min-width: 600px) and (max-width: 900px) {
-//   .sideBar {
-//     text-align: center;
-//     height: auto;
-
-//     .userInfo {
-//       text-align: center;
-//       margin-top: -32vh;
-//     }
-//   }
-// }
