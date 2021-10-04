@@ -10,7 +10,10 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-
+.container {
+  background-color: #fff;
+  padding: 10px;
+}
 
 /* Baby Blue
 #DBF5F0
@@ -23,10 +26,10 @@ Blue Green
 
 Midnight Blue
 #0C6170 */
-$primary: #0C6170;
-$secondary:#37BEB0;
-$third-color:#A4E5E0;
-$whitish: #DBF5F0;
+$primary: #0c6170;
+$secondary: #37beb0;
+$third-color: #a4e5e0;
+$whitish: #dbf5f0;
 $warning: red;
 $runqing: blue;
 $manish: black;

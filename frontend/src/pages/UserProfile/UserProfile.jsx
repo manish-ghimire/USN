@@ -1,46 +1,69 @@
+import React, { useEffect, useState } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
 import axios from 'axios'
-import React, { useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
 import Navbar from '../../components/Navbar/Navbar'
-import Grid from '@mui/material/Grid'
 import PostingBox from '../../components/PostingBox/PostingBox.jsx'
 import Post from '../../components/Post/Post.jsx'
 import './UserProfile.scss'
-import DefaultIcon from '../../images/128pxUser.png'
+import Container from '@mui/material/Container'
+import UsersSidebar from '../../components/UsersSidebar/UsersSidebar'
+import SchoolIcon from '@mui/icons-material/School'
+import {
+  Avatar,
+  Divider,
+  Box,
+  Grid,
+  Hidden,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from '@mui/material'
+import Card from '../../components/Card/Card'
 
-const posts = [
-  {
-    _id: 1,
-    text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
-    shares: 10,
-    likes: 52,
-  },
-  {
-    _id: 2,
-    text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
-    shares: 10,
-    likes: 52,
-  },
-]
+// const posts = [
+//   {
+//     _id: 1,
+//     text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
+//     shares: 10,
+//     likes: 52,
+//   },
+//   {
+//     _id: 2,
+//     text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
+//     shares: 10,
+//     likes: 52,
+//   },
+// ]
 
 const UserProfile = ({ setCircle, setSnackbar }) => {
   const history = useHistory()
-  const accessToken = localStorage.getItem('accessToken')
+  const { userID } = useParams()
+  const [user, setUser] = useState({})
+  const [posts, setPosts] = useState({})
 
+  const accessToken = localStorage.getItem('accessToken')
   useEffect(() => {
-    const token = localStorage.getItem('accessToken')
     setCircle(true)
     if (accessToken) {
       const fetchData = async () => {
         try {
-          const success = await axios.get(`/users/6124bee645e6d377f039326f`, {
+          const successUser = await axios.get(`/users/${userID}`, {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           })
-          console.log(success.data.username)
-          // Fetch data - Need API route first
-          console.log('UserProfile Successful')
+          console.log(successUser)
+          setUser(successUser.data)
+
+          const successPost = await axios.get(`/post/user=${userID}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          console.log(successPost)
+          setUser(successPost.data)
         } catch (error) {
           // console.log(error)
         }
@@ -51,38 +74,90 @@ const UserProfile = ({ setCircle, setSnackbar }) => {
       history.push('/login', { text: 'hellooooooo' })
     }
     setCircle(false)
-  }, [history, setCircle, accessToken])
+  }, [history, setCircle, userID, accessToken])
 
   return (
     <>
       <Navbar />
-      <Grid container className='bodyContainer'>
-        {/* SIDEBAR STARTS HERE */}
-        <Grid item className='sideBar' xs={12} md={3}>
-          <Grid item md={5} sm={12} xs={12}>
-            <img id='userIcon' src={DefaultIcon} alt='Default user' />
-          </Grid>
-          <Grid item md={7} sm={12} xs={12}>
-            <div className='userInfo'>
-              Username
-              <br />
-              Location
-              <br />
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-              {/*58 chars allowed for Short Discription*/}
+      <Container disableGutters maxWidth='xl' className='container'>
+        <UsersSidebar />
+        <Grid container>
+          <Hidden mdDown>
+            <Grid item md={4}>
+              <Card>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Avatar
+                    alt='Memy Sharp'
+                    src='https://picsum.photos/400/400'
+                    sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
+                  />
+                  <div>
+                    {user.fName} {user.lName}
+                  </div>
+                  <div>{user.studiesAt}</div>
+                  <div>{user.isFrom}</div>
+                  <div>{user.role}</div>
+                </Box>
+                <br />
+                <Divider />
+                <Typography>Educational Background</Typography>
+                <List>
+                  <ListItem button>
+                    <ListItemIcon>
+                      <SchoolIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={'University of Canberra'}
+                      secondary={'Expected completion 2021'}
+                      onClick={() => console.log('list item clicked')}
+                    />
+                  </ListItem>
+                  <ListItem button>
+                    <ListItemIcon>
+                      <SchoolIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={'Frakfurt University'}
+                      secondary={'2015-2021'}
+                      onClick={() => console.log('list item clicked')}
+                    />
+                  </ListItem>
+                </List>
+                <Divider />
+                <Typography>Clubs membership in</Typography>
+                <List>
+                  <ListItem button>
+                    <ListItemIcon>
+                      <SchoolIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={'Engineering Society Club'}
+                      secondary={'University of Canberra'}
+                      onClick={() => console.log('list item clicked')}
+                    />
+                  </ListItem>
+                </List>
+              </Card>
+            </Grid>
+          </Hidden>
+
+          <Grid item xs={12} md={8}>
+            <div className='postingContainer'>
+              <PostingBox />
+            </div>
+            <div className='postsContainer'>
+              <Post posts={posts} />
             </div>
           </Grid>
         </Grid>
-        {/* BODY STARTS HERE */}
-        <Grid item xs={12} md={9}>
-          <div className='postingContainer'>
-            <PostingBox />
-          </div>
-          <div className='postsContainer'>
-            <Post posts={posts} />
-          </div>
-        </Grid>
-      </Grid>
+      </Container>
     </>
   )
 }

@@ -16,7 +16,7 @@ import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import MoreIcon from '@mui/icons-material/MoreVert'
 import { Link } from 'react-router-dom'
-import { Divider } from '@mui/material'
+import { Avatar, Divider } from '@mui/material'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -108,7 +108,7 @@ const Navbar = () => {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>My Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+      <MenuItem onClick={() => history.push('/settings')}>Settings</MenuItem>
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
       <Divider />
       <MenuItem onClick={() => history.push('/user/1')}>UserProfile</MenuItem>
@@ -177,23 +177,6 @@ const Navbar = () => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position='static'>
         <Toolbar>
-          {/* <IconButton
-            size='large'
-            edge='start'
-            color='inherit'
-            aria-label='open drawer'
-            sx={{ mr: 2 }}
-          >
-            <HomeIcon />
-          </IconButton> */}
-          {/* <Typography
-            variant='h6'
-            noWrap
-            component='div'
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-          >
-            University Social Network
-          </Typography> */}
           <Link to='/'>
             <img src={WhiteLogo} alt='' height='30px' />
           </Link>
@@ -240,7 +223,8 @@ const Navbar = () => {
               onClick={handleProfileMenuOpen}
               color='inherit'
             >
-              <AccountCircle />
+              {/* <AccountCircle /> */}
+              <Avatar alt='Memy Sharp' src='https://picsum.photos/200/200' />
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
