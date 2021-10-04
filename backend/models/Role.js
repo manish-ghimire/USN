@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const RoleSchema = new mongoose.Schema(
 {
-  role: {
+  roles: {
     type: Array,
     default: [],
   },
