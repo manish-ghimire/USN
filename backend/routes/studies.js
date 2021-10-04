@@ -77,8 +77,10 @@ router.post("/register", verify, async (req, res) => {
 //Update Users
 // https://reqbin.com/
 // put--> http://localhost:5000/api/study/:studyDisplayName
+  // router.put(/:studyDisplayName?join=:id)
+    // router.put(/:studyDisplayName?leave=:id)
 router.put("/:studyDisplayName", verify, async (req, res) => {
-  // router.put(/:studyDisplayName?join=:id/)
+
   // const studyName = await Study.findOne({studyDisplayName: req.params.studyDisplayName});
 
 
@@ -252,15 +254,7 @@ router.delete("/:studyDisplayName", verify, async (req, res) => {
     studyName: req.params.studyName
   });
   if (studyName) {
-    console.log({
-      userid: req.user.id
-    });
-    console.log({
-      studyId: studyName._id
-    });
-    console.log({
-      studyadmin: studyName.studyAdmin
-    });
+
     if (studyName.studyAdmin.includes(req.user.id) || req.user.isAdmin) {
       await Post.deleteMany({
         userId: studyName._id

@@ -32,7 +32,7 @@ const StudySchema = new mongoose.Schema({
   studyMembers: {
     type: Array,
     default: [],
-        unique: true,
+    unique: true,
   },
 },
 { timestamps: true });
