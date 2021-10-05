@@ -27,7 +27,7 @@ router.post("/", verify, async (req, res) => {
 });
 //update a post
 // http://localhost:5000/api/market:id
-router.put("/:id", verify, async (req, res) => {
+router.put("/item/:id", verify, async (req, res) => {
   try {
     const post = await Market.findById(req.params.id);
 
@@ -56,7 +56,7 @@ router.put("/:id", verify, async (req, res) => {
 });
 //delete a post
 
-router.delete("/:id", verify, (req, res) => {
+router.delete("/item/:id", verify, (req, res) => {
   try {
     const post = Market.findById(req.params.id);
     if (post.userId === req.user.id || req.user.isAdmin) {
@@ -71,7 +71,7 @@ router.delete("/:id", verify, (req, res) => {
 });
 //like / unlike a post
 
-router.put("/:id/like", verify, async (req, res) => {
+router.put("/item/:id/like", verify, async (req, res) => {
   try {
     const post = await Market.findById(req.params.id);
     if (!post.likes.includes(req.user.id)) {
@@ -85,12 +85,12 @@ router.put("/:id/like", verify, async (req, res) => {
     res.status(500).json(err);
   }
 });
-router.get("/", verify, async (req, res) => {
-  posts = await Market.find();
-  res.status(200).json(posts);
-});
+// router.get("/", verify, async (req, res) => {
+//   posts = await Market.find();
+//   res.status(200).json(posts);
+// });
 //Get a post
-router.get("/:id", verify, async (req, res) => {
+router.get("/item/:id", verify, async (req, res) => {
   try {
     const post = await Market.findById(req.params.id);
     res.status(200).json(post);
@@ -124,6 +124,14 @@ else{
 // catch (err){
 //     res.status(500).json(err);
 // }
+});
+
+// find comments
+// http://localhost:5000/api/post/:id/comments
+router.get("/item/:id/comments", verify, async (req, res) => {
+  const com = await Comment.find({commentToId: req.params.id});
+  console.log(com);
+  res.status(200).json(com);
 });
 // //get timeline posts
 //

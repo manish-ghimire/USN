@@ -27,7 +27,14 @@ router.get("/:id/comments", verify, async (req, res) => {
   console.log(com);
   res.status(200).json(com);
 });
-// http://localhost:5000/api/:id/:comments
+// find comment replys
+router.get("/:commentsId", verify, async (req, res) => {
+  const com = await Comment.find({commentToId: req.params.commentsId});
+  console.log(com);
+  res.status(200).json(com);
+});
+// post comment
+// http://localhost:5000/api/:id/comments
 router.post("/:id/comments", verify, async (req, res) => {
   const newCom = new Comment({
     userId: req.user.id,
@@ -47,9 +54,44 @@ router.post("/:id/comments", verify, async (req, res) => {
     res.status(500).json(err);
   }
 });
+// post reply
+router.post("/:commentsId/reply", verify, async (req, res) => {
+  const newCom = new Comment({
+    userId: req.user.id,
+    desc: req.body.desc,
+    commentToId: req.params.commentsId
+  });
+  try {
+    if (!newCom || req.body.desc.trim() != ''){
+    res.status(422).json({error: "Post is Empty"});
+  }
+  else{
+    const savedCom = await newCom.save();
+    res.status(200).json(savedCom);
+  }
+  }
+  catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+
+// router.delete("/:id/:commentsId", verify, async (req, res) => {
+//   try {
+//     const com = await Comment.findById(req.params.commentsId);
+//     if (com.userId === req.user.id || req.user.isAdmin){
+//        com.delete();
+//       res.status(200).json("The post has been deleted!");
+//     } else {
+//       res.status(401).json("You can delete only your post!");
+//     }
+//   } catch (err) {
+//     res.status(500).json(err);
+//   }
+// });
 // delete comments
 // http://localhost:5000/api/post/:id/comments
-router.delete("/:id/:commentsId", verify, async (req, res) => {
+router.delete("/:commentsId", verify, async (req, res) => {
   try {
     const com = await Comment.findById(req.params.commentsId);
     if (com.userId === req.user.id || req.user.isAdmin){
@@ -62,7 +104,8 @@ router.delete("/:id/:commentsId", verify, async (req, res) => {
     res.status(500).json(err);
   }
 });
-router.put("/:id/:commentsId/like", verify, async (req, res) => {
+// like comments
+router.put("/:commentsId/like", verify, async (req, res) => {
   try {
     const com = await Comment.findById(req.params.commentsId);
     console.log(com);
@@ -75,10 +118,10 @@ router.put("/:id/:commentsId/like", verify, async (req, res) => {
     }
   } catch (err) {
     res.status(500).json(err);
-  }
-});
-// http://localhost:5000/api/post/:id/:commentsId
-router.put("/:id/:commentsId", verify, async (req, res) => {
+  }});
+//  update comments
+// http://localhost:5000/api/post/:commentsId
+router.put("/:commentsId", verify, async (req, res) => {
   const com = await Comment.findOne({_id: req.params.commentsId});
   if (com.userId === req.user.id || req.user.isAdmin){
         if (req.body.desc.trim() != ''){
@@ -177,6 +220,7 @@ const role = req.query.role;
 const userPosts = req.query.user;
 const uniPosts = req.query.uni;
 const clubPosts = req.query.club;
+const studyPosts = req.query.study;
 // try{
 console.log(userPosts);
 let posts;
@@ -203,13 +247,19 @@ else if (clubPosts){
 });
 res.status(200).json(posts);
 }
+else if (studyPosts){
+  posts = await Post.find({postTo: {
+    $in: [studyPosts],
+  },
+});
+res.status(200).json(posts);
+}
 else{
   posts = await Post.find();
   res.status(200).json(posts);
 }
 });
 //Get all post
-
 router.get("/", verify, async (req, res) => {
   posts = await Post.find();
   res.status(200).json(posts);
