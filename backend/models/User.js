@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const childUserSchema = new mongoose.Schema({
-  uniName: {
+  uniId: {
     type: String,
     default: "",
   },

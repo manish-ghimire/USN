@@ -3,6 +3,13 @@ const Post = require("../models/Post");
 const Comment = require("../models/Comment");
 const User = require("../models/User");
 const verify = require("./verify");
+// TEST ONLY TEST ONLY
+// TEST ONLY TEST ONLY
+// TEST ONLY TEST ONLY
+// TEST ONLY TEST ONLY
+// TEST ONLY TEST ONLY
+// TEST ONLY TEST ONLY
+// comment in posts.js
 //  post http://localhost:5000/api/comment/:postId
 // http://localhost:5000/api/comment/:postId
 router.post("/:postId", verify, async (req, res) => {

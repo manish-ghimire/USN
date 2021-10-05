@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const User = require('../models/User')
+const Uni = require("../models/Uni")
 const Post = require('../models/Post')
 const verify = require('./verify')
 const bcrypt = require('bcrypt')
@@ -31,24 +32,20 @@ router.get('/:id', verify, async (req, res) => {
   }
 })
 
-// get user via query
-// router.get("/", verify, async (req, res) => {
-//     const userId = req.query.userId;
-//     const username = req.query.username;
-//     try {
-//         const user = userId ? await User.findById(userId) : await User.findOne({
-//             username: username
-//         });
-//         const {
-//             password,
-//             updatedAt,
-//             ...other
-//         } = user._doc;
-//         res.status(200).json(other);
-//     } catch (err) {
-//         res.status(500).json(err);
-//     }
-// });
+// get all user via query
+router.get("/find", verify, async (req, res) => {
+  const role = req.query.role;
+
+  let users;
+  console.log(role);
+  if (role){
+      users = await Post.find({role: {
+        $in: [role],
+      },
+    });
+      res.status(200).json(posts);
+  }
+  });
 
 //Update User
 // https://reqbin.com/
@@ -58,32 +55,6 @@ router.get('/:id', verify, async (req, res) => {
 // update stuff
 // }
 router.put('/:id', verify, async (req, res) => {
-  // const reqUser = await User.findById(req.body.userId);
-  // console.log(reqUser._doc);
-  // if (reqUser._doc.isAdmin){
-  //   try {
-  //       const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-  //           $set: req.body,
-  //       }, {
-  //           new: true
-  //       });
-  //       res.status(200).json(updatedUser);
-  //   } catch (err) {
-  //       res.status(500).json(err);
-  //   }
-  // }
-  // else if (!reqUser._doc.isAdmin && req.body.userId !== req.params.id || !reqUser._doc.isAdmin && req.body.userId === req.params.id ){
-  //  try {
-  //      const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-  //          $set: {"isAdmin": false},
-  //      }, {
-  //          new: true
-  //      });
-  //      res.status(401).json("Can not update!!!");
-  //  } catch (err) {
-  //      res.status(500).json(err);
-  //  }
-  // }
   if (req.user.id === req.params.id || req.user.isAdmin) {
     if (req.body.password) {
       try {

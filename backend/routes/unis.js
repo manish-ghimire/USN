@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const User = require("../models/User");
 const Uni = require("../models/Uni");
+const Club = require("../models/Club");
 const Post = require("../models/Post");
 const verify = require("./verify");
 const bcrypt = require("bcrypt");
@@ -39,6 +40,31 @@ router.get("/", verify, async (req, res) => {
     return res.status(401).json("Can't find uni");
   }
 });
+// get all clubs
+// router.get("/clubs", verify, async (req, res) => {
+//   try {
+//     const clubGroups = await Club.find();
+//     res.status(200).json(clubGroups);
+//   } catch (err) {
+//     return res.status(401).json("Can't find uni");
+//   }
+// });
+
+router.get("/:uniDisplayName/find", verify, async (req, res) => {
+  const uniName = await Uni.findOne({
+    uniDisplayName: req.params.uniDisplayName
+  });
+  // console.log(uniName);
+// const clubPosts = req.query.club;
+if (uniName){
+  const club = await Club.find({clubToUni:uniName._id});
+  if (club){
+  res.status(200).json(club);
+  console.log(club)
+}
+}
+});
+
 
 
 

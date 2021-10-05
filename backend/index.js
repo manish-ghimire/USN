@@ -9,6 +9,7 @@ const postRoute = require("./routes/posts");
 const roleRoute = require("./routes/roles");
 const uniRoute = require("./routes/unis");
 const studyRoute = require("./routes/studies");
+const clubRoute = require("./routes/clubs");
 const marketRoute = require("./routes/markets");
 const commentRoute = require("./routes/comments");
 const jwt = require("jsonwebtoken");
@@ -29,7 +30,7 @@ app.use("/api/uni", uniRoute);
 app.use("/api/study", studyRoute);
 app.use("/api/market", marketRoute);
 app.use("/api/comment", commentRoute);
-
+app.use("/api/club", clubRoute);
 
 app.listen(5000, () => {
   console.log('Backend is running!')

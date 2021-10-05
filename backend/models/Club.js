@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
-const StudySchema = new mongoose.Schema({
-  studyName:{
+const ClubSchema = new mongoose.Schema({
+  clubName:{
     type: String,
     require: true,
     unique: true,
   },
-  studyDisplayName:{
+  clubDisplayName:{
     type: String,
     require: true,
     unique: true,
@@ -23,17 +23,21 @@ const StudySchema = new mongoose.Schema({
     type: String,
     max: 255,
   },
-  studyAdmin: {
+  clubAdmin: {
     type: Array,
     default: [],
     required: true,
   },
-  studyMembers: {
+  clubMembers: {
     type: Array,
     default: [],
     unique: true,
   },
+  clubToUni: {
+    type: String,
+    require: true,
+  }
 },
 { timestamps: true });
 
-module.exports = mongoose.model("Study", StudySchema);
+module.exports = mongoose.model("Club", ClubSchema);
