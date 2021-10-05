@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import './PostingBox.scss'
 import { Button, TextField } from '@mui/material'
+import Card from '../../components/Card/Card'
 
 const PostingBox = () => {
   const [content, setContent] = useState('')
@@ -10,7 +11,7 @@ const PostingBox = () => {
   }
 
   return (
-    <div className='postingbox'>
+    <Card height='190px'>
       <TextField
         fullWidth
         id='outlined-multiline-static'
@@ -24,7 +25,7 @@ const PostingBox = () => {
           POST NOW !
         </Button>
       </div>
-    </div>
+    </Card>
   )
 }
 

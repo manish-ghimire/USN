@@ -3,11 +3,12 @@ import { Divider } from '@mui/material'
 import ShareIcon from '@mui/icons-material/Share'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import React from 'react'
+import Card from '../../components/Card/Card'
 import './Post.scss'
 
 const Post = ({ posts }) => {
   return posts.map((post) => (
-    <div key={post._id} className='post-box'>
+    <Card key={post._id}>
       <div className='avatar-area'>
         <img src='https://picsum.photos/200/200' alt='User' />
         <div className='details'>
@@ -35,7 +36,7 @@ const Post = ({ posts }) => {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   ))
 }
 

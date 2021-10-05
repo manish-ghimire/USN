@@ -9,6 +9,7 @@ import UniProfile from './pages/UniProfile/UniProfile'
 import Club from './pages/Club/Club'
 import StudyGroup from './pages/StudyGroup/StudyGroup'
 import Market from './pages/Market/Market'
+import Settings from './pages/Settings/Settings'
 import {
   Alert,
   Backdrop,
@@ -17,6 +18,7 @@ import {
   Snackbar,
 } from '@mui/material'
 import { ThemeProvider } from '@emotion/react'
+import Home from './pages/Home/Home'
 
 const custom_theme = createTheme({
   palette: {
@@ -39,7 +41,7 @@ function App() {
 
   return (
     <div className='App'>
-      <ThemeProvider theme={custom_theme}>
+      <ThemeProvider theme={custom_theme} className='container'>
         <Router>
           <Switch>
             <Route
@@ -62,16 +64,7 @@ function App() {
                 />
               )}
             />
-            <Route
-              exact
-              path='/'
-              component={() => (
-                <UserProfile
-                  setCircle={(value) => setCircle(value)}
-                  setSnackbar={(value) => setSnackbar(value)}
-                />
-              )}
-            />
+            <Route exact path='/' component={() => <Home />} />
             <Route
               exact
               path='/user/:userID'
@@ -132,6 +125,7 @@ function App() {
                 />
               )}
             />
+            <Route exact path='/settings' component={Settings} />
             <Route exact path='/error' component={Error} />
           </Switch>
         </Router>

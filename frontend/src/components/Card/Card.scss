@@ -1,0 +1,12 @@
+.cardbox {
+  margin: 20px 10px;
+  padding: 20px;
+  background-color: rgb(255, 255, 255);
+  // border: 1px solid rgb(218, 218, 218);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgb(210, 210, 210);
+
+  &:hover {
+    box-shadow: 0 0 10px rgb(170, 170, 170);
+  }
+}
