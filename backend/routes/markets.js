@@ -2,15 +2,19 @@ const router = require("express").Router();
 const Market = require("../models/Market");
 const User = require("../models/User");
 const verify = require("./verify");
+const Comment = require("../models/Comment");
 
 
-router.post("/", verify, async (req, res) => {
+router.post("/item/", verify, async (req, res) => {
   const newMark = new Market({
     userId: req.user.id,
     itemName: req.body.itemName,
     itemDesc: req.body.itemDesc,
     itemPrice: req.body.itemPrice,
-    itemLocation: req.body.itemLocation
+    itemLocation: req.body.itemLocation,
+    img: req.body.img,
+    role: req.body.role,
+    postToId: req.body.postToId
   });
   try {
     if (!newMark){
@@ -27,14 +31,14 @@ router.post("/", verify, async (req, res) => {
 });
 //update a post
 // http://localhost:5000/api/market:id
-router.put("/item/:id", verify, async (req, res) => {
+router.put("/item/:itemId", verify, async (req, res) => {
   try {
-    const post = await Market.findById(req.params.id);
+    const post = await Market.findById(req.params.itemId);
 
     if (post.userId === req.user.id || req.user.isAdmin) {
       try{
         const updatedPost = await Market.findByIdAndUpdate(
-          req.params.id,
+          req.params.itemId,
           {
             $set: req.body,
           },
@@ -56,11 +60,11 @@ router.put("/item/:id", verify, async (req, res) => {
 });
 //delete a post
 
-router.delete("/item/:id", verify, (req, res) => {
+router.delete("/item/:itemId", verify, async (req, res) => {
   try {
-    const post = Market.findById(req.params.id);
+    const post = await Market.findById(req.params.itemId);
     if (post.userId === req.user.id || req.user.isAdmin) {
-       post.delete();
+        post.delete();
       res.status(200).json("The post has been deleted!");
     } else {
       res.status(401).json("You can delete only your post!");
@@ -71,9 +75,9 @@ router.delete("/item/:id", verify, (req, res) => {
 });
 //like / unlike a post
 
-router.put("/item/:id/like", verify, async (req, res) => {
+router.put("/item/:itemId/like", verify, async (req, res) => {
   try {
-    const post = await Market.findById(req.params.id);
+    const post = await Market.findById(req.params.itemId);
     if (!post.likes.includes(req.user.id)) {
       await post.updateOne({ $push: { likes: req.user.id } });
       res.status(200).json("The post has been liked");
@@ -90,16 +94,21 @@ router.put("/item/:id/like", verify, async (req, res) => {
 //   res.status(200).json(posts);
 // });
 //Get a post
-router.get("/item/:id", verify, async (req, res) => {
+router.get("/item/:itemId", verify, async (req, res) => {
   try {
-    const post = await Market.findById(req.params.id);
+    const post = await Market.findById(req.params.itemId);
+    if (post){
     res.status(200).json(post);
+  }
+  else {
+      res.status(500).json("can't find item!");
+  }
   } catch (err) {
     res.status(500).json(err);
   }
 });
-//Get All Post
-// http://localhost:5000/api/post/item?user=:id&?=role=:role
+// get filtered post
+// http://localhost:5000/api/market/item?user=:id&?=role=:role
 router.get("/item", verify, async (req, res) => {
 const role = req.query.role;
 const userPosts = req.query.user;
@@ -117,21 +126,47 @@ if (userPosts){
     res.status(200).json(posts);
 }
 else{
-  post = await Market.find();
-  res.status(200).json(posts);
+  res.status(500).json("cant find item");
 }
 // }
 // catch (err){
 //     res.status(500).json(err);
 // }
 });
+//Get All Post
+// http://localhost:5000/api/market/
+router.get("/", verify, async (req, res) => {
+
+  const items = await Market.find();
+  res.status(200).json(items);
+});
 
 // find comments
-// http://localhost:5000/api/post/:id/comments
-router.get("/item/:id/comments", verify, async (req, res) => {
-  const com = await Comment.find({commentToId: req.params.id});
+// http://localhost:5000/api/post/:itemId/comments
+router.get("/item/:itemId/comments", verify, async (req, res) => {
+  const com = await Comment.find({commentToId: req.params.itemId});
   console.log(com);
   res.status(200).json(com);
+});
+// http://localhost:5000/api/item/:itemId/comments
+router.post("/item/:itemId/comments", verify, async (req, res) => {
+  const newCom = new Comment({
+    userId: req.user.id,
+    desc: req.body.desc,
+    commentToId: req.params.itemId
+  });
+  try {
+    if (!newCom){
+    res.status(422).json({error: "Post is Empty"});
+  }
+  else{
+    const savedCom = await newCom.save();
+    res.status(200).json(savedCom);
+  }
+  }
+  catch (err) {
+    res.status(500).json(err);
+  }
 });
 // //get timeline posts
 //
