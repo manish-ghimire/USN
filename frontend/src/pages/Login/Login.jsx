@@ -83,6 +83,7 @@ const Login = ({ setCircle, setSnackbar }) => {
             />
             <Button
               sx={{ my: 2 }}
+              type='submit'
               fullWidth
               variant='contained'
               color='primary'

@@ -147,6 +147,7 @@ const Settings = () => {
   }
   const handleCreatePost = () => {
     const body = {
+      token: localStorage.getItem('accessToken'),
       userId: postUserId.current.value,
       desc: postDesc.current.value,
       img: postImg.current.value,
@@ -154,10 +155,11 @@ const Settings = () => {
       role: postRole.current.value,
       postToId: postToId.current.value,
     }
+    console.log('body', body)
     const putData = async () => {
       console.log(body.token)
       try {
-        const successPost = await axios.post(`/post`, body, {
+        const successPost = await axios.post(`/post/`, body, {
           headers: {
             Authorization: `Bearer ${body.token}`,
           },

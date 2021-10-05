@@ -29,6 +29,7 @@ const UserProfile = ({ setCircle }) => {
   const { userID } = useParams()
   const [user, setUser] = useState({})
   const [posts, setPosts] = useState([])
+  const [unis, setUnis] = useState([])
   const accessToken = localStorage.getItem('accessToken')
 
   useEffect(() => {
@@ -46,6 +47,16 @@ const UserProfile = ({ setCircle }) => {
           console.log('Success user', successUser)
 
           const successPost = await axios.get(`/post/find?user=${userID}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          setPosts(successPost.data)
+          console.log('Success post', successPost)
+
+          const uniIDs = []
+
+          const successUni = await axios.get(`/post/find?user=${userID}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -82,20 +93,22 @@ const UserProfile = ({ setCircle }) => {
         <div>
           {user.fName} {user.lName}
         </div>
-        <div>{user.studiesAt}</div>
+        <div>{user.username}</div>
         <div>{user.isFrom}</div>
         <div>{user.role}</div>
       </Box>
       <br />
       <Divider />
-      <Typography>Educational Backgroundddddd</Typography>
       <List>
+        {['A', 'B', 'C'].map((item) => {
+          return item
+        })}
         <ListItem button>
           <ListItemIcon>
             <SchoolIcon />
           </ListItemIcon>
           <ListItemText
-            primary={user.studiesAt}
+            primary={'University of Canberra'}
             secondary={'Expected completion 2021'}
             onClick={() => console.log('list item clicked')}
           />
@@ -112,7 +125,6 @@ const UserProfile = ({ setCircle }) => {
         </ListItem>
       </List>
       <Divider />
-      <Typography>Clubs membership in</Typography>
       <List>
         <ListItem button>
           <ListItemIcon>

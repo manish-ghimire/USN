@@ -16,8 +16,8 @@ import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import MoreIcon from '@mui/icons-material/MoreVert'
 import { Link } from 'react-router-dom'
-import { Avatar, Divider  } from '@mui/material'
-import {Message} from '@mui/icons-material'
+import { Avatar, Divider } from '@mui/material'
+import { Message } from '@mui/icons-material'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -87,8 +87,9 @@ const Navbar = () => {
 
   const handleLogout = () => {
     console.log('log me out')
-    localStorage.removeItem('refreshToken')
-    localStorage.removeItem('accessToken')
+    // localStorage.removeItem('refreshToken')
+    // localStorage.removeItem('accessToken')
+    localStorage.clear()
     history.push('/login')
   }
 
@@ -143,18 +144,17 @@ const Navbar = () => {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-      <Link to ="/messenger" style={{textDecoration:"none"}}>
-        <IconButton size='large' aria-label='show 4 new mails' color='inherit'>
-
-
-
+        <Link to='/messenger' style={{ textDecoration: 'none' }}>
+          <IconButton
+            size='large'
+            aria-label='show 4 new mails'
+            color='inherit'
+          >
             <Badge badgeContent={4} color='error'>
-            <Message />
-
-          </Badge>
-
-        </IconButton>
-              </Link>
+              <Message />
+            </Badge>
+          </IconButton>
+        </Link>
         <p>Messages</p>
       </MenuItem>
       <MenuItem>
@@ -207,19 +207,19 @@ const Navbar = () => {
 
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-
             <IconButton
               size='large'
               aria-label='show 4 new mails'
               color='inherit'
             >
-
-      <Link to ="/messenger" style={{textDecoration:"none", color: "white"}}>
+              <Link
+                to='/messenger'
+                style={{ textDecoration: 'none', color: 'white' }}
+              >
                 <Badge badgeContent={4} color='error'>
-                <Message />
-
-              </Badge>
-  </Link>
+                  <Message />
+                </Badge>
+              </Link>
             </IconButton>
 
             <IconButton
