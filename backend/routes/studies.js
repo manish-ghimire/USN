@@ -27,6 +27,11 @@ router.get("/:studyDisplayName", verify, async (req, res) => {
   }
 });
 
+router.get("/", verify, async (req, res) => {
+  const studyGroups = await Study.find();
+  res.status(200).json(studyGroups);
+});
+
 // create study
 // http://localhost:5000/api/study/register
 router.post("/register", verify, async (req, res) => {
@@ -57,7 +62,10 @@ router.post("/register", verify, async (req, res) => {
         const newStudy = new Study({
           studyName: req.body.studyName,
           studyDisplayName: req.body.studyName.replace(/\s+/g, ''),
-          studyAdmin: req.user.id
+          studyAdmin: req.user.id,
+          desc: req.body.desc,
+          coverPicture: req.body.coverPicture,
+          profilePicture: req.body.profilePicture
         });
 
         newStudy.save();
@@ -86,51 +94,99 @@ router.put("/:studyDisplayName", verify, async (req, res) => {
 
   const joinStudy = req.query.join;
   const leaveStudy = req.query.leave;
+
+
   // console.log(leaveStudy)
   // if (studyDisplayName){
   const studyName = await Study.findOne({
     studyDisplayName: req.params.studyDisplayName
   });
 
-async function joinStudyGroup(joinStudy){
-  if (joinStudy) {
-    // const studyName = await Study.findOne({
-    //   studyDisplayName: req.params.studyDisplayName
-    // });
-    if (studyName.studyMembers.includes(req.user.id)) {
 
+  async function studyUpdate(studyName) {
+    // const studyName = await Study.findOne({studyDisplayName: req.params.studyDisplayName});
+// try{
+    if (studyName.studyAdmin.includes(req.user.id) || req.user.isAdmin) {
+      console.log({"includes":studyName.studyAdmin.includes(req.user.id)});
+      if(req.body.studyAdmin){
+        const updatedStudyAdmin = await studyName.updateOne({
+          $push: {
+            studyAdmin: req.body.studyAdmin
+          }
+        });
+      }
+        const {
+          studyAdmin,
+          studyMembers,
+          ...other
+        } = req.body;
+        const updatedStudy = await studyName.updateOne({
+          $set: other
+        }, {
+          $push: {
+            studyMembers: req.body.studyMember
+          }
+        });
+         res.status(200).json('Study group has been updated!')
+    } else if (studyName.studyMembers.includes(req.user.id)) {
+        return res.status(401).json("Not study group admin!");
+    } else {
+      return res.status(401).json("Not authenticated!");
+    }
+
+  }
+
+
+  async function joinClubGroup(joinClub){
+        try{
+    if (joinClub) {
+      // const clubName = await club.findOne({
+      //   clubDisplayName: req.params.clubDisplayName
+      // });
+      if (clubName.clubMembers.includes(req.user.id) || clubName.studyMembers.includes(joinClub) || clubName.clubAdmin.includes(req.user.id) || clubName.clubAdmin.includes(joinStudy) ) {
+
+  console.log({error: "already joined"});
+        return res.status(402).json({
+          error: "already joined"
+        });
+
+      } else if (req.user.id === joinClub && !clubName.clubMembers.includes(req.user.id) || req.user.isAdmin) {
+
+              const updateClubMember = await clubName.updateOne({
+                $push: {
+                  clubMembers: joinClub
+                }});
+              console.log("user joined!")
+              return res.status(200).json("user joined!");
+
+      }
+    }
+
+    }
+    catch(err){
       return res.status(402).json({
-        error: "already joined"
+        error: err
       });
-    } else if (req.user.id === joinStudy && !studyName.studyMembers.includes(req.user.id) || req.user.isAdmin) {
-
-            const updatedStudyMember = await studyName.updateOne({
-              $push: {
-                studyMembers: req.user.id
-              }});
-            console.log("user joined!")
-            return res.status(200).json("user joined!");
 
     }
   }
-}
 
 
 async function leaveStudyGroup(leaveStudy) {
 console.log('aaaaa');
   if (leaveStudy) {
-      if (!studyName.studyAdmin.includes(req.user.id) && req.user.id == leaveStudy || req.user.isAdmin) {
-        if (studyName.studyMembers.includes(req.user.id)) {
+
+if (req.user.id === leaveStudy || req.user.isAdmin){
         const updatedStudyMember = await studyName.updateOne({
           $pull: {
-            studyMembers: req.user.id
+            studyMembers: leaveStudy
           }
         });
         return res.status(200).json("Left study group!");
       }else{
         return res.status(200).json("You are not apart of this study group!");
       }
-      }else if (studyName.studyAdmin.includes(req.user.id) || req.user.isAdmin) {
+       if (studyName.studyAdmin.includes(req.user.id) || req.user.isAdmin) {
           console.log("zzz");
           if (studyName.studyAdmin.length < 2) {
             if (req.body.studyAdmin){
@@ -157,7 +213,6 @@ console.log('aaaaa');
               }
             });
             return res.status(200).json("admin updated");
-
           }
       } else {
   return res.status(200).json("You are not apart of this study group!");
@@ -165,82 +220,36 @@ console.log('aaaaa');
   }
 }
 
-  async function study(studyName) {
-    // const studyName = await Study.findOne({studyDisplayName: req.params.studyDisplayName});
-// try{
-    if (studyName.studyAdmin.includes(req.user.id) || req.user.isAdmin) {
-      console.log({"includes":studyName.studyAdmin.includes(req.user.id)});
-      if(req.body.studyAdmin){
-        const updatedStudyAdmin = await studyName.updateOne({
-          $push: {
-            studyAdmin: req.body.studyAdmin
-          }
-        });
-      }
-      if (req.body){
-        const {
-          studyAdmin,
-          studyMembers,
-          ...other
-        } = req.body;
-        const updatedStudy = await studyName.updateOne({
-          $set: other
-        }, {
-          $push: {
-            studyMembers: req.body.studyMember
-          }
-        }, {
-          new: true
-        });
-        return res.status(200).json(studyName);
-}
-    } else if (studyName.studyMembers.includes(req.user.id) || req.user.isAdmin) {
-      console.log(req.body);
-      if (req.body) {
-        const {
-          uniAdmin,
-          studyMembers,
-          studyName,
-          ...other
-        } = req.body;
-        const updatedStudy = await studyName.updateOne({
-          $set: other
-        }, {
-          $push: {
-            studyMembers: req.body.studyMember
-          }
-        }, {
-          new: true
-        });
-        return res.status(200).json(studyName);
-      } else {
-        return res.status(403).json('req body empty');
-      }
-    } else {
-      return res.status(401).json("Not authenticated!");
-    }
-
-  }
 
 
-    if (!studyName.studyAdmin.includes(req.user.id) || !studyName.studyMembers.includes(req.user.id) || !req.user.isAdmin) {
-joinStudyGroup(joinStudy);
-leaveStudyGroup(leaveStudy);
 
-    } else if (studyName.studyAdmin.includes(req.user.id)) {
+  if (studyName.studyAdmin.includes(req.user.id)) {
 console.log("is a study admin");
-      // study(studyName);
-      // joinStudyGroup(joinStudy);
+if (req.body){
+      studyUpdate(studyName);
+    }
+      if(leaveStudy){
       leaveStudyGroup(leaveStudy);
+    }
     }
     else if (studyName.studyMembers.includes(req.user.id)) {
 console.log("is a study member");
-  leaveStudyGroup(leaveStudy);
-} else {
+if(leaveStudy){
+leaveStudyGroup(leaveStudy);
+}
+} else if (req.user.isAdmin) {
     console.log("is admin");
-    // study(studyName);
-    // joinStudyGroup(joinStudy);
+    if (req.body){
+    studyUpdate(studyName);
+  }
+    joinStudyGroup(joinStudy);
+    if(leaveStudy){
     leaveStudyGroup(leaveStudy);
+  }
+  }
+  else{
+  console.log("is a not a member");
+joinStudyGroup(joinStudy);
   }
 
   // }
@@ -251,15 +260,17 @@ console.log("is a study member");
 // delete--> http://localhost:5000/api/study/:studyDisplayName
 router.delete("/:studyDisplayName", verify, async (req, res) => {
   const studyName = await Study.findOne({
-    studyName: req.params.studyName
+    studyDisplayName: req.params.studyDisplayName
   });
+  console.log(studyName);
   if (studyName) {
 
     if (studyName.studyAdmin.includes(req.user.id) || req.user.isAdmin) {
-      await Post.deleteMany({
-        userId: studyName._id
-      });
-      await User.findByIdAndDelete(studyName._id);
+      // await Study.deleteMany({
+      //   userId: studyName._id
+      // });
+
+      await Study.findByIdAndDelete(studyName._id);
       res.status(200).json("study deleted!");
     } else {
       return res.status(401).json("Not authenticated!");

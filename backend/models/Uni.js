@@ -14,6 +14,7 @@ const UniSchema = new mongoose.Schema({
   email: {
     type: String,
     max: 255,
+    require: true,
       unique: true,
   },
   profilePicture: {

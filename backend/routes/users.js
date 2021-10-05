@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const User = require('../models/User')
+const Uni = require("../models/Uni")
 const Post = require('../models/Post')
 const verify = require('./verify')
 const bcrypt = require('bcrypt')
@@ -31,24 +32,20 @@ router.get('/:id', verify, async (req, res) => {
   }
 })
 
-// get user via query
-// router.get("/", verify, async (req, res) => {
-//     const userId = req.query.userId;
-//     const username = req.query.username;
-//     try {
-//         const user = userId ? await User.findById(userId) : await User.findOne({
-//             username: username
-//         });
-//         const {
-//             password,
-//             updatedAt,
-//             ...other
-//         } = user._doc;
-//         res.status(200).json(other);
-//     } catch (err) {
-//         res.status(500).json(err);
-//     }
-// });
+// get all user via query
+router.get("/find", verify, async (req, res) => {
+  const role = req.query.role;
+
+  let users;
+  console.log(role);
+  if (role){
+      users = await Post.find({role: {
+        $in: [role],
+      },
+    });
+      res.status(200).json(posts);
+  }
+  });
 
 //Update User
 // https://reqbin.com/
@@ -58,32 +55,6 @@ router.get('/:id', verify, async (req, res) => {
 // update stuff
 // }
 router.put('/:id', verify, async (req, res) => {
-  // const reqUser = await User.findById(req.body.userId);
-  // console.log(reqUser._doc);
-  // if (reqUser._doc.isAdmin){
-  //   try {
-  //       const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-  //           $set: req.body,
-  //       }, {
-  //           new: true
-  //       });
-  //       res.status(200).json(updatedUser);
-  //   } catch (err) {
-  //       res.status(500).json(err);
-  //   }
-  // }
-  // else if (!reqUser._doc.isAdmin && req.body.userId !== req.params.id || !reqUser._doc.isAdmin && req.body.userId === req.params.id ){
-  //  try {
-  //      const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-  //          $set: {"isAdmin": false},
-  //      }, {
-  //          new: true
-  //      });
-  //      res.status(401).json("Can not update!!!");
-  //  } catch (err) {
-  //      res.status(500).json(err);
-  //  }
-  // }
   if (req.user.id === req.params.id || req.user.isAdmin) {
     if (req.body.password) {
       try {
@@ -160,24 +131,55 @@ router.delete('/:id', verify, async (req, res) => {
 })
 
 // Get followers
-router.get('/followers/:userId', verify, async (req, res) => {
+router.get('/:userId/following', verify, async (req, res) => {
+      try {
+  const user = await User.findById(req.params.userId);
+  console.log(user.following);
+  const following = await Promise.all(
+    user.following.map(
+      followingId => {
+      console.log(followingId);
+      return User.findById(followingId)
+  })
+);
+let followingList = [];
+following.map(followingUsers => {
+ const { _id, username, profilePicture } = followingUsers;
+ followingList.push({ _id, username, profilePicture })
+}
+);
+res.status(200).json(followingList);
+
+    } catch (err) {
+      res.status(500).json(err);
+    }
+});
+router.get('/:userId/followers', verify, async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId)
-    const followers = await Promise.all(
-      user.following.map((followersId) => {
-        return User.findById(followersId)
-      })
-    )
-    let followersList = []
-    followers.map((follower) => {
-      const { _id, username, profilePicture } = follower
-      followersList.push({ _id, username, profilePicture })
-    })
-    res.status(200).json(friendList)
-  } catch (err) {
-    res.status(500).json(err)
-  }
+const user = await User.findById(req.params.userId);
+console.log(user);
+const followers = await Promise.all(
+user.followers.map(
+  followerId => {
+  return User.findById(followerId)
 })
+);
+let followerList = [];
+followers.map(followerUsers => {
+
+  console.log(followerUsers);
+const { _id, username, profilePicture } = followerUsers;
+console.log(followerUsers);
+followerList.push({ _id, username, profilePicture })
+}
+);
+res.status(200).json(followerList);
+
+} catch (err) {
+  res.status(500).json(err);
+}
+});
+
 
 //follow
 // http://localhost:5000/api/users/:id/follow
@@ -191,7 +193,9 @@ router.put("/:id/follow", verify, async (req, res) => {
         await currentUser.updateOne({ $push: { following: req.params.id } })
         res.status(200).json('user has been followed')
       } else {
-        res.status(403).json('you already follow this user')
+          await user.updateOne({ $pull: { followers: req.user.id } })
+           await currentUser.updateOne({ $pull: { following: req.params.id } })
+        res.status(200).json('user has been unfollowed');
       }
     } catch (err) {
       res.status(500).json(err)
@@ -202,25 +206,5 @@ router.put("/:id/follow", verify, async (req, res) => {
 })
 
 //unfollow
-
-router.put('/:id/unfollow', verify, async (req, res) => {
-  if (req.user.id !== req.params.id) {
-    try {
-      const user = await User.findById(req.params.id)
-      const currentUser = await User.findById(req.user.id)
-      if (user.followers.includes(req.user.id)) {
-        await user.updateOne({ $pull: { followers: req.user.id } })
-        await currentUser.updateOne({ $pull: { following: req.params.id } })
-        res.status(200).json('user has been unfollowed')
-      } else {
-        res.status(403).json('you dont follow this user')
-      }
-    } catch (err) {
-      res.status(500).json(err)
-    }
-  } else {
-    res.status(403).json('you cant unfollow yourself')
-  }
-})
 
 module.exports = router

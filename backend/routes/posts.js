@@ -1,20 +1,9 @@
 const router = require("express").Router();
 const Post = require("../models/Post");
+const Comment = require("../models/Comment");
 const User = require("../models/User");
 const verify = require("./verify");
-// create post
-// post http://localhost:5000/api/post
-// {
-// "userId": "{userId}",
-// "desc": "{post desc}"
-// }
-// update post
-// post http://localhost:5000/api/post/{post id}
-// {
-// "userId": "6111104d64500e62187a6727",
-// "desc": "update post desc"
-// }
-// get post http://localhost:5000/api/post/{post id}
+// create post http://localhost:5000/api/post/{post id}
 // http://localhost:5000/api/post/
 router.post("/", verify, async (req, res) => {
   const newPost = new Post(req.body);
@@ -31,13 +20,141 @@ router.post("/", verify, async (req, res) => {
     res.status(500).json(err);
   }
 });
-//update a post
+// find comments
+// http://localhost:5000/api/post/:id/comments
+router.get("/:id/comments", verify, async (req, res) => {
+  const com = await Comment.find({commentToId: req.params.id});
+  console.log(com);
+  res.status(200).json(com);
+});
+// find comment replys
+router.get("/:commentsId", verify, async (req, res) => {
+  const com = await Comment.find({commentToId: req.params.commentsId});
+  console.log(com);
+  res.status(200).json(com);
+});
+// post comment
+// http://localhost:5000/api/:id/comments
+router.post("/:id/comments", verify, async (req, res) => {
+  const newCom = new Comment({
+    userId: req.user.id,
+    desc: req.body.desc,
+    commentToId: req.params.id
+  });
+  try {
+    if (!newCom || req.body.desc.trim() != ''){
+    res.status(422).json({error: "Post is Empty"});
+  }
+  else{
+    const savedCom = await newCom.save();
+    res.status(200).json(savedCom);
+  }
+  }
+  catch (err) {
+    res.status(500).json(err);
+  }
+});
+// post reply
+router.post("/:commentsId/reply", verify, async (req, res) => {
+  const newCom = new Comment({
+    userId: req.user.id,
+    desc: req.body.desc,
+    commentToId: req.params.commentsId
+  });
+  try {
+    if (!newCom || req.body.desc.trim() != ''){
+    res.status(422).json({error: "Post is Empty"});
+  }
+  else{
+    const savedCom = await newCom.save();
+    res.status(200).json(savedCom);
+  }
+  }
+  catch (err) {
+    res.status(500).json(err);
+  }
+});
 
+
+// router.delete("/:id/:commentsId", verify, async (req, res) => {
+//   try {
+//     const com = await Comment.findById(req.params.commentsId);
+//     if (com.userId === req.user.id || req.user.isAdmin){
+//        com.delete();
+//       res.status(200).json("The post has been deleted!");
+//     } else {
+//       res.status(401).json("You can delete only your post!");
+//     }
+//   } catch (err) {
+//     res.status(500).json(err);
+//   }
+// });
+// delete comments
+// http://localhost:5000/api/post/:id/comments
+router.delete("/:commentsId", verify, async (req, res) => {
+  try {
+    const com = await Comment.findById(req.params.commentsId);
+    if (com.userId === req.user.id || req.user.isAdmin){
+       com.delete();
+      res.status(200).json("The post has been deleted!");
+    } else {
+      res.status(401).json("You can delete only your post!");
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+// like comments
+router.put("/:commentsId/like", verify, async (req, res) => {
+  try {
+    const com = await Comment.findById(req.params.commentsId);
+    console.log(com);
+    if (!com.likes.includes(req.user.id)) {
+      await com.updateOne({ $push: { likes: req.user.id } });
+      res.status(200).json("The post has been liked");
+    } else {
+      await com.updateOne({ $pull: { likes: req.user.id } });
+      res.status(200).json("The post has been unliked");
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }});
+//  update comments
+// http://localhost:5000/api/post/:commentsId
+router.put("/:commentsId", verify, async (req, res) => {
+  const com = await Comment.findOne({_id: req.params.commentsId});
+  if (com.userId === req.user.id || req.user.isAdmin){
+        if (req.body.desc.trim() != ''){
+          try{
+            const updatedCom = await Comment.findByIdAndUpdate(
+              req.params.commentsId,
+              {
+                $set: req.body,
+              },
+              { new: true }
+            );      console.log(updatedCom);
+                  res.status(200).json(updatedCom);
+          }
+          catch (err){
+            res.status(500).json(err);
+          }
+
+}
+else {
+ res.status(403).json("Post descripton is empty!");
+}
+  }  else {
+        res.status(403).json("You can only update your own comment!");
+    }
+
+});
+//update a post
+// http://localhost:5000/api/post/:id
 router.put("/:id", verify, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
-    if (post.userId === req.user.id) {
+    if (post.userId === req.user.id || req.user.isAdmin) {
       if (req.body.desc.trim() != ''){
       try{
         const updatedPost = await Post.findByIdAndUpdate(
@@ -57,7 +174,7 @@ router.put("/:id", verify, async (req, res) => {
     }
   }
   else {
-      res.status(403).json("You can update only your post!");
+      res.status(403).json("You can only update your own post!");
   }
 
   } catch (err) {
@@ -65,11 +182,11 @@ router.put("/:id", verify, async (req, res) => {
   }
 });
 //delete a post
-
-router.delete("/:id", verify, (req, res) => {
+// http://localhost:5000/api/post/:id
+router.delete("/:id", verify, async (req, res) => {
   try {
-    const post = Post.findById(req.params.id);
-    if (post.userId === req.user.id) {
+    const post = await Post.findById(req.params.id);
+    if (post.userId === req.user.id || req.user.isAdmin) {
        post.delete();
       res.status(200).json("The post has been deleted!");
     } else {
@@ -80,7 +197,7 @@ router.delete("/:id", verify, (req, res) => {
   }
 });
 //like / unlike a post
-
+// http://localhost:5000/api/post/:id/like
 router.put("/:id/like", verify, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -95,22 +212,15 @@ router.put("/:id/like", verify, async (req, res) => {
     res.status(500).json(err);
   }
 });
-//Get a post
-// router.get("/:id", async (req, res) => {
-//   try {
-//     const post = await Post.findById(req.params.id);
-//     res.status(200).json(post);
-//   } catch (err) {
-//     res.status(500).json(err);
-//   }
-// });
+
 //Get All Post
-// http://localhost:5000/api/post/?user=:id&?=role=:role
+// http://localhost:5000/api/post/?user=:id&?role=:role
 router.get("/find", verify, async (req, res) => {
 const role = req.query.role;
 const userPosts = req.query.user;
 const uniPosts = req.query.uni;
 const clubPosts = req.query.club;
+const studyPosts = req.query.study;
 // try{
 console.log(userPosts);
 let posts;
@@ -130,13 +240,38 @@ if (userPosts){
 });
 res.status(200).json(posts);
 }
-else{
-  res.status(404).json("cant find post");
+else if (clubPosts){
+  posts = await Post.find({postTo: {
+    $in: [clubPosts],
+  },
+});
+res.status(200).json(posts);
 }
-// }
-// catch (err){
-//     res.status(500).json(err);
-// }
+else if (studyPosts){
+  posts = await Post.find({postTo: {
+    $in: [studyPosts],
+  },
+});
+res.status(200).json(posts);
+}
+else{
+  posts = await Post.find();
+  res.status(200).json(posts);
+}
+});
+//Get all post
+router.get("/", verify, async (req, res) => {
+  posts = await Post.find();
+  res.status(200).json(posts);
+});
+//Get a post
+router.get("/:id", verify, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    res.status(200).json(post);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 // //get timeline posts
 //
