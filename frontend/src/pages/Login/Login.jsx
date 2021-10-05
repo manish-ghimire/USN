@@ -34,6 +34,7 @@ const Login = ({ setCircle, setSnackbar }) => {
         const userID = success.data.user._id
         localStorage.setItem('refreshToken', success.data.refreshToken)
         localStorage.setItem('accessToken', success.data.accessToken)
+        localStorage.setItem('currentUser', JSON.stringify(success.data))
         setCircle(false)
         setSnackbar({
           show: true,

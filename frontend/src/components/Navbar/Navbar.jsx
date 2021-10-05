@@ -62,6 +62,7 @@ const Navbar = () => {
   const history = useHistory()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null)
+  const currentUser = JSON.parse(localStorage.getItem('currentUser')).user._id
 
   const isMenuOpen = Boolean(anchorEl)
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
@@ -111,7 +112,9 @@ const Navbar = () => {
       <MenuItem onClick={() => history.push('/settings')}>Settings</MenuItem>
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
       <Divider />
-      <MenuItem onClick={() => history.push('/user/1')}>UserProfile</MenuItem>
+      <MenuItem onClick={() => history.push(`/user/${currentUser}`)}>
+        UserProfile
+      </MenuItem>
       <MenuItem onClick={() => history.push('/uni/1')}>UniProfile</MenuItem>
       <MenuItem onClick={() => history.push('/club/1')}>Club</MenuItem>
       <MenuItem onClick={() => history.push('/studygroup/1')}>

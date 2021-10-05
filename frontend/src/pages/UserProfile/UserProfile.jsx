@@ -4,12 +4,10 @@ import axios from 'axios'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import Drawer from '@mui/material/Drawer'
-import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import MenuIcon from '@mui/icons-material/Menu'
 import SchoolIcon from '@mui/icons-material/School'
 import Typography from '@mui/material/Typography'
 import Navbar from '../../components/Navbar/Navbar'
@@ -18,10 +16,9 @@ import Post from '../../components/Post/Post.jsx'
 import Card from '../../components/Card/Card'
 import { Avatar, Container, Grid, Hidden } from '@mui/material'
 
-const drawerWidth = 300
+const drawerWidth = 200
 
-const UserProfile = (props) => {
-  const { window, setCircle } = props
+const UserProfile = ({ setCircle }) => {
   const [mobileOpen, setMobileOpen] = React.useState(false)
 
   const handleDrawerToggle = () => {
@@ -31,23 +28,11 @@ const UserProfile = (props) => {
   const history = useHistory()
   const { userID } = useParams()
   const [user, setUser] = useState({})
-  const [posts, setPosts] = useState([
-    {
-      _id: 1,
-      text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
-      shares: 10,
-      likes: 52,
-    },
-    {
-      _id: 2,
-      text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
-      shares: 10,
-      likes: 52,
-    },
-  ])
-
+  const [posts, setPosts] = useState([])
   const accessToken = localStorage.getItem('accessToken')
+
   useEffect(() => {
+    console.log(userID)
     setCircle(true)
     if (accessToken) {
       const fetchData = async () => {
@@ -57,18 +42,18 @@ const UserProfile = (props) => {
               Authorization: `Bearer ${accessToken}`,
             },
           })
-          console.log('Success user', successUser)
           setUser(successUser.data)
+          console.log('Success user', successUser)
 
           const successPost = await axios.get(`/post/find?user=${userID}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
           })
+          setPosts(successPost.data)
           console.log('Success post', successPost)
-          setUser(successPost.data)
         } catch (error) {
-          // console.log(error)
+          console.log(error)
         }
       }
       fetchData()
@@ -103,14 +88,14 @@ const UserProfile = (props) => {
       </Box>
       <br />
       <Divider />
-      <Typography>Educational Backgrounddd</Typography>
+      <Typography>Educational Backgroundddddd</Typography>
       <List>
         <ListItem button>
           <ListItemIcon>
             <SchoolIcon />
           </ListItemIcon>
           <ListItemText
-            primary={'University of Canberra'}
+            primary={user.studiesAt}
             secondary={'Expected completion 2021'}
             onClick={() => console.log('list item clicked')}
           />
@@ -143,9 +128,6 @@ const UserProfile = (props) => {
     </div>
   )
 
-  const container =
-    window !== undefined ? () => window().document.body : undefined
-
   return (
     <>
       <Navbar />
@@ -155,7 +137,6 @@ const UserProfile = (props) => {
         aria-label='mailbox folders'
       >
         <Drawer
-          container={container}
           variant='temporary'
           open={mobileOpen}
           onClose={handleDrawerToggle}
@@ -201,9 +182,6 @@ const UserProfile = (props) => {
                   <div>
                     {user.fName} {user.lName}
                   </div>
-                  <div>{user.studiesAt}</div>
-                  <div>{user.isFrom}</div>
-                  <div>{user.role}</div>
                 </Box>
               </Card>
             </Grid>
