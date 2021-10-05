@@ -10,6 +10,8 @@ import Club from './pages/Club/Club'
 import StudyGroup from './pages/StudyGroup/StudyGroup'
 import Market from './pages/Market/Market'
 import Settings from './pages/Settings/Settings'
+import Messenger from './pages/Messenger/Messenger'
+
 import {
   Alert,
   Backdrop,
@@ -125,6 +127,13 @@ function App() {
                 />
               )}
             />
+            <Route exact path='/messenger' component={() => (
+              <Messenger
+                setCircle={(value) => setCircle(value)}
+                setSnackbar={(value) => setSnackbar(value)}
+                />
+              )}
+             />
             <Route exact path='/settings' component={Settings} />
             <Route exact path='/error' component={Error} />
           </Switch>
