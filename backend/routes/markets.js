@@ -2,29 +2,23 @@ const router = require("express").Router();
 const Market = require("../models/Market");
 const User = require("../models/User");
 const verify = require("./verify");
-// create post
-// post http://localhost:5000/api/post
-// {
-// "userId": "{userId}",
-// "desc": "{post desc}"
-// }
-// update post
-// post http://localhost:5000/api/post/{post id}
-// {
-// "userId": "6111104d64500e62187a6727",
-// "desc": "update post desc"
-// }
-// get post http://localhost:5000/api/post/{post id}
-// http://localhost:5000/api/post/
+
+
 router.post("/", verify, async (req, res) => {
-  const newPost = new Market(req.body);
+  const newMark = new Market({
+    userId: req.user.id,
+    itemName: req.body.itemName,
+    itemDesc: req.body.itemDesc,
+    itemPrice: req.body.itemPrice,
+    itemLocation: req.body.itemLocation
+  });
   try {
-    if (!newPost){
-    res.status(422).json({error: "Post is Empty"});
+    if (!newMark){
+    res.status(422).json({error: "All fields are required"});
   }
   else{
-    const savedPost = await newPost.save();
-    res.status(200).json(savedPost);
+    const saveMark = await newMark.save();
+    res.status(200).json(saveMark);
   }
   }
   catch (err) {
@@ -32,13 +26,12 @@ router.post("/", verify, async (req, res) => {
   }
 });
 //update a post
-
+// http://localhost:5000/api/market:id
 router.put("/:id", verify, async (req, res) => {
   try {
     const post = await Market.findById(req.params.id);
 
-    if (post.userId === req.user.id) {
-      if (req.body.desc.trim() != ''){
+    if (post.userId === req.user.id || req.user.isAdmin) {
       try{
         const updatedPost = await Market.findByIdAndUpdate(
           req.params.id,
@@ -52,9 +45,6 @@ router.put("/:id", verify, async (req, res) => {
       catch (err){
         res.status(500).json(err);
       }
-    } else {
-      res.status(403).json("Post descripton is empty!");
-    }
   }
   else {
       res.status(403).json("You can update only your post!");
@@ -69,7 +59,7 @@ router.put("/:id", verify, async (req, res) => {
 router.delete("/:id", verify, (req, res) => {
   try {
     const post = Market.findById(req.params.id);
-    if (post.userId === req.user.id) {
+    if (post.userId === req.user.id || req.user.isAdmin) {
        post.delete();
       res.status(200).json("The post has been deleted!");
     } else {
@@ -95,17 +85,21 @@ router.put("/:id/like", verify, async (req, res) => {
     res.status(500).json(err);
   }
 });
+router.get("/", verify, async (req, res) => {
+  posts = await Market.find();
+  res.status(200).json(posts);
+});
 //Get a post
-// router.get("/:id", async (req, res) => {
-//   try {
-//     const post = await Post.findById(req.params.id);
-//     res.status(200).json(post);
-//   } catch (err) {
-//     res.status(500).json(err);
-//   }
-// });
+router.get("/:id", verify, async (req, res) => {
+  try {
+    const post = await Market.findById(req.params.id);
+    res.status(200).json(post);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 //Get All Post
-// http://localhost:5000/api/post/?user=:id&?=role=:role
+// http://localhost:5000/api/post/item?user=:id&?=role=:role
 router.get("/item", verify, async (req, res) => {
 const role = req.query.role;
 const userPosts = req.query.user;

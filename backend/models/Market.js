@@ -37,7 +37,6 @@ const MarketSchema = new mongoose.Schema(
     postToId: {
       type: Array,
       default : [],
-      required: true,
     },
     comments: {
       type: Array,
