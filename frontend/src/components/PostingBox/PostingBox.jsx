@@ -11,7 +11,7 @@ const PostingBox = () => {
   }
 
   return (
-    <Card>
+    <Card height='190px'>
       <TextField
         fullWidth
         id='outlined-multiline-static'
