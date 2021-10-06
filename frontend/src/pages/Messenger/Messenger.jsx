@@ -12,7 +12,7 @@ import './Messenger.scss'
 
 
   const Messenger = (props) => {
-    console.log('here');
+
     const { window, setCircle } = props
 
 
@@ -21,28 +21,39 @@ import './Messenger.scss'
     const [user, setUser] = useState({})
 
     const accessToken = localStorage.getItem('accessToken')
+    const currentUser = localStorage.getItem('currentUser')
+    console.log(currentUser.user)
+    // const userID = currentUser._id
     useEffect(() => {
       setCircle(true)
       if (accessToken) {
 
         const fetchData = async () => {
-
           try {
-              const successUser = await axios.get(`/user/${userID}`, {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            })
-            console.log('Success user', successUser)
-            setUser(successUser.data)
+            //   const successUser = await axios.get(`/user/${userID}`, {
+            //   headers: {
+            //     Authorization: `Bearer ${accessToken}`,
+            //   },
+            // })
+            // console.log('Success user', successUser)
+            // setUser(successUser.data)
+            console.log('here');
+            // const successPost = await axios.get(`/post/?user=${userID}`, {
+            //   headers: {
+            //     Authorization: `Bearer ${accessToken}`,
+            //   },
+            // })
+            // console.log('Success post', successPost)
+            // setUser(successPost.data)
 
-            const successPost = await axios.get(`/post/find?user=${userID}`, {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            })
-            console.log('Success post', successPost)
-            setUser(successPost.data)
+            // const getConversations = await axios.get(`/conversation/${userID}`, {
+            // headers: {
+            //   Authorization: `Bearer ${accessToken}`,
+            // },
+          // })
+
+          // console.log('Success getConversations', getConversations)
+          // setUser(getConversations.data)
           } catch (error) {
             // console.log(error)
           }

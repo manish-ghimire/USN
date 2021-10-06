@@ -1,9 +1,9 @@
 import "./message.css";
 import { format } from "timeago.js";
 
-export default function Message({ message, own }) {
+export default function Message() {
   return (
-    <div className={own ? "message own" : "message"}>
+    <div className= "message">
       <div className="messageTop">
         <img
           className="messageImg"
