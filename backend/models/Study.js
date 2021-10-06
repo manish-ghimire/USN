@@ -4,12 +4,10 @@ const StudySchema = new mongoose.Schema({
   studyName:{
     type: String,
     require: true,
-    unique: true,
   },
   studyDisplayName:{
     type: String,
     require: true,
-    unique: true,
   },
   profilePicture: {
     type: String,
@@ -31,7 +29,6 @@ const StudySchema = new mongoose.Schema({
   studyMembers: {
     type: Array,
     default: [],
-    unique: true,
   },
 },
 { timestamps: true });
