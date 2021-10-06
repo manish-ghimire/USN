@@ -12,6 +12,21 @@ router.get("/:studyDisplayName", verify, async (req, res) => {
     const studyName = await Study.findOne({
       studyDisplayName: req.params.studyDisplayName
     });
+    if (!studyName){
+      const studyId = await Study.findOne({
+        _id: req.params.studyDisplayName
+      });
+      try {
+
+        const {
+          updatedAt,
+          ...other
+        } = studyId._doc;
+        res.status(200).json(other);
+      } catch (err) {
+        res.status(500).json(err);
+      }
+    }else{
     try {
 
       const {
@@ -22,6 +37,7 @@ router.get("/:studyDisplayName", verify, async (req, res) => {
     } catch (err) {
       res.status(500).json(err);
     }
+  }
   } catch (err) {
     return res.status(401).json("Not authenticated!")
   }
