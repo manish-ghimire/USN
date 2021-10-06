@@ -153,7 +153,7 @@ router.put("/:studyDisplayName", verify, async (req, res) => {
   }
 
 
-  async function joinClubGroup(joinClub){
+  async function joinStudyGroup(joinClub){
         try{
     if (joinClub) {
       // const clubName = await club.findOne({
