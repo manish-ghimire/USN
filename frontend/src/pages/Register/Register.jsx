@@ -44,7 +44,7 @@ const Register = ({ setCircle, setSnackbar }) => {
           sevirity: 'success',
           text: 'Registration successful.',
         })
-        history.push('/')
+        history.push('/login')
       } catch (error) {
         console.log(error)
       }
@@ -99,6 +99,7 @@ const Register = ({ setCircle, setSnackbar }) => {
             />
             <Button
               sx={{ my: 2 }}
+              type='submit'
               fullWidth
               variant='contained'
               color='primary'

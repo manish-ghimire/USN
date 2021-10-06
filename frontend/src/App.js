@@ -66,7 +66,16 @@ function App() {
                 />
               )}
             />
-            <Route exact path='/' component={() => <Home />} />
+            <Route
+              exact
+              path='/'
+              component={() => (
+                <Home
+                  setCircle={(value) => setCircle(value)}
+                  setSnackbar={(value) => setSnackbar(value)}
+                />
+              )}
+            />
             <Route
               exact
               path='/user/:userID'
@@ -127,13 +136,16 @@ function App() {
                 />
               )}
             />
-            <Route exact path='/messenger' component={() => (
-              <Messenger
-                setCircle={(value) => setCircle(value)}
-                setSnackbar={(value) => setSnackbar(value)}
+            <Route
+              exact
+              path='/messenger'
+              component={() => (
+                <Messenger
+                  setCircle={(value) => setCircle(value)}
+                  setSnackbar={(value) => setSnackbar(value)}
                 />
               )}
-             />
+            />
             <Route exact path='/settings' component={Settings} />
             <Route exact path='/error' component={Error} />
           </Switch>

@@ -26,6 +26,7 @@ const UniProfile = ({ setCircle }) => {
   }
 
   const history = useHistory()
+  const { uniId } = useParams()
   const [unis, setUnis] = useState([])
   const [posts, setPosts] = useState([])
   const accessToken = localStorage.getItem('accessToken')
@@ -35,27 +36,17 @@ const UniProfile = ({ setCircle }) => {
     if (accessToken) {
       const fetchData = async () => {
         try {
-          // const successPost = await axios.get(`/post/find?user=${userID}`, {
-          //   headers: {
-          //     Authorization: `Bearer ${accessToken}`,
-          //   },
-          // })
-          // console.log('Success post', successPost)
-          const posts = [
+          const successPost = await axios.get(
+            `/post/?uni=615ce748d6666f0654d46cc4`,
             {
-              _id: 1,
-              text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
-              shares: 10,
-              likes: 52,
-            },
-            {
-              _id: 2,
-              text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
-              shares: 10,
-              likes: 52,
-            },
-          ]
-          setPosts(posts)
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          )
+          console.log('Success post', successPost)
+
+          // setPosts(posts)
         } catch (error) {
           console.log('Error while getting posts', error)
         }

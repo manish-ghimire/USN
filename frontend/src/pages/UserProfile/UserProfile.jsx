@@ -25,7 +25,7 @@ const UserProfile = ({ setCircle }) => {
   }
 
   const history = useHistory()
-  const { userID } = useParams()
+  const { userId } = useParams()
   const [user, setUser] = useState({})
   const [unis, setUnis] = useState([])
   const [posts, setPosts] = useState([])
@@ -36,7 +36,7 @@ const UserProfile = ({ setCircle }) => {
     if (accessToken) {
       const fetchData = async () => {
         try {
-          const successUser = await axios.get(`/user/${userID}`, {
+          const successUser = await axios.get(`/user/${userId}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -44,7 +44,7 @@ const UserProfile = ({ setCircle }) => {
           setUser(successUser.data)
           console.log('Success user', successUser)
 
-          // console.log(successUser.data.studyAt)
+          console.log(successUser.data.studyAt)
           const uniLists = []
           successUser.data.studyAt.map(async (uni) => {
             const successUni = await axios.get(`/uni/${uni.uniId}`, {
@@ -72,7 +72,7 @@ const UserProfile = ({ setCircle }) => {
       history.push('/login', { text: 'hellooooooo' })
     }
     setCircle(false)
-  }, [history, setCircle, userID, accessToken])
+  }, [history, setCircle, userId, accessToken])
 
   const drawer = (
     <div>
@@ -174,7 +174,7 @@ const UserProfile = ({ setCircle }) => {
             </Grid>
           </Hidden>
           <Hidden mdUp>
-            <Grid item xs={4}>
+            <Grid item xs={12}>
               <Card height='190px'>
                 <Box
                   sx={{
@@ -198,7 +198,6 @@ const UserProfile = ({ setCircle }) => {
             </Grid>
           </Hidden>
           <Grid item xs={8}>
-            <PostingBox />
             <Hidden mdDown>
               <Post posts={posts} />
             </Hidden>

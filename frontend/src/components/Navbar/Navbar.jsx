@@ -63,7 +63,6 @@ const Navbar = () => {
   const history = useHistory()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null)
-  const currentUser = JSON.parse(localStorage.getItem('currentUser')).user._id
 
   const isMenuOpen = Boolean(anchorEl)
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
@@ -110,11 +109,25 @@ const Navbar = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>My Profile</MenuItem>
+      <MenuItem
+        onClick={() =>
+          history.push(
+            `/user/${JSON.parse(localStorage.getItem('currentUser')).user._id}`
+          )
+        }
+      >
+        My Profile
+      </MenuItem>
       <MenuItem onClick={() => history.push('/settings')}>Settings</MenuItem>
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
       <Divider />
-      <MenuItem onClick={() => history.push(`/user/${currentUser}`)}>
+      <MenuItem
+        onClick={() =>
+          history.push(
+            `/user/${JSON.parse(localStorage.getItem('currentUser')).user._id}`
+          )
+        }
+      >
         UserProfile
       </MenuItem>
       <MenuItem onClick={() => history.push('/uni/615ce748d6666f0654d46cc4')}>

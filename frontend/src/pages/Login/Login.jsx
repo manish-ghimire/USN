@@ -27,11 +27,11 @@ const Login = ({ setCircle, setSnackbar }) => {
       })
       console.log('im hereeeeeee')
     } else {
-      setCircle(true)
+      // setCircle(true)
       try {
         const success = await axios.post('/auth/login', user)
         console.log(success)
-        const userID = success.data.user._id
+        // const userID = success.data.user._id
         localStorage.setItem('refreshToken', success.data.refreshToken)
         localStorage.setItem('accessToken', success.data.accessToken)
         localStorage.setItem('currentUser', JSON.stringify(success.data))
@@ -41,7 +41,7 @@ const Login = ({ setCircle, setSnackbar }) => {
           severity: 'success',
           text: 'Login Successful',
         })
-        history.push(`/user/${userID}`)
+        history.push(`/`)
       } catch (error) {
         console.log(error)
         setCircle(false)
