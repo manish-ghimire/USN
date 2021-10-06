@@ -23,5 +23,15 @@ router.post("/", verify, async (req, res) => {
 });
 
 // Get conversation
-
+router.get("/:id", verify, async (req, res) => {
+  try {
+    const conversation = await Conversation.find({
+      members: {$in: [req.params.id]},
+    })
+    res.status(200).json(conversation);
+  }
+  catch (err) {
+    res.status(500).json(err);
+  }
+});
 module.exports = router;
