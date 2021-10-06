@@ -9,7 +9,6 @@ import ListItem from '@mui/material/ListItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import SchoolIcon from '@mui/icons-material/School'
-import Typography from '@mui/material/Typography'
 import Navbar from '../../components/Navbar/Navbar'
 import PostingBox from '../../components/PostingBox/PostingBox.jsx'
 import Post from '../../components/Post/Post.jsx'
@@ -28,12 +27,11 @@ const UserProfile = ({ setCircle }) => {
   const history = useHistory()
   const { userID } = useParams()
   const [user, setUser] = useState({})
-  const [posts, setPosts] = useState([])
   const [unis, setUnis] = useState([])
+  const [posts, setPosts] = useState([])
   const accessToken = localStorage.getItem('accessToken')
 
   useEffect(() => {
-    console.log(userID)
     setCircle(true)
     if (accessToken) {
       const fetchData = async () => {
@@ -46,25 +44,26 @@ const UserProfile = ({ setCircle }) => {
           setUser(successUser.data)
           console.log('Success user', successUser)
 
-          const successPost = await axios.get(`/post/find?user=${userID}`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-          setPosts(successPost.data)
-          console.log('Success post', successPost)
+          // console.log(successUser.data.studyAt)
+          const uniLists = []
+          successUser.data.studyAt.map(async (uni) => {
+            const successUni = await axios.get(`/uni/${uni.uniId}`, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            })
 
-          const uniIDs = []
+            // console.log('success Uni:', successUser.data.studyAt[0].classOf)
 
-          const successUni = await axios.get(`/post/find?user=${userID}`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
+            uniLists.push({
+              uniName: successUni.data.uniName,
+              classOf: successUser.data.studyAt[0].classOf,
+            })
           })
-          setPosts(successPost.data)
-          console.log('Success post', successPost)
+
+          console.log(uniLists)
         } catch (error) {
-          console.log(error)
+          console.log('Error fetching data', error)
         }
       }
       fetchData()

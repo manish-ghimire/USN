@@ -117,7 +117,9 @@ const Navbar = () => {
       <MenuItem onClick={() => history.push(`/user/${currentUser}`)}>
         UserProfile
       </MenuItem>
-      <MenuItem onClick={() => history.push('/uni/1')}>UniProfile</MenuItem>
+      <MenuItem onClick={() => history.push('/uni/615ce748d6666f0654d46cc4')}>
+        UniProfile
+      </MenuItem>
       <MenuItem onClick={() => history.push('/club/1')}>Club</MenuItem>
       <MenuItem onClick={() => history.push('/studygroup/1')}>
         StudyGroup

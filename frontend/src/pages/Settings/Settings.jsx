@@ -174,6 +174,57 @@ const Settings = () => {
   }
   // ***************** CREATE A POST ENDS *******************************
 
+  // ***************** CREATE A MARKET ITEM *******************************
+  const marketuserId = useRef()
+  const marketitemName = useRef()
+  const marketitemDesc = useRef()
+  const marketitemPrice = useRef()
+  const marketitemLocation = useRef()
+  const marketimg = useRef()
+  const marketlikes = useRef()
+  const marketrole = useRef()
+  const marketpostToId = useRef()
+
+  const [openCreateItem, setopenCreateItem] = useState(false)
+
+  const handleOpenCreateItem = () => {
+    setopenCreateItem(true)
+  }
+  const handleCloseCreateItem = () => {
+    setopenCreateItem(false)
+  }
+  const handleCreateItem = () => {
+    const token = localStorage.getItem('accessToken')
+    const body = {
+      userId: marketuserId.current.value,
+      itemName: marketitemName.current.value,
+      itemDesc: marketitemDesc.current.value,
+      itemPrice: marketitemPrice.current.value,
+      itemLocation: marketitemLocation.current.value,
+      img: marketimg.current.value,
+      likes: marketlikes.current.value,
+      role: marketrole.current.value,
+      postToId: marketpostToId.current.value,
+    }
+    console.log('body', body)
+    const putData = async () => {
+      console.log(body.token)
+      try {
+        const successMarketItem = await axios.post(`/market/item`, body, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        console.log('Market Item created:', successMarketItem)
+      } catch (error) {
+        console.log('error', error)
+      }
+    }
+    putData()
+    setopenCreateItem(false)
+  }
+  // ***************** CREATE A MARKET ITEM ENDS *******************************
+
   return (
     <div>
       <Navbar />
@@ -187,6 +238,9 @@ const Settings = () => {
         </Button>
         <Button variant='outlined' onClick={handleOpenCreatePost}>
           Create a post
+        </Button>
+        <Button variant='outlined' onClick={handleOpenCreateItem}>
+          Create a market item
         </Button>
       </div>
 
@@ -476,7 +530,7 @@ const Settings = () => {
           <Button onClick={handleCreateUni}>Create a university</Button>
         </DialogActions>
       </Dialog>
-      {/***************** CREATE A UNIVERSITY *******************************/}
+      {/***************** CREATE A UNIVERSITY ENDS *******************************/}
 
       {/***************** CREATE A POST *******************************/}
       <Dialog open={openCreatePost} onClose={handleCloseCreatePost}>
@@ -550,7 +604,111 @@ const Settings = () => {
           <Button onClick={handleCreatePost}>Create a Post</Button>
         </DialogActions>
       </Dialog>
-      {/***************** CREATE A POST *******************************/}
+      {/***************** CREATE A POST ENDS *******************************/}
+
+      {/***************** CREATE A MARKET ITEM *******************************/}
+      <Dialog open={openCreateItem} onClose={handleCloseCreateItem}>
+        <DialogTitle>Create a market item</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Fields are set as strings</DialogContentText>
+
+          <TextField
+            autoFocus
+            margin='dense'
+            id='marketuserId'
+            inputRef={marketuserId}
+            label='userId'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='marketitemName'
+            inputRef={marketitemName}
+            label='itemName'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='marketitemDesc'
+            inputRef={marketitemDesc}
+            label='itemDesc'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='marketitemPrice'
+            inputRef={marketitemPrice}
+            label='itemPrice'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='marketitemLocation'
+            inputRef={marketitemLocation}
+            label='itemLocation'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='marketimg'
+            inputRef={marketimg}
+            label='img'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='marketlikes'
+            inputRef={marketlikes}
+            label='likes'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='marketrole'
+            inputRef={marketrole}
+            label='role'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='marketpostToId'
+            inputRef={marketpostToId}
+            label='postToId'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCreateItem}>Cancel</Button>
+          <Button onClick={handleCreateItem}>Create a Post</Button>
+        </DialogActions>
+      </Dialog>
+      {/***************** CREATE A MARKET ITEM ENDS *******************************/}
     </div>
   )
 }

@@ -1,81 +1,205 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useHistory, useParams } from 'react-router'
+import axios from 'axios'
+import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
+import Drawer from '@mui/material/Drawer'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import SchoolIcon from '@mui/icons-material/School'
+import Typography from '@mui/material/Typography'
 import Navbar from '../../components/Navbar/Navbar'
-import DefaultIcon from '../../images/128pxUser.png'
 import PostingBox from '../../components/PostingBox/PostingBox.jsx'
 import Post from '../../components/Post/Post.jsx'
-import Grid from '@mui/material/Grid'
-import './UniProfile.scss'
+import Card from '../../components/Card/Card'
+import { Avatar, Container, Grid, Hidden } from '@mui/material'
 
-const posts = [
-  {
-    _id: 1,
-    text: 'Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... ',
-    shares: 10,
-    likes: 52,
-  },
-  {
-    _id: 2,
-    text: 'Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni...  ',
-    shares: 10,
-    likes: 52,
-  },
-  {
-    _id: 3,
-    text: 'Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni ',
-    shares: 10,
-    likes: 52,
-  },
-  {
-    _id: 4,
-    text: 'Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... ',
-    shares: 10,
-    likes: 52,
-  },
-  {
-    _id: 5,
-    text: 'Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... Related to uni... ',
-    shares: 10,
-    likes: 52,
-  },
-]
+const drawerWidth = 200
 
-const UniProfile = () => {
+const UniProfile = ({ setCircle }) => {
+  const [mobileOpen, setMobileOpen] = React.useState(false)
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen)
+  }
+
+  const history = useHistory()
+  const [unis, setUnis] = useState([])
+  const [posts, setPosts] = useState([])
+  const accessToken = localStorage.getItem('accessToken')
+
   useEffect(() => {
-    try {
-      // const success = axios.
-    } catch (error) {}
-  }, [])
+    setCircle(true)
+    if (accessToken) {
+      const fetchData = async () => {
+        try {
+          // const successPost = await axios.get(`/post/find?user=${userID}`, {
+          //   headers: {
+          //     Authorization: `Bearer ${accessToken}`,
+          //   },
+          // })
+          // console.log('Success post', successPost)
+          const posts = [
+            {
+              _id: 1,
+              text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
+              shares: 10,
+              likes: 52,
+            },
+            {
+              _id: 2,
+              text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
+              shares: 10,
+              likes: 52,
+            },
+          ]
+          setPosts(posts)
+        } catch (error) {
+          console.log('Error while getting posts', error)
+        }
+      }
+      fetchData()
+    } else {
+      console.log('Im here')
+      history.push('/login', { text: 'hellooooooo' })
+    }
+    setCircle(false)
+  }, [history, setCircle, accessToken])
+
+  const drawer = (
+    <div>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar
+          alt='Memy Sharp'
+          src='https://picsum.photos/400/400'
+          sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
+        />
+        {/* <div>
+          {user.fName} {user.lName}
+        </div>
+        <div>{user.username}</div>
+        <div>{user.isFrom}</div>
+        <div>{user.role}</div> */}
+      </Box>
+      <br />
+      <Divider />
+      <List>
+        {['A', 'B', 'C'].map((item) => {
+          return item
+        })}
+        <ListItem button>
+          <ListItemIcon>
+            <SchoolIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={'University of Canberra'}
+            secondary={'Expected completion 2021'}
+            onClick={() => console.log('list item clicked')}
+          />
+        </ListItem>
+        <ListItem button>
+          <ListItemIcon>
+            <SchoolIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={'Frakfurt University'}
+            secondary={'2015-2021'}
+            onClick={() => console.log('list item clicked')}
+          />
+        </ListItem>
+      </List>
+      <Divider />
+      <List>
+        <ListItem button>
+          <ListItemIcon>
+            <SchoolIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={'Engineering Society Club'}
+            secondary={'University of Canberra'}
+            onClick={() => console.log('list item clicked')}
+          />
+        </ListItem>
+      </List>
+    </div>
+  )
 
   return (
     <>
       <Navbar />
-      <Grid container className='bodyContainer'>
-        {/* SIDEBAR STARTS HERE */}
-        <Grid item className='sideBar' xs={12} md={3}>
-          <Grid item md={5} sm={12} xs={12}>
-            <img id='userIcon' src={DefaultIcon} alt='Default user' />
-          </Grid>
-          <Grid item md={7} sm={12} xs={12}>
-            <div className='userInfo'>
-              Username
-              <br />
-              Location
-              <br />
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-              {/*58 chars allowed for Short Discription*/}
-            </div>
-          </Grid>
-        </Grid>
-        {/* BODY STARTS HERE */}
-        <Grid item xs={12} md={9}>
-          <div className='postingContainer'>
+      <Box
+        component='nav'
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        aria-label='mailbox folders'
+      >
+        <Drawer
+          variant='temporary'
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          sx={{
+            display: { xs: 'block', md: 'none' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+              marginTop: '57px',
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </Box>
+      <Container disableGutters maxWidth='xl' className='container'>
+        <Grid container>
+          <Hidden mdDown>
+            <Grid item md={4}>
+              <Card>{drawer}</Card>
+            </Grid>
+          </Hidden>
+          <Hidden mdUp>
+            <Grid item xs={4}>
+              <Card height='190px'>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Avatar
+                    alt='Memy Sharp'
+                    src='https://picsum.photos/400/400'
+                    sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
+                    onClick={handleDrawerToggle}
+                  />
+                  <div>{/* {user.fName} {user.lName} */}</div>
+                </Box>
+              </Card>
+            </Grid>
+          </Hidden>
+          <Grid item xs={8}>
             <PostingBox />
-          </div>
-          <div className='postsContainer'>
+            <Hidden mdDown>
+              <Post posts={posts} />
+            </Hidden>
+          </Grid>
+          <Hidden mdUp>
             <Post posts={posts} />
-          </div>
+          </Hidden>
         </Grid>
-      </Grid>
+      </Container>
     </>
   )
 }
