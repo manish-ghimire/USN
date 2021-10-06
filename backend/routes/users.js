@@ -11,11 +11,12 @@ const bcrypt = require('bcrypt')
 // http://localhost:5000/api/users/:id or username
 router.get('/:id', verify, async (req, res) => {
 
-  try {
+  // try {
     const usern = await User.findOne({ username: req.params.id })
     if (!usern) {
       const user = await User.findById(req.params.id)
-      try {
+      console.log(user)
+      // try {
         const userClubAdmin = await Club.find({
             clubAdmin: {
               $in: [req.params.id],
@@ -42,37 +43,63 @@ router.get('/:id', verify, async (req, res) => {
           }
         })
         const { password, updatedAt, ...other } = user._doc
-        const userAll = [
-          ...other,
+        const userDetails = [
+          other,
           ...userClubAdmin,
           ...userClubMembers,
           ...userStudyAdmin,
           ...userStudyMembers,
 
         ]
-        res.status(200).json(userAll);
-      } catch (err) {
-        res.status(500).json(err)
-      }
+        console.log(userDetails)
+        res.status(200).json(userDetails);
+      // } catch (err) {
+      //   res.status(500).json(err)
+      // }
     } else {
-      try {
+      // try {
+        const userClubAdmin = await Club.find({
+            clubAdmin: {
+              $in: [req.params.id],
+          }
+        })
+
+        const userClubMembers = await Club.find({
+          clubMembers: {
+            $in: [req.params.id],
+          }
+        })
+
+        const userStudyAdmin = await Study.find({
+          studyMembers: {
+            $in: [req.params.id],
+          },
+            studyAdmin: {
+              $in: [req.params.id],
+          }
+        })
+        const userStudyMembers = await Study.find({
+          studyMembers: {
+            $in: [req.params.id],
+          }
+        })
         const { password, updatedAt, ...other } = usern._doc
-        const userAll = [
-          ...other,
+        const userDetails = [
+          other,
           ...userClubAdmin,
           ...userClubMembers,
           ...userStudyAdmin,
           ...userStudyMembers,
-
         ]
-        res.status(200).json(userAll);
-      } catch (err) {
-        res.status(500).json(err)
-      }
+        console.log(userDetails);
+        res.status(200).json(userDetails);
+      // } catch (err) {
+      //   res.status(500).json(err)
+      // }
     }
-  } catch (err) {
-    return res.status(401).json('Not authenticated!')
-  }
+  // } catch (err) {
+  //   return res.status(401).json('Not authenticated!')
+  // }
 })
 
 // get all user via query
