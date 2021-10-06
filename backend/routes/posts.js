@@ -226,7 +226,7 @@ else{
 
 //Get All Post
 // http://localhost:5000/api/post/?user=:id&?role=:role
-router.get("/find", verify, async (req, res) => {
+router.get("/", verify, async (req, res) => {
     console.log("3");
 const role = req.query.role;
 const userPosts = req.query.user;
@@ -276,11 +276,11 @@ else{
 console.log('bototm here');
 });
 // //Get all post
-router.get("/", verify, async (req, res) => {
-    console.log("4");
-  posts = await Post.find();
-  res.status(200).json(posts);
-});
+// router.get("/", verify, async (req, res) => {
+//     console.log("4");
+//   posts = await Post.find();
+//   res.status(200).json(posts);
+// });
 
 // //get timeline posts
 //
