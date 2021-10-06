@@ -8,11 +8,12 @@ const bcrypt = require('bcrypt')
 // Get User Via userId or Username
 // http://localhost:5000/api/users/:id or username
 router.get('/:id', verify, async (req, res) => {
-  // console.log(user);
+
   try {
     const usern = await User.findOne({ username: req.params.id })
     if (!usern) {
       const user = await User.findById(req.params.id)
+        console.log(user.study)
       try {
         const { password, updatedAt, ...other } = user._doc
         res.status(200).json(other)
@@ -64,30 +65,41 @@ router.put('/:id', verify, async (req, res) => {
         return res.status(500).json(err)
       }
     }
-    try {
+    // try {
       if (req.body.isAdmin === req.user.isAdmin || req.user.isAdmin) {
         const user = await User.findById(req.params.id)
-        // const updatedAdmin = await uniName.updateOne({ $push: {uniAdmin: req.body.uniAdmin}});
-        const updatedUser = await User.findByIdAndUpdate(
-          req.params.id,
-          { $set: req.body },
-          { new: true }
-        )
-        return res.status(200).json(updatedUser)
+
+        const { study, ...other } = req.body
+      const updatedUser = await user.update({
+  $set: other,
+  $push: {
+      study: req.body.study
+  }
+}, {
+  multi: true
+});
+
+{ "$push": { "data": { "$each": newData, "$slice": 100 } } }
+
+        return res.status(200).json("user has been updated");
+
       } else if (req.body.isAdmin !== req.user.isAdmin) {
         const user = await User.findById(req.params.id)
-        const { isAdmin, ...other } = req.body
-        const updatedUser = await User.findByIdAndUpdate(
-          req.params.id,
-          { $set: other },
-          { new: true }
-        )
-
-        return res.status(200).json(updatedUser)
-      }
-    } catch (err) {
-      res.status(500).json(err)
+        const { isAdmin, study, ...other } = req.body
+        const updatedUser = await user.update({
+    $set: other,
+    $push: {
+        study: req.body.study
     }
+  }, {
+    multi: true
+  });
+
+        return res.status(200).json("user has been updated")
+      }
+    // } catch (err) {
+    //   res.status(500).json(err)
+    // }
   } else {
     res.status(401).json('Can not update!')
   }
