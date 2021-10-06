@@ -25,7 +25,7 @@ router.get('/:id', verify, async (req, res) => {
               $in: [req.params.id],
           }
         })
-        const userStudy = await Club.find({
+        const userStudy = await Study.find({
           studyMembers: {
             $in: [req.params.id],
           },
