@@ -25,8 +25,16 @@ router.get('/:id', verify, async (req, res) => {
               $in: [req.params.id],
           }
         })
+        const userStudy = await Club.find({
+          studyMembers: {
+            $in: [req.params.id],
+          },
+            studyAdmin: {
+              $in: [req.params.id],
+          }
+        })
         const { password, updatedAt, ...other } = user._doc
-        res.status(200).json([other, userClub])
+        res.status(200).json([{other:other}, {userClub:userClub}, {userStudy: userStudy}])
       } catch (err) {
         res.status(500).json(err)
       }
