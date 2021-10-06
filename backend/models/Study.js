@@ -29,7 +29,6 @@ const StudySchema = new mongoose.Schema({
   studyMembers: {
     type: Array,
     default: [],
-    unique: true,
   },
 },
 { timestamps: true });
