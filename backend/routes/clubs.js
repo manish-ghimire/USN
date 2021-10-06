@@ -12,6 +12,21 @@ router.get("/:clubDisplayName", verify, async (req, res) => {
     const clubName = await Club.findOne({
       clubDisplayName: req.params.clubDisplayName
     });
+    if (!clubName){
+      const clubId = await Club.findOne({
+        _id: req.params.clubDisplayName
+      });
+      try {
+
+        const {
+          updatedAt,
+          ...other
+        } = clubId._doc;
+        res.status(200).json(other);
+      } catch (err) {
+        res.status(500).json(err);
+      }
+    }else{
     try {
 
       const {
@@ -22,6 +37,7 @@ router.get("/:clubDisplayName", verify, async (req, res) => {
     } catch (err) {
       res.status(500).json(err);
     }
+  }
   } catch (err) {
     return res.status(401).json("Not authenticated!")
   }
