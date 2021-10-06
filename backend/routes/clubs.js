@@ -82,7 +82,7 @@ router.post("/register", verify, async (req, res) => {
           clubAdmin: req.user.id,
           desc: req.body.desc,
           coverPicture: req.body.coverPicture,
-          profilePicture: req.body.profilePicture
+          profilePicture: req.body.profilePicture,
         });
 
         newClub.save();

@@ -43,14 +43,14 @@ router.get('/:id', verify, async (req, res) => {
           }
         })
         const { password, updatedAt, ...other } = user._doc
-        const user123 = {
+        const user123 = [
           ...other,
           ...userClubAdmin,
           ...userClubMembers,
           ...userStudyAdmin,
           ...userStudyMembers,
 
-        }
+        ]
         res.status(200).json(user123);
       } catch (err) {
         res.status(500).json(err)
