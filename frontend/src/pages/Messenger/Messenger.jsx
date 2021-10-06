@@ -24,9 +24,11 @@ import './Messenger.scss'
     useEffect(() => {
       setCircle(true)
       if (accessToken) {
+
         const fetchData = async () => {
+
           try {
-            const successUser = await axios.get(`/user/${userID}`, {
+              const successUser = await axios.get(`/user/${userID}`, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
