@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { useHistory, useParams } from 'react-router'
 import axios from 'axios'
 import Navbar from '../../components/Navbar/Navbar'
+import Conversation from '../../components/Conversations/Conversation';
+import Message from '../../components/Message/Message';
+import ChatOnline from '../../components/ChatOnline/ChatOnline';
 import {MenuIcon, SchoolIcon} from '@mui/icons-material/Menu'
 import './Messenger.scss'
 
@@ -21,9 +24,11 @@ import './Messenger.scss'
     useEffect(() => {
       setCircle(true)
       if (accessToken) {
+
         const fetchData = async () => {
+
           try {
-            const successUser = await axios.get(`/user/${userID}`, {
+              const successUser = await axios.get(`/user/${userID}`, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
@@ -54,11 +59,44 @@ import './Messenger.scss'
     return (
       <>
       <Navbar />
-<div className="messenger">
-here
-</div>
-</>
-    )
+      <div className="messenger">
+        <div className="chatMenu">
+          <div className="chatMenuWrapper">
+            <input placeholder="Search for friends" className="chatMenuInput" />
+              <div>
+                <Conversation />
+              </div>
+          </div>
+        </div>
+        <div className="chatBox">
+          <div className="chatBoxWrapper">
+              <div className="chatBoxTop">
+
+                      <Message />
+
+                </div>
+                <div className="chatBoxBottom">
+                  <textarea
+                    className="chatMessageInput"
+                    placeholder="write something..."
+                  ></textarea>
+                  <button className="chatSubmitButton">
+                    Send
+                  </button>
+                </div>
+              <span className="noConversationText">
+                Open a conversation to start a chat.
+              </span>
+          </div>
+        </div>
+        <div className="chatOnline">
+          <div className="chatOnlineWrapper">
+            <ChatOnline />
+          </div>
+        </div>
+      </div>
+      </>
+      );
   }
 
   export default Messenger

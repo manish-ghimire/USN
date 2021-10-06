@@ -24,14 +24,9 @@ router.post('/', verify, async (req, res) => {
 router.get('/:id', verify, async (req, res) => {
   const commentsId = req.query.comments
   if (commentsId) {
-    console.log(commentsId)
-    const com = await Comment.find({ _id: commentsId })
-    if (com) {
-      res.status(200).json(com)
-    } else {
-      const com2 = await Comment.find({ commentToId: commentsId })
-      res.status(200).json(com2)
-    }
+    console.log('here', commentsId)
+    const com2 = await Comment.find({ commentToId: { $in: [commentsId] } })
+    res.status(200).json(com2)
   } else {
     try {
       const post = await Post.findById(req.params.id)

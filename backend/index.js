@@ -11,6 +11,8 @@ const uniRoute = require("./routes/unis");
 const studyRoute = require("./routes/studies");
 const clubRoute = require("./routes/clubs");
 const marketRoute = require("./routes/markets");
+const conversationRoute = require("./routes/conversations");
+const messageRoute = require("./routes/messages");
 const commentRoute = require("./routes/comments");
 const jwt = require("jsonwebtoken");
 dotenv.config();
@@ -31,6 +33,9 @@ app.use("/api/study", studyRoute);
 app.use("/api/market", marketRoute);
 app.use("/api/comment", commentRoute);
 app.use("/api/club", clubRoute);
+app.use("/api/conversation", conversationRoute);
+app.use("/api/message", messageRoute);
+
 
 app.listen(5000, () => {
   console.log('Backend is running!')
