@@ -1,6 +1,8 @@
 const router = require('express').Router()
 const User = require('../models/User')
 const Uni = require("../models/Uni")
+const Study = require("../models/Study")
+const Club = require("../models/Club")
 const Post = require('../models/Post')
 const verify = require('./verify')
 const bcrypt = require('bcrypt')
@@ -15,8 +17,16 @@ router.get('/:id', verify, async (req, res) => {
       const user = await User.findById(req.params.id)
         console.log(user.study)
       try {
+        const userClub = await Club.find({
+          clubMembers: {
+            $in: [req.params.id],
+          },
+            clubAdmin: {
+              $in: [req.params.id],
+          }
+        })
         const { password, updatedAt, ...other } = user._doc
-        res.status(200).json(other)
+        res.status(200).json([other, userClub])
       } catch (err) {
         res.status(500).json(err)
       }
@@ -79,7 +89,7 @@ router.put('/:id', verify, async (req, res) => {
   multi: true
 });
 
-{ "$push": { "data": { "$each": newData, "$slice": 100 } } }
+
 
         return res.status(200).json("user has been updated");
 
@@ -88,11 +98,7 @@ router.put('/:id', verify, async (req, res) => {
         const { isAdmin, study, ...other } = req.body
         const updatedUser = await user.update({
     $set: other,
-    $push: {
-        study: req.body.study
-    }
-  }, {
-    multi: true
+ $push: { study: { $each: [req.body.study], $slice: 100 } }
   });
 
         return res.status(200).json("user has been updated")
