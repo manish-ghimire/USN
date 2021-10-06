@@ -4,12 +4,10 @@ const ClubSchema = new mongoose.Schema({
   clubName:{
     type: String,
     require: true,
-    unique: true,
   },
   clubDisplayName:{
     type: String,
     require: true,
-    unique: true,
   },
   profilePicture: {
     type: String,
@@ -31,7 +29,6 @@ const ClubSchema = new mongoose.Schema({
   clubMembers: {
     type: Array,
     default: [],
-    unique: true,
   },
   clubToUni: {
     type: String,
