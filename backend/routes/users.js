@@ -17,15 +17,19 @@ router.get('/:id', verify, async (req, res) => {
       const user = await User.findById(req.params.id)
         console.log(user.study)
       try {
-        const userClub = await Club.find({
-          clubMembers: {
-            $in: [req.params.id],
-          },
+        const userClubAdmin = await Club.find({
             clubAdmin: {
               $in: [req.params.id],
           }
         })
-        const userStudy = await Study.find({
+
+        const userClubMembers = await Club.find({
+          clubMembers: {
+            $in: [req.params.id],
+          }
+        })
+
+        const userStudyAdmin = await Study.find({
           studyMembers: {
             $in: [req.params.id],
           },
@@ -33,11 +37,19 @@ router.get('/:id', verify, async (req, res) => {
               $in: [req.params.id],
           }
         })
+        const userStudyMembers = await Study.find({
+          studyMembers: {
+            $in: [req.params.id],
+          }
+        })
         const { password, updatedAt, ...other } = user._doc
         const user123 = {
           ...other,
-          ...userClub,
-          ...userStudy
+          ...userClubAdmin,
+          ...userClubMembers,
+          ...userStudyAdmin,
+          ...userStudyMembers,
+
         }
         res.status(200).json(user123);
       } catch (err) {
@@ -111,7 +123,9 @@ router.put('/:id', verify, async (req, res) => {
         const { isAdmin, study, ...other } = req.body
         const updatedUser = await user.update({
     $set: other,
- $push: { study: { $each: [req.body.study], $slice: 100 } }
+    $push: {
+        study: req.body.study
+    }
   });
 
         return res.status(200).json("user has been updated")
