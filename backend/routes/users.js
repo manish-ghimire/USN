@@ -34,7 +34,12 @@ router.get('/:id', verify, async (req, res) => {
           }
         })
         const { password, updatedAt, ...other } = user._doc
-        res.status(200).json([{other:other}, {userClub:userClub}, {userStudy: userStudy}])
+        const user123 = {
+          ...other,
+          ...userClub,
+          ...userStudy
+        }
+        res.status(200).json(user123);
       } catch (err) {
         res.status(500).json(err)
       }
