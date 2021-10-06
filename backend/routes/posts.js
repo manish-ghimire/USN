@@ -230,21 +230,21 @@ router.get('/', verify, async (req, res) => {
     res.status(200).json(posts)
   } else if (uniPosts) {
     posts = await Post.find({
-      postTo: {
+      postToId: {
         $in: [uniPosts],
       },
     })
     res.status(200).json(posts)
   } else if (clubPosts) {
     posts = await Post.find({
-      postTo: {
+      postToId: {
         $in: [clubPosts],
       },
     })
     res.status(200).json(posts)
   } else if (studyPosts) {
     posts = await Post.find({
-      postTo: {
+      postToId: {
         $in: [studyPosts],
       },
     })
