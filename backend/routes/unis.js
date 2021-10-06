@@ -7,16 +7,25 @@ const verify = require('./verify')
 const bcrypt = require('bcrypt')
 // Get Uni
 // http://localhost:5000/api/unis/:uniName
-router.get('/:uniDisplayName', verify, async (req, res) => {
+  router.get('/:uniDisplayName', verify, async (req, res) => {
   try {
     const uniDisplayName = await Uni.findOne({
       uniDisplayName: req.params.uniDisplayName,
-    })
-    console.log(req.user.id)
-    console.log({
-      uniDisplayName: uniDisplayName.uniDisplayName,
-    })
-    if (uniDisplayName) {
+    });
+    if (!uniDisplayName) {
+      const uniId = await Uni.findOne({
+        _id: req.params.uniDisplayName,
+      })
+      console.log()
+      try {
+        const { updatedAt, ...other } = uniId._doc
+        res.status(200).json(other)
+      } catch (err) {
+        res.status(500).json(err)
+      }
+
+    }
+    else{
       try {
         const { updatedAt, ...other } = uniDisplayName._doc
         res.status(200).json(other)
@@ -37,21 +46,14 @@ router.get('/', verify, async (req, res) => {
     return res.status(401).json("Can't find uni")
   }
 })
-// get all clubs
-// router.get("/clubs", verify, async (req, res) => {
-//   try {
-//     const clubGroups = await Club.find();
-//     res.status(200).json(clubGroups);
-//   } catch (err) {
-//     return res.status(401).json("Can't find uni");
-//   }
-// });
 
+// find clubs
 router.get('/:uniDisplayName/find', verify, async (req, res) => {
   const uniName = await Uni.findOne({
     uniDisplayName: req.params.uniDisplayName,
   })
-  // console.log(uniName);
+  console.log(uniName._id);
+    console.log("finduniclubs");
   // const clubPosts = req.query.club;
   if (uniName) {
     const club = await Club.find({ clubToUni: uniName._id })
