@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const Post = require('../models/Post')
+const Market = require('../models/Market')
 const Comment = require('../models/Comment')
 const User = require('../models/User')
 const verify = require('./verify')
