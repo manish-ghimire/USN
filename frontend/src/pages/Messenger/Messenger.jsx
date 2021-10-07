@@ -20,9 +20,9 @@ import './Messenger.scss'
     const [conversation, setConversation] = useState([])
     const accessToken = localStorage.getItem('accessToken')
     const currentUser = JSON.parse(localStorage.getItem('currentUser'))
-    const  userID = currentUser.user._id
+    const userID = currentUser.user._id
 
-    console.log(userID)
+    // console.log(userID)
     // const userID = currentUser._id
     useEffect(() => {
       setCircle(true)
@@ -70,7 +70,7 @@ import './Messenger.scss'
         <div className="chatMenu">
           <div className="chatMenuWrapper">
             <input placeholder="Search for friends" className="chatMenuInput" />
-              { conversation.map((c)=>(<Conversation conversation={c} accessToken={accessToken} userID={userID} />))  }
+              { conversation.map((c)=>(<Conversation conversation={c} accessToken={accessToken} userID={user} />))  }
           </div>
         </div>
         <div className="chatBox">
