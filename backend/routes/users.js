@@ -9,23 +9,7 @@ const bcrypt = require('bcrypt')
 
 // Get User Via userId or Username
 // http://localhost:5000/api/users/:id or username
-
-// R - all users whose role is something (student or general or whatever)
-router.get('role/:role', verify, async (req, res) => {
-  console.log('I am manish')
-
-  const role = req.query.role
-  const users = await User.find({
-    role: {
-      $in: [role],
-    },
-  })
-  res.status(200).json(users)
-})
-
-// R - one user
-router.get('id/:id', verify, async (req, res) => {
-  console.log('I am Nathan')
+router.get('/:id', verify, async (req, res) => {
   const usern = await User.findOne({ username: req.params.id })
   if (!usern) {
     const user = await User.findById(req.params.id)
@@ -43,21 +27,24 @@ router.get('id/:id', verify, async (req, res) => {
   }
 })
 
-// R - all users
-router.get('/', verify, async (req, res) => {
-  console.log('I am Runqing')
-
-  const users = await User.find()
-  res.status(200).json(users)
-})
-
 // get all user via query
-// router.get('/', verify, async (req, res) => {
-//   const role = req.query.role
+router.get('/', verify, async (req, res) => {
+  const role = req.query.Roles
 
-//   const users = await User.find()
-//   res.status(200).json(posts)
-// })
+  let users
+  console.log(role)
+  if (role) {
+    users = await Post.find({
+      role: {
+        $in: [role],
+      },
+    })
+    res.status(200).json(posts)
+  } else {
+    users = await User.find()
+    res.status(200).json(posts)
+  }
+})
 
 //Update User
 // https://reqbin.com/

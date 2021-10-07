@@ -158,7 +158,7 @@ async function joinClubGroup(joinClub){
     // const clubName = await club.findOne({
     //   clubDisplayName: req.params.clubDisplayName
     // });
-    if (clubName.clubMembers.includes(req.user.id)) {
+    if (clubName.clubMembers.includes(req.user.id) || clubName.clubMembers.includes(joinClub) || clubName.clubAdmin.includes(req.user.id) || clubName.clubAdmin.includes(joinClub)) {
 
       return res.status(402).json({
         error: "already joined"
@@ -205,6 +205,22 @@ if (req.user.id === leaveClub || req.user.isAdmin){
                   clubMembers: req.body.clubAdmin
                 }
               });
+          const userCMember = User.findById(req.user.id);
+            const userCAdmin = User.findById(req.body.clubAdmin);
+            if (userCMember){
+              const updatedClubAdmintoUser = await userCMember.updateOne({
+                $pull: {
+                    clubs: req.user.id
+                  }
+              });
+            }
+             if (userCAdmin){
+              const updatedClubAdmintoUser2 = await userCAdmin.updateOne({
+                $pull: {
+                    clubs: req.user.clubAdmin
+                  }
+              });
+            }
               return res.status(200).json("admin updated");
             }else{
     return res.status(200).json("club group needs an admin");
@@ -216,6 +232,16 @@ if (req.user.id === leaveClub || req.user.isAdmin){
                 clubAdmin: req.user.id
               }
             });
+              const userCMember = User.findById(req.user.id);
+              if (userCMember){
+            const updatedClubAdmintoUser = await userCMember.updateOne({
+              $pull: {
+                  clubs: req.user.id
+                }
+            });
+          }
+          // up to herre=========================================================
+
             return res.status(200).json("admin updated");
           }
       } else {
