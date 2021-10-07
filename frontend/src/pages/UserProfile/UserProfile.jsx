@@ -53,13 +53,14 @@ const UserProfile = ({ setCircle }) => {
               },
             })
 
-            // console.log('success Uni:', successUser.data.studyAt[0].classOf)
+            console.log('success Uni:', successUser.data)
 
             uniLists.push({
               uniName: successUni.data.uniName,
               classOf: successUser.data.studyAt[0].classOf,
             })
           })
+          console.log('uniLists:', uniLists)
 
           console.log(uniLists)
         } catch (error) {
