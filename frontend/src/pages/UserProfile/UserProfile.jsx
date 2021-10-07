@@ -46,7 +46,7 @@ const UserProfile = ({ setCircle }) => {
 
           // console.log(successUser.data.studyAt)
           const uniLists = []
-          successUser.data.studyAt.map(async (uni) => {
+          successUser.data.study.map(async (uni) => {
             const successUni = await axios.get(`/uni/${uni.uniId}`, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,

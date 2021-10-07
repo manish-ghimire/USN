@@ -17,11 +17,12 @@ import './Messenger.scss'
     const history = useHistory()
     // const { userID } = useParams()
     const [user, setUser] = useState({})
-    const [conversation, setConversation] = useState({})
+    const [conversation, setConversation] = useState([])
     const accessToken = localStorage.getItem('accessToken')
-    const currentUser = localStorage.getItem('currentUser')
-    const userID = JSON.parse(currentUser)
-    console.log(userID.user._id)
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'))
+    const  userID = currentUser.user._id
+
+    console.log(userID)
     // const userID = currentUser._id
     useEffect(() => {
       setCircle(true)
@@ -30,7 +31,7 @@ import './Messenger.scss'
         const fetchData = async () => {
           try {
 // console.log(userID.user._id);
-              const successUser = await axios.get(`/user/${userID.user._id}`, {
+              const successUser = await axios.get(`/user/${userID}`, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
@@ -38,15 +39,10 @@ import './Messenger.scss'
             console.log('Success user', successUser)
             setUser(successUser.data)
             console.log('here');
-            // const successPost = await axios.get(`/post/?user=${userID}`, {
-            //   headers: {
-            //     Authorization: `Bearer ${accessToken}`,
-            //   },
-            // })
-            // console.log('Success post', successPost)
-            // setUser(successPost.data)
 
-            const getConversations = await axios.get(`/conversation/${userID.user._id}`, {
+
+
+            const getConversations = await axios.get(`/conversation/${userID}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -74,9 +70,7 @@ import './Messenger.scss'
         <div className="chatMenu">
           <div className="chatMenuWrapper">
             <input placeholder="Search for friends" className="chatMenuInput" />
-              <div>
-                <Conversation />
-              </div>
+              { conversation.map((c)=>(<Conversation conversation={c} accessToken={accessToken} userID={userID} />))  }
           </div>
         </div>
         <div className="chatBox">

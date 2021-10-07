@@ -117,6 +117,7 @@ router.put("/:clubDisplayName", verify, async (req, res) => {
     clubDisplayName: req.params.clubDisplayName
   });
 
+
   async function clubUpdate(clubName) {
 try{
     if (clubName.clubAdmin.includes(req.user.id) || req.user.isAdmin) {
@@ -224,7 +225,42 @@ if (req.user.id === leaveClub || req.user.isAdmin){
 }
 
 
-
+console.log(clubName);
+  if (!clubName){
+    const clubName = await Club.findOne({
+      _id: req.params.clubDisplayName
+    });
+    if (clubName.clubAdmin.includes(req.user.id)) {
+    console.log("is a club admin");
+    if (req.body){
+        clubUpdate(clubName);
+      }
+        if(leaveClub){
+        leaveClubGroup(leaveClub);
+      }
+      }
+      else if (clubName.clubMembers.includes(req.user.id)) {
+    console.log("is a club member");
+    if(leaveClub){
+    leaveClubGroup(leaveClub);
+    }
+    } else if (req.user.isAdmin) {
+      console.log("is admin");
+      if (req.body){
+      clubUpdate(clubName);
+    }
+    if (joinClub){
+      joinClubGroup(joinClub);
+    }
+      if(leaveClub){
+      leaveClubGroup(leaveClub);
+    }
+    }
+    else{
+    console.log("is a not a member");
+    joinclubGroup(joinclub);
+    }
+  }else{
 if (clubName.clubAdmin.includes(req.user.id)) {
 console.log("is a club admin");
 if (req.body){
@@ -254,6 +290,7 @@ if (joinClub){
 else{
 console.log("is a not a member");
 joinclubGroup(joinclub);
+}
 }
 
 // }
