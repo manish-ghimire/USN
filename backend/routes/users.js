@@ -48,14 +48,8 @@ router.get('/:id', verify, async (req, res) => {
           ...userClubMembers,
           ...userStudyAdmin,
           ...userStudyMembers,
-<<<<<<< HEAD
-        }
-        res.status(200).json(user123)
-=======
-
         ]
-        res.status(200).json(user123);
->>>>>>> 175e1fd544eac27c42f956d42471d5d402f00079
+        res.status(200).json(user123)
       } catch (err) {
         res.status(500).json(err)
       }
