@@ -229,7 +229,7 @@ router.get('/', verify, async (req, res) => {
 
     com = await Comment.find()
     console.log({postandcom:[{post:posts},{com:com}]})
-    res.status(200).json([{postandcom: [{post: posts }, { com: com }]}])
+    res.status(200).json([{ posts: posts }, { comments: com }])
   }
 
   console.log('bototm here')

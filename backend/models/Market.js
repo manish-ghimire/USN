@@ -42,6 +42,10 @@ const MarketSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    commentId: {
+      type: Array,
+      default : [],
+    }
   },
   { timestamps: true }
 )
