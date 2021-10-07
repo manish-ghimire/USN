@@ -4,7 +4,27 @@ const User = require("../models/User");
 const verify = require("./verify");
 const Comment = require("../models/Comment");
 
+// http://localhost:5000/api/item/:itemId/comments
+router.post("/item/:itemId/comments", verify, async (req, res) => {
+  const newCom = new Comment({
+    userId: req.user.id,
+    desc: req.body.desc,
+    commentToId: req.params.itemId
+  });
 
+  // try {
+    if (!newCom){
+    res.status(422).json({error: "Post is Empty"});
+  }
+  else{
+    const savedCom = await newCom.save();
+    res.status(200).json(savedCom);
+  }
+  // }
+  // catch (err) {
+  //   res.status(500).json(err);
+  // }
+});
 router.post("/item/", verify, async (req, res) => {
   const newMark = new Market({
     userId: req.user.id,
@@ -16,7 +36,7 @@ router.post("/item/", verify, async (req, res) => {
     role: req.body.role,
     postToId: req.body.postToId
   });
-  try {
+  // try {
     if (!newMark){
     res.status(422).json({error: "All fields are required"});
   }
@@ -24,10 +44,10 @@ router.post("/item/", verify, async (req, res) => {
     const saveMark = await newMark.save();
     res.status(200).json(saveMark);
   }
-  }
-  catch (err) {
-    res.status(500).json(err);
-  }
+  // }
+  // catch (err) {
+  //   res.status(500).json(err);
+  // }
 });
 //update a post
 // http://localhost:5000/api/market:id
@@ -148,26 +168,7 @@ router.get("/item/:itemId/comments", verify, async (req, res) => {
   console.log(com);
   res.status(200).json(com);
 });
-// http://localhost:5000/api/item/:itemId/comments
-router.post("/item/:itemId/comments", verify, async (req, res) => {
-  const newCom = new Comment({
-    userId: req.user.id,
-    desc: req.body.desc,
-    commentToId: req.params.itemId
-  });
-  try {
-    if (!newCom){
-    res.status(422).json({error: "Post is Empty"});
-  }
-  else{
-    const savedCom = await newCom.save();
-    res.status(200).json(savedCom);
-  }
-  }
-  catch (err) {
-    res.status(500).json(err);
-  }
-});
+
 // //get timeline posts
 //
 // router.get("/timeline/:userId", async (req, res) => {

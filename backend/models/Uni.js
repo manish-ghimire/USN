@@ -41,6 +41,10 @@ const UniSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
+  clubs:{
+    type: Array,
+    default: [],
+  }
 },
 { timestamps: true });
 

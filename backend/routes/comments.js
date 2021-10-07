@@ -14,7 +14,8 @@ router.post("/", verify, async (req, res) => {
     img: req.body.img,
     commentToId: req.body.commentToId
   });
-  try {
+
+  // try {
     if (!newCom){
     res.status(422).json({error: "Comment is Empty"});
   }
@@ -22,22 +23,38 @@ router.post("/", verify, async (req, res) => {
     const savedCom = await newCom.save();
     res.status(200).json(savedCom);
   }
-  }
-  catch (err) {
-    res.status(500).json(err);
-  }
+  const markCom = await Market.findById(req.body.commentToId);
+  // console.log(markCom);
+  if (markCom){
+const upMark = await markCom.updateOne({ $push: { commentId: req.body.commentToId } });
+console.log(markCom);
+}
+  // }
+  // catch (err) {
+  //   res.status(500).json(err);
+  // }
 });
 
 router.get("/:id", verify, async (req, res) => {
     const com = await Comment.findById(req.params.id)
     if (!com){
-      const com = await Comment.findOne({commentToId:req.params.id})
-  const markCom = await Market.find({commentId:com})
-        res.status(200).json(markCom)
+        const com = await Comment.find({commentToId:req.params.id})
+          res.status(200).json(com)
     }else{
-res.status(200).json(com)
-    }
+  res.status(200).json(com)
+}
 });
+//
+// router.get("/:id", verify, async (req, res) => {
+//     const com = await Comment.findById(req.params.id)
+//     if (!com){
+//       const com = await Comment.findOne({commentToId:req.params.id})
+//   const markCom = await Market.find({commentId:com})
+//         res.status(200).json(markCom)
+//     }else{
+// res.status(200).json(com)
+//     }
+// });
 
 router.get("/", verify, async (req, res) => {
     const com = await Comment.find()
