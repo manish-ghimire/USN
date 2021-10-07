@@ -27,7 +27,7 @@ useEffect(()=>{
         src=""
         alt=""/>
 
-      <span className="conversationName"></span>
+      <span className="conversationName">userID.username</span>
     </div>
   )
 }

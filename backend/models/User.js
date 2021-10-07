@@ -74,6 +74,14 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    clubs: {
+      type: Array,
+      default: [],
+    },
+    studyGroups: {
+      type: Array,
+      default: [],
+    },
     study: [childUserSchema],
   },
   { timestamps: true }
