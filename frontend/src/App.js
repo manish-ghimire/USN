@@ -96,9 +96,15 @@ function App() {
                 />
               )}
             />
-            <Route
-              exact
-              path='/club/:clubID'
+            <Route path='/club/:clubID'
+              component={() => (
+                <Club
+                  setCircle={(value) => setCircle(value)}
+                  setSnackbar={(value) => setSnackbar(value)}
+                />
+              )}
+            />
+            <Route exact path='/club'
               component={() => (
                 <Club
                   setCircle={(value) => setCircle(value)}

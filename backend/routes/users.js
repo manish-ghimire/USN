@@ -39,10 +39,10 @@ router.get('/', verify, async (req, res) => {
         $in: [role],
       },
     })
-    res.status(200).json(posts)
+    res.status(200).json(users)
   } else {
     users = await User.find()
-    res.status(200).json(posts)
+    res.status(200).json(users)
   }
 })
 

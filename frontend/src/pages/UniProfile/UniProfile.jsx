@@ -28,36 +28,72 @@ const UniProfile = ({ setCircle }) => {
   const history = useHistory()
   const { uniId } = useParams()
   const [unis, setUnis] = useState([])
+  const { uniID } = useParams()
   const [posts, setPosts] = useState([])
   const accessToken = localStorage.getItem('accessToken')
-
   useEffect(() => {
     setCircle(true)
     if (accessToken) {
       const fetchData = async () => {
         try {
-          const successPost = await axios.get(
-            `/post/?uni=615ce748d6666f0654d46cc4`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
-          )
-          console.log('Success post', successPost)
-
-          // setPosts(posts)
+          const successStudy = await axios.get(`/uni/${uniID}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          console.log('here')
+          setUnis(successStudy)
+          console.log('Success Uni Stuff', successStudy.data)
         } catch (error) {
-          console.log('Error while getting posts', error)
+          console.log('Error fetching data', error)
         }
       }
       fetchData()
+      console.log(unis)
     } else {
       console.log('Im here')
       history.push('/login', { text: 'hellooooooo' })
     }
     setCircle(false)
-  }, [history, setCircle, accessToken])
+  }, [history, setCircle, setUnis, accessToken])
+
+  // useEffect(() => {
+  //   setCircle(true)
+  //   if (accessToken) {
+  //     const fetchData = async () => {
+  //       try {
+  //         // const successPost = await axios.get(`/post/find?user=${userID}`, {
+  //         //   headers: {
+  //         //     Authorization: `Bearer ${accessToken}`,
+  //         //   },
+  //         // })
+  //         // console.log('Success post', successPost)
+  //         const posts = [
+  //           {
+  //             _id: 1,
+  //             text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
+  //             shares: 10,
+  //             likes: 52,
+  //           },
+  //           {
+  //             _id: 2,
+  //             text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
+  //             shares: 10,
+  //             likes: 52,
+  //           },
+  //         ]
+  //         setPosts(posts)
+  //       } catch (error) {
+  //         console.log('Error while getting posts', error)
+  //       }
+  //     }
+  //     fetchData()
+  //   } else {
+  //     console.log('Im here')
+  //     history.push('/login', { text: 'hellooooooo' })
+  //   }
+  //   setCircle(false)
+  // }, [history, setCircle, accessToken])
 
   const drawer = (
     <div>
