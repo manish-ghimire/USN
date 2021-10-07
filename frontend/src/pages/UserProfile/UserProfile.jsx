@@ -22,7 +22,6 @@ const UserProfile = ({ setCircle }) => {
   const accessToken = localStorage.getItem('accessToken')
 
   useEffect(() => {
-    // setCircle(true)
     if (accessToken) {
       const fetchData = async () => {
         try {
@@ -32,6 +31,7 @@ const UserProfile = ({ setCircle }) => {
             },
           })
           setUser(successUser.data)
+          console.log(successUser.data)
 
           const uniLists = []
           successUser.data.study.map(async (uni, index) => {
