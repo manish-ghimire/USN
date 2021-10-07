@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Post = require("../models/Post");
+const Market = require("../models/Market");
 const Comment = require("../models/Comment");
 const User = require("../models/User");
 const verify = require("./verify");
@@ -29,7 +30,13 @@ router.post("/", verify, async (req, res) => {
 
 router.get("/:id", verify, async (req, res) => {
     const com = await Comment.findById(req.params.id)
-  res.status(200).json(com)
+    if (!com){
+      const com = await Comment.findOne({commentToId:req.params.id})
+  const markCom = await Market.find({commentId:com})
+        res.status(200).json(markCom)
+    }else{
+res.status(200).json(com)
+    }
 });
 
 router.get("/", verify, async (req, res) => {
