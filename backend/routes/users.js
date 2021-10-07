@@ -29,30 +29,24 @@ router.get('/:id', verify, async (req, res) => {
 
 // get all user via query
 router.get('/', verify, async (req, res) => {
-  const role = req.query.Roles
-
+  // const role = req.query.Roles
   let users
-  console.log(role)
-  if (role) {
-    users = await Post.find({
-      role: {
-        $in: [role],
-      },
-    })
-    res.status(200).json(users)
-  } else {
-    users = await User.find()
-    res.status(200).json(users)
-  }
+  // console.log(role)
+  // if (role) {
+  //   users = await Post.find({
+  //     role: {
+  //       $in: [role],
+  //     },
+  //   })
+  //   res.status(200).json(users)
+  // } else {
+  users = await User.find()
+  res.status(200).json(users)
+  // }
 })
 
 //Update User
-// https://reqbin.com/
 // put--> http://localhost:5000/api/users/:id
-// {
-// "userId":"id",
-// update stuff
-// }
 router.put('/:id', verify, async (req, res) => {
   if (req.user.id === req.params.id || req.user.isAdmin) {
     if (req.body.password) {
@@ -150,49 +144,49 @@ router.delete('/:id', verify, async (req, res) => {
 })
 
 // Get followers
-router.get('/:userId/following', verify, async (req, res) => {
-  try {
-    const user = await User.findById(req.params.userId)
-    console.log(user.following)
-    const following = await Promise.all(
-      user.following.map((followingId) => {
-        console.log(followingId)
-        return User.findById(followingId)
-      })
-    )
-    let followingList = []
-    following.map((followingUsers) => {
-      const { _id, username, profilePicture } = followingUsers
-      followingList.push({ _id, username, profilePicture })
-    })
-    res.status(200).json(followingList)
-  } catch (err) {
-    res.status(500).json(err)
-  }
-})
-router.get('/:userId/followers', verify, async (req, res) => {
-  try {
-    const user = await User.findById(req.params.userId)
-    console.log(user)
-    const followers = await Promise.all(
-      user.followers.map((followerId) => {
-        return User.findById(followerId)
-      })
-    )
-    let followerList = []
-    followers.map((followerUsers) => {
-      console.log(followerUsers)
-      const { _id, username, profilePicture } = followerUsers
-      console.log(followerUsers)
-      followerList.push({ _id, username, profilePicture })
-    })
-    res.status(200).json(followerList)
-  } catch (err) {
-    res.status(500).json(err)
-  }
-})
+// router.get('/:userId/following', verify, async (req, res) => {
+//   try {
+//     const user = await User.findById(req.params.userId)
+//     console.log(user.following)
+//     const following = await Promise.all(
+//       user.following.map((followingId) => {
+//         console.log(followingId)
+//         return User.findById(followingId)
+//       })
+//     )
+//     let followingList = []
+//     following.map((followingUsers) => {
+//       const { _id, username, profilePicture } = followingUsers
+//       followingList.push({ _id, username, profilePicture })
+//     })
+//     res.status(200).json(followingList)
+//   } catch (err) {
+//     res.status(500).json(err)
+//   }
+// })
+// router.get('/:userId/followers', verify, async (req, res) => {
+//   try {
+//     const user = await User.findById(req.params.userId)
+//     console.log(user)
+//     const followers = await Promise.all(
+//       user.followers.map((followerId) => {
+//         return User.findById(followerId)
+//       })
+//     )
+//     let followerList = []
+//     followers.map((followerUsers) => {
+//       console.log(followerUsers)
+//       const { _id, username, profilePicture } = followerUsers
+//       console.log(followerUsers)
+//       followerList.push({ _id, username, profilePicture })
+//     })
+//     res.status(200).json(followerList)
+//   } catch (err) {
+//     res.status(500).json(err)
+//   }
+// })
 
-//follow
+//follow and unfollow
 // http://localhost:5000/api/users/:id/follow
 router.put('/:id/follow', verify, async (req, res) => {
   if (req.user.id !== req.params.id) {
