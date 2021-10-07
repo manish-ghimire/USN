@@ -10,60 +10,94 @@ const bcrypt = require('bcrypt')
 // Get User Via userId or Username
 // http://localhost:5000/api/users/:id or username
 router.get('/:id', verify, async (req, res) => {
-  try {
-    const usern = await User.findOne({ username: req.params.id })
-    if (!usern) {
-      const user = await User.findById(req.params.id)
-      console.log(user.study)
-      try {
-        const userClubAdmin = await Club.find({
-          clubAdmin: {
-            $in: [req.params.id],
-          },
-        })
+  // try {
+  const usern = await User.findOne({ username: req.params.id })
+  if (!usern) {
+    const user = await User.findById(req.params.id)
+    console.log(user)
+    // try {
+    const userClubAdmin = await Club.find({
+      clubAdmin: {
+        $in: [req.params.id],
+      },
+    })
 
-        const userClubMembers = await Club.find({
-          clubMembers: {
-            $in: [req.params.id],
-          },
-        })
+    const userClubMembers = await Club.find({
+      clubMembers: {
+        $in: [req.params.id],
+      },
+    })
 
-        const userStudyAdmin = await Study.find({
-          studyMembers: {
-            $in: [req.params.id],
-          },
-          studyAdmin: {
-            $in: [req.params.id],
-          },
-        })
-        const userStudyMembers = await Study.find({
-          studyMembers: {
-            $in: [req.params.id],
-          },
-        })
-        const { password, updatedAt, ...other } = user._doc
-        const user123 = [
-          ...other,
-          ...userClubAdmin,
-          ...userClubMembers,
-          ...userStudyAdmin,
-          ...userStudyMembers,
-        ]
-        res.status(200).json(user123)
-      } catch (err) {
-        res.status(500).json(err)
-      }
-    } else {
-      try {
-        const { password, updatedAt, ...other } = usern._doc
-        res.status(200).json(other)
-      } catch (err) {
-        res.status(500).json(err)
-      }
-    }
-  } catch (err) {
-    return res.status(401).json('Not authenticated!')
+    const userStudyAdmin = await Study.find({
+      studyMembers: {
+        $in: [req.params.id],
+      },
+      studyAdmin: {
+        $in: [req.params.id],
+      },
+    })
+    const userStudyMembers = await Study.find({
+      studyMembers: {
+        $in: [req.params.id],
+      },
+    })
+    const { password, updatedAt, ...other } = user._doc
+    const userDetails = [
+      other,
+      ...userClubAdmin,
+      ...userClubMembers,
+      ...userStudyAdmin,
+      ...userStudyMembers,
+    ]
+    console.log(userDetails)
+    res.status(200).json(userDetails)
+    // } catch (err) {
+    //   res.status(500).json(err)
+    // }
+  } else {
+    // try {
+    const userClubAdmin = await Club.find({
+      clubAdmin: {
+        $in: [req.params.id],
+      },
+    })
+
+    const userClubMembers = await Club.find({
+      clubMembers: {
+        $in: [req.params.id],
+      },
+    })
+
+    const userStudyAdmin = await Study.find({
+      studyMembers: {
+        $in: [req.params.id],
+      },
+      studyAdmin: {
+        $in: [req.params.id],
+      },
+    })
+    const userStudyMembers = await Study.find({
+      studyMembers: {
+        $in: [req.params.id],
+      },
+    })
+    const { password, updatedAt, ...other } = usern._doc
+    const userDetails = [
+      other,
+      ...userClubAdmin,
+      ...userClubMembers,
+      ...userStudyAdmin,
+      ...userStudyMembers,
+    ]
+    console.log(userDetails)
+    res.status(200).json(userDetails)
+    // } catch (err) {
+    //   res.status(500).json(err)
+    // }
   }
+  // } catch (err) {
+  //   return res.status(401).json('Not authenticated!')
+  // }
 })
 
 // get all user via query

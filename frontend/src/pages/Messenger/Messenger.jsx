@@ -8,41 +8,52 @@ import ChatOnline from '../../components/ChatOnline/ChatOnline';
 import {MenuIcon, SchoolIcon} from '@mui/icons-material/Menu'
 import './Messenger.scss'
 
-  const drawerWidth = 300
-
 
   const Messenger = (props) => {
-    console.log('here');
+
     const { window, setCircle } = props
 
 
     const history = useHistory()
-    const { userID } = useParams()
+    // const { userID } = useParams()
     const [user, setUser] = useState({})
-
+    const [conversation, setConversation] = useState({})
     const accessToken = localStorage.getItem('accessToken')
+    const currentUser = localStorage.getItem('currentUser')
+    const userID = JSON.parse(currentUser)
+    console.log(userID.user._id)
+    // const userID = currentUser._id
     useEffect(() => {
       setCircle(true)
       if (accessToken) {
 
         const fetchData = async () => {
-
           try {
-              const successUser = await axios.get(`/user/${userID}`, {
+// console.log(userID.user._id);
+              const successUser = await axios.get(`/user/${userID.user._id}`, {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
             })
             console.log('Success user', successUser)
             setUser(successUser.data)
+            console.log('here');
+            // const successPost = await axios.get(`/post/?user=${userID}`, {
+            //   headers: {
+            //     Authorization: `Bearer ${accessToken}`,
+            //   },
+            // })
+            // console.log('Success post', successPost)
+            // setUser(successPost.data)
 
-            const successPost = await axios.get(`/post/find?user=${userID}`, {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            })
-            console.log('Success post', successPost)
-            setUser(successPost.data)
+            const getConversations = await axios.get(`/conversation/${userID.user._id}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+
+          console.log('Success getConversations', getConversations)
+          setConversation(getConversations.data)
           } catch (error) {
             // console.log(error)
           }
@@ -53,7 +64,7 @@ import './Messenger.scss'
         history.push('/login', { text: 'hellooooooo' })
       }
       setCircle(false)
-    }, [history, setCircle, userID, accessToken])
+    }, [history, setCircle, setUser, setConversation, accessToken])
 
 
     return (
