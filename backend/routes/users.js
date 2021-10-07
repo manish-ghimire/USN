@@ -13,9 +13,10 @@ router.get('/:id', verify, async (req, res) => {
 
   // try {
     const usern = await User.findOne({ username: req.params.id })
+    console.log(usern);
     if (!usern) {
       const user = await User.findById(req.params.id)
-      console.log(user)
+      // console.log(user)
       // try {
         const userClubAdmin = await Club.find({
             clubAdmin: {
@@ -30,9 +31,6 @@ router.get('/:id', verify, async (req, res) => {
         })
 
         const userStudyAdmin = await Study.find({
-          studyMembers: {
-            $in: [req.params.id],
-          },
             studyAdmin: {
               $in: [req.params.id],
           }
@@ -42,15 +40,14 @@ router.get('/:id', verify, async (req, res) => {
             $in: [req.params.id],
           }
         })
-        const { password, updatedAt, ...other } = user._doc
-        const userDetails = [
-          other,
+        const { password, updatedAt, ...userInfo } = user._doc
+        const userDetails = {
+          userInfo,
           ...userClubAdmin,
           ...userClubMembers,
           ...userStudyAdmin,
           ...userStudyMembers,
-
-        ]
+        }
         console.log(userDetails)
         res.status(200).json(userDetails);
       // } catch (err) {
@@ -58,39 +55,40 @@ router.get('/:id', verify, async (req, res) => {
       // }
     } else {
       // try {
+      const userId = ""+usern._id+"";
+      console.log("userhere", usern._id);
         const userClubAdmin = await Club.find({
             clubAdmin: {
-              $in: [req.params.id],
+                $in: [userId],
           }
         })
+        console.log(userClubAdmin)
 
         const userClubMembers = await Club.find({
           clubMembers: {
-            $in: [req.params.id],
+            $in: [userId],
           }
         })
 
         const userStudyAdmin = await Study.find({
-          studyMembers: {
-            $in: [req.params.id],
-          },
             studyAdmin: {
-              $in: [req.params.id],
+              $in: [userId],
           }
         })
         const userStudyMembers = await Study.find({
           studyMembers: {
-            $in: [req.params.id],
+            $in: [userId],
           }
         })
-        const { password, updatedAt, ...other } = usern._doc
-        const userDetails = [
-          other,
-          ...userClubAdmin,
-          ...userClubMembers,
-          ...userStudyAdmin,
-          ...userStudyMembers,
-        ]
+        const { password, updatedAt, ...userInfo } = usern._doc
+
+const userDetails = {
+  userInfo,
+  ...userClubAdmin,
+  ...userClubMembers,
+  ...userStudyAdmin,
+  ...userStudyMembers,
+}
         console.log(userDetails);
         res.status(200).json(userDetails);
       // } catch (err) {
