@@ -19,25 +19,6 @@ router.post('/', verify, async (req, res) => {
   }
 })
 
-// get post and  comments
-// http://localhost:5000/api/post/:id?comments=:commentId
-router.get('/:id', verify, async (req, res) => {
-  const commentsId = req.query.comments
-  if (commentsId) {
-    console.log('here', commentsId)
-    const com2 = await Comment.find({ commentToId: { $in: [commentsId] } })
-    res.status(200).json(com2)
-  } else {
-    try {
-      const post = await Post.findById(req.params.id)
-      console.log(post)
-      const com = await Comment.find({ commentToId: req.params.id })
-      res.status(200).json({ postandcom: [{ post: post }, { com: com }] })
-    } catch (err) {
-      res.status(500).json(err)
-    }
-  }
-})
 // post reply to comments
 // http://localhost:5000/api/post/:id/comments
 router.post('/:id', verify, async (req, res) => {
@@ -80,36 +61,27 @@ router.post('/:id/comments', verify, async (req, res) => {
   }
 })
 
-// delete or post comments
+
+// get post and  comments
 // http://localhost:5000/api/post/:id?comments=:commentId
-router.delete('/:id', verify, async (req, res) => {
+router.get('/:id', verify, async (req, res) => {
   const commentsId = req.query.comments
   if (commentsId) {
-    try {
-      const com = await Comment.findById(req.params.commentsId)
-      if (com.userId === req.user.id || req.user.isAdmin) {
-        com.delete()
-        res.status(200).json('The post has been deleted!')
-      } else {
-        res.status(401).json('You can delete only your post!')
-      }
-    } catch (err) {
-      res.status(500).json(err)
-    }
+    console.log('here', commentsId)
+    const com2 = await Comment.find({ commentToId: { $in: [commentsId] } })
+    res.status(200).json(com2)
   } else {
     try {
       const post = await Post.findById(req.params.id)
-      if (post.userId === req.user.id || req.user.isAdmin) {
-        post.delete()
-        res.status(200).json('The post has been deleted!')
-      } else {
-        res.status(401).json('You can delete only your post!')
-      }
+      console.log(post)
+      const com = await Comment.find({ commentToId: req.params.id })
+      res.status(200).json({ postandcom: [{ post: post }, { com: com }] })
     } catch (err) {
       res.status(500).json(err)
     }
   }
 })
+
 
 //  update comments
 // http://localhost:5000/api/post/:id?commentsId=:id
@@ -251,8 +223,12 @@ router.get('/', verify, async (req, res) => {
     res.status(200).json(posts)
   } else {
     console.log('else here')
+
     posts = await Post.find()
-    res.status(200).json(posts)
+
+    com = await Comment.find()
+    console.log({postandcom:[{post:posts},{com:com}]})
+    res.status(200).json([{postandcom: [{post: posts }, { com: com }]}])
   }
 
   console.log('bototm here')
@@ -292,5 +268,36 @@ router.get('/', verify, async (req, res) => {
 //     res.status(500).json(err);
 //   }
 // });
+
+// delete or post comments
+// http://localhost:5000/api/post/:id?comments=:commentId
+router.delete('/:id', verify, async (req, res) => {
+  const commentsId = req.query.comments
+  if (commentsId) {
+    try {
+      const com = await Comment.findById(req.params.commentsId)
+      if (com.userId === req.user.id || req.user.isAdmin) {
+        com.delete()
+        res.status(200).json('The post has been deleted!')
+      } else {
+        res.status(401).json('You can delete only your post!')
+      }
+    } catch (err) {
+      res.status(500).json(err)
+    }
+  } else {
+    try {
+      const post = await Post.findById(req.params.id)
+      if (post.userId === req.user.id || req.user.isAdmin) {
+        post.delete()
+        res.status(200).json('The post has been deleted!')
+      } else {
+        res.status(401).json('You can delete only your post!')
+      }
+    } catch (err) {
+      res.status(500).json(err)
+    }
+  }
+})
 
 module.exports = router
