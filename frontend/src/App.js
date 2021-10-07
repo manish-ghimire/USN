@@ -78,7 +78,7 @@ function App() {
             />
             <Route
               exact
-              path='/user/:userID'
+              path='/user/:userId'
               component={() => (
                 <UserProfile
                   setCircle={(value) => setCircle(value)}

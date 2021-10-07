@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
 const MarketSchema = new mongoose.Schema(
   {
@@ -24,7 +24,7 @@ const MarketSchema = new mongoose.Schema(
     },
     img: {
       type: String,
-      default: "",
+      default: '',
     },
     likes: {
       type: Array,
@@ -32,13 +32,14 @@ const MarketSchema = new mongoose.Schema(
     },
     role: {
       type: Array,
-      default : [],
+      default: [],
     },
     postToId: {
       type: Array,
-      default : [],
+      default: [],
     },
   },
-{ timestamps: true });
+  { timestamps: true }
+)
 
-module.exports = mongoose.model("Market", MarketSchema);
+module.exports = mongoose.model('Market', MarketSchema)

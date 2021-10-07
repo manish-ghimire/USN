@@ -12,7 +12,7 @@ const Home = () => {
     if (!accessToken) {
       history.push('/login')
     }
-  }, [])
+  }, [history])
   return (
     <>
       <Navbar />

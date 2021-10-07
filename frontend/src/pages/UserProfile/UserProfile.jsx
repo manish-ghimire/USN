@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory, useParams } from 'react-router'
+import { useHistory, useParams } from 'react-router-dom'
 import axios from 'axios'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
@@ -10,7 +10,6 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import SchoolIcon from '@mui/icons-material/School'
 import Navbar from '../../components/Navbar/Navbar'
-import PostingBox from '../../components/PostingBox/PostingBox.jsx'
 import Post from '../../components/Post/Post.jsx'
 import Card from '../../components/Card/Card'
 import { Avatar, Container, Grid, Hidden } from '@mui/material'
@@ -32,6 +31,7 @@ const UserProfile = ({ setCircle }) => {
   const accessToken = localStorage.getItem('accessToken')
 
   useEffect(() => {
+    console.log(userId)
     setCircle(true)
     if (accessToken) {
       const fetchData = async () => {
@@ -43,8 +43,8 @@ const UserProfile = ({ setCircle }) => {
           })
           setUser(successUser.data)
           console.log('Success user', successUser)
+          console.log('Success user', successUser.data.study)
 
-          console.log(successUser.data.studyAt)
           const uniLists = []
           successUser.data.study.map(async (uni) => {
             const successUni = await axios.get(`/uni/${uni.uniId}`, {

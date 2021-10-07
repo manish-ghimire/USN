@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
-const childUserSchema = new mongoose.Schema({
+
+const UniDetailSchema = new mongoose.Schema({
   uniId: {
     type: String,
     default: '',
@@ -74,7 +75,15 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
-    study: [childUserSchema],
+    clubs: {
+      type: Array,
+      default: [],
+    },
+    studyGroups: {
+      type: Array,
+      default: [],
+    },
+    study: [UniDetailSchema],
   },
   { timestamps: true }
 )

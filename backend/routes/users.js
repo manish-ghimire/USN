@@ -9,111 +9,55 @@ const bcrypt = require('bcrypt')
 
 // Get User Via userId or Username
 // http://localhost:5000/api/users/:id or username
-router.get('/:id', verify, async (req, res) => {
-  // try {
+
+// R - all users whose role is something (student or general or whatever)
+router.get('role/:role', verify, async (req, res) => {
+  console.log('I am manish')
+
+  const role = req.query.role
+  const users = await User.find({
+    role: {
+      $in: [role],
+    },
+  })
+  res.status(200).json(users)
+})
+
+// R - one user
+router.get('id/:id', verify, async (req, res) => {
+  console.log('I am Nathan')
   const usern = await User.findOne({ username: req.params.id })
-  console.log(usern)
   if (!usern) {
     const user = await User.findById(req.params.id)
-    // console.log(user)
-    // try {
-    const userClubAdmin = await Club.find({
-      clubAdmin: {
-        $in: [req.params.id],
-      },
-    })
+    const updatedUser = user._doc
+    delete updatedUser.password
+    console.log(updatedUser)
 
-    const userClubMembers = await Club.find({
-      clubMembers: {
-        $in: [req.params.id],
-      },
-    })
-
-    const userStudyAdmin = await Study.find({
-      studyAdmin: {
-        $in: [req.params.id],
-      },
-    })
-    const userStudyMembers = await Study.find({
-      studyMembers: {
-        $in: [req.params.id],
-      },
-    })
-    const { password, updatedAt, ...userInfo } = user._doc
-    const userDetails = {
-      userInfo,
-      ...userClubAdmin,
-      ...userClubMembers,
-      ...userStudyAdmin,
-      ...userStudyMembers,
-    }
-    console.log(userDetails)
-    res.status(200).json(userDetails)
-    // } catch (err) {
-    //   res.status(500).json(err)
-    // }
+    res.status(200).json(updatedUser)
   } else {
-    // try {
-    const userId = '' + usern._id + ''
-    console.log('userhere', usern._id)
-    const userClubAdmin = await Club.find({
-      clubAdmin: {
-        $in: [userId],
-      },
-    })
-    console.log(userClubAdmin)
+    const updatedUser = usern._doc
+    delete updatedUser.password
+    console.log(updatedUser)
 
-    const userClubMembers = await Club.find({
-      clubMembers: {
-        $in: [userId],
-      },
-    })
-
-    const userStudyAdmin = await Study.find({
-      studyAdmin: {
-        $in: [userId],
-      },
-    })
-    const userStudyMembers = await Study.find({
-      studyMembers: {
-        $in: [userId],
-      },
-    })
-    const { password, updatedAt, ...userInfo } = usern._doc
-
-    const userDetails = {
-      userInfo,
-      ...userClubAdmin,
-      ...userClubMembers,
-      ...userStudyAdmin,
-      ...userStudyMembers,
-    }
-    console.log(userDetails)
-    res.status(200).json(userDetails)
-    // } catch (err) {
-    //   res.status(500).json(err)
-    // }
+    res.status(200).json(updatedUser)
   }
-  // } catch (err) {
-  //   return res.status(401).json('Not authenticated!')
-  // }
+})
+
+// R - all users
+router.get('/', verify, async (req, res) => {
+  console.log('I am Runqing')
+
+  const users = await User.find()
+  res.status(200).json(users)
 })
 
 // get all user via query
-router.get('/find', verify, async (req, res) => {
-  const role = req.query.role
+// router.get('/', verify, async (req, res) => {
+//   const role = req.query.role
 
-  let users
-  console.log(role)
-  if (role) {
-    users = await Post.find({
-      role: {
-        $in: [role],
-      },
-    })
-    res.status(200).json(posts)
-  }
-})
+//   const users = await User.find()
+//   res.status(200).json(posts)
+// })
 
 //Update User
 // https://reqbin.com/
