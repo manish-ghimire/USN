@@ -153,9 +153,10 @@ router.put("/:studyDisplayName", verify, async (req, res) => {
   }
 
 
-  async function joinStudyGroup(joinStudy){
-        try{
+  async function joinStudyGroup(joinStudy, studyName){
+        // try{
     if (joinStudy) {
+      console.log(joinStudy);
       if (studyName.studyMembers.includes(req.user.id) || studyName.studyMembers.includes(joinStudy) || studyName.studyAdmin.includes(req.user.id) || studyName.studyAdmin.includes(joinStudy) ) {
 
   console.log({error: "already joined"});
@@ -169,7 +170,8 @@ router.put("/:studyDisplayName", verify, async (req, res) => {
                 $push: {
                   studyMembers: joinStudy
                 }});
-                const userSMember = User.findById(joinStudy);
+                const userSMember = await User.findById(joinStudy);
+                console.log("userSMember", userSMember);
                 const updatedStudyMembertoUser = await userSMember.updateOne({
                   $push: {
                     studyGroups: joinStudy
@@ -186,7 +188,8 @@ router.put("/:studyDisplayName", verify, async (req, res) => {
           $push: {
             studyMembers: joinStudy
           }});
-          const userSMember = User.findById(joinStudy);
+          const userSMember =  await User.findById(joinStudy);
+          console.log('herere')
           const updatedStudyMembertoUser = await userSMember.updateOne({
             $push: {
               studyGroups: joinStudy
@@ -196,20 +199,19 @@ router.put("/:studyDisplayName", verify, async (req, res) => {
         return res.status(200).json("user joined!");
 
       }
-    }
-
-    }
-    catch(err){
-      return res.status(402).json({
-        error: err
-      });
-
-    }
+}
+    // }
+    // catch(err){
+    //   return res.status(402).json({
+    //     error: err
+    //   });
+    //
+    // }
   }
 
 
-async function leaveStudyGroup(leaveStudy) {
-console.log('aaaaa');
+async function leaveStudyGroup(leaveStudy, studyName) {
+console.log('aaaaa', studyName);
   if (leaveStudy) {
 
 if (req.user.id === leaveStudy || req.user.isAdmin){
@@ -237,8 +239,8 @@ if (req.user.id === leaveStudy || req.user.isAdmin){
                   studyMembers: req.body.studyAdmin
                 }
               });
-              const userSMember = User.findById(req.user.id);
-                const userSAdmin = User.findById(req.body.studyAdmin);
+              const userSMember = await User.findById(req.user.id);
+                const userSAdmin = await User.findById(req.body.studyAdmin);
                 if (userSMember){
                   const updatedStudyAdmintoUser = await userSMember.updateOne({
                     $pull: {
@@ -264,7 +266,7 @@ if (req.user.id === leaveStudy || req.user.isAdmin){
                 studyAdmin: req.user.id
               }
             });
-            const userSAdmin = User.findById(req.body.studyAdmin);
+            const userSAdmin = await User.findById(req.body.studyAdmin);
             if (userSAdmin){
              const updatedStudyAdmintoUser2 = await userSAdmin.updateOne({
                $pull: {
@@ -279,73 +281,35 @@ if (req.user.id === leaveStudy || req.user.isAdmin){
       }
   }
 }
-
-
+// if (req.body){
+//       studyUpdate(studyName);
+//     }
+//       joinStudyGroup(joinStudy);
+//       if(leaveStudy){
+//       leaveStudyGroup(leaveStudy);
+//     }
+//     const studyName = await Study.findOne({
+//       _id: req.params.studyDisplayName
+//     });
+console.log(studyName)
 if (!studyName){
-  const studyName = await Study.findOne({
-    _id: req.params.studyDisplayName
-  });
-  if (studyName.studyAdmin.includes(req.user.id)) {
-console.log("is a study admin");
-if (req.body){
-      studyUpdate(studyName);
-    }
-      joinStudyGroup(joinStudy);
-      if(leaveStudy){
-      leaveStudyGroup(leaveStudy);
-    }
-    }
-    else if (studyName.studyMembers.includes(req.user.id)) {
-console.log("is a study member");
-if(leaveStudy){
-leaveStudyGroup(leaveStudy);
-}
-} else if (req.user.isAdmin) {
-    console.log("is admin");
-    if (req.body){
-    studyUpdate(studyName);
-  }
-    joinStudyGroup(joinStudy);
-    if(leaveStudy){
-    leaveStudyGroup(leaveStudy);
-  }
-  }
-  else{
-  console.log("is a not a member");
-joinStudyGroup(joinStudy);
-  }
-}else{
 
   if (studyName.studyAdmin.includes(req.user.id)) {
 console.log("is a study admin");
-if (req.body){
-      studyUpdate(studyName);
-    }
-      if(leaveStudy){
-      leaveStudyGroup(leaveStudy);
-    }
+
     }
     else if (studyName.studyMembers.includes(req.user.id)) {
 console.log("is a study member");
-if(leaveStudy){
-leaveStudyGroup(leaveStudy);
-}
+
 } else if (req.user.isAdmin) {
     console.log("is admin");
-    if (req.body){
-    studyUpdate(studyName);
-  }
-    joinStudyGroup(joinStudy);
-    if(leaveStudy){
-    leaveStudyGroup(leaveStudy);
-  }
+
   }
   else{
   console.log("is a not a member");
-joinStudyGroup(joinStudy);
+  joinStudyGroup(joinStudy);
   }
 }
-
   // }
 });
 
