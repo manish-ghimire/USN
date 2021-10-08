@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+
 const UniSchema = new mongoose.Schema({
   uniName:{
     type: String,
