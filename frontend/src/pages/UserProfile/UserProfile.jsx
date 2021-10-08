@@ -30,8 +30,6 @@ const UserProfile = ({ setCircle }) => {
               Authorization: `Bearer ${accessToken}`,
             },
           })
-          setUser(successUser.data)
-          console.log(successUser.data)
 
           const uniLists = []
           successUser.data.study.map(async (uni, index) => {
@@ -40,13 +38,13 @@ const UserProfile = ({ setCircle }) => {
                 Authorization: `Bearer ${accessToken}`,
               },
             })
-
             uniLists.push({
               uniName: successUni.data.uniName,
               classOf: successUser.data.study[index].classOf,
             })
           })
           setUnis(uniLists)
+          setUser(successUser.data)
         } catch (error) {
           console.log('Error fetching data', error)
         }
@@ -54,9 +52,9 @@ const UserProfile = ({ setCircle }) => {
       fetchData()
     } else {
       console.log('Im here')
-      history.push('/login', { text: 'hellooooooo' })
+      // history.push('/login', { text: 'hellooooooo' })
     }
-  }, [accessToken, history, userId])
+  }, [accessToken, userId])
 
   const posts = [
     {
@@ -79,7 +77,7 @@ const UserProfile = ({ setCircle }) => {
       <Container disableGutters maxWidth='xl' className='container'>
         <Grid container>
           <Hidden mdDown>
-            <Grid item md={4}>
+            <Grid item md={3}>
               <Card>
                 <Box
                   sx={{
@@ -87,6 +85,7 @@ const UserProfile = ({ setCircle }) => {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    paddingBottom: '20px',
                   }}
                 >
                   <Avatar
@@ -95,24 +94,23 @@ const UserProfile = ({ setCircle }) => {
                     sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
                   />
                   <div>
-                    {user.fName} {user.lName}
+                    {user.fName} {user.lName}kkkkkkkk
                   </div>
                   <div>{user.username}</div>
                   <div>{user.isFrom}</div>
                   <div>{user.role}</div>
                 </Box>
-                <br />
                 <Divider />
                 <List>
-                  {unis.map((uni) => (
-                    <>{uni.uniName}</>
+                  {['A'].map((uni, index) => (
+                    <h1 key={index}>{console.log(unis[0].classOf)}</h1>
                   ))}
                   <ListItem button>
                     <ListItemIcon>
                       <SchoolIcon />
                     </ListItemIcon>
                     <ListItemText
-                      primary={'uni.uniName'}
+                      primary={'uni.uniNameeeeeee'}
                       secondary={'uni.classOf'}
                       onClick={() => console.log('list item clicked')}
                     />
@@ -151,13 +149,13 @@ const UserProfile = ({ setCircle }) => {
                     sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
                   />
                   <div>
-                    {user.fName} {user.lName}
+                    {user.fName} {user.lName}zzzzzzzzzzzzzz
                   </div>
                 </Box>
               </Card>
             </Grid>
           </Hidden>
-          <Grid item xs={8}>
+          <Grid item xs={9}>
             <Hidden mdDown>
               <Post posts={posts} />
             </Hidden>
