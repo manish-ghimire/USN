@@ -1,106 +1,235 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useHistory, useParams } from 'react-router'
 import axios from 'axios'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
+import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import SchoolIcon from '@mui/icons-material/School'
+import Typography from '@mui/material/Typography'
 import Navbar from '../../components/Navbar/Navbar'
+import PostingBox from '../../components/PostingBox/PostingBox.jsx'
 import Post from '../../components/Post/Post.jsx'
 import Card from '../../components/Card/Card'
+import GroupsIcon from '@mui/icons-material/Groups'
 import { Avatar, Container, Grid, Hidden } from '@mui/material'
-import { SettingsInputCompositeSharp } from '@mui/icons-material'
+
+const drawerWidth = 300
 
 const UserProfile = ({ setCircle }) => {
+  const [mobileOpen, setMobileOpen] = React.useState(false)
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen)
+  }
+
   const history = useHistory()
   const { userId } = useParams()
-  const [user, setUser] = useState({})
+  const [user, setUser] = useState([])
   const [unis, setUnis] = useState([])
-  const [blas, setBla] = useState([
-    { uniName: 'University of Canberra', classOf: '2019' },
-    { uniName: 'University of Sydney', classOf: '2021' },
-  ])
   const [clubs, setClubs] = useState([])
+  const [posts, setPosts] = useState([])
   const accessToken = localStorage.getItem('accessToken')
-
   useEffect(() => {
-    console.log('FETCH DATA START')
-    fetchData()
-  }, [])
-
-  const fetchData = async () => {
-    try {
-      const userUrl = `/user/${userId}`
-      const successUser = await axios.get(userUrl, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-
-      const uniLists = []
-
-      for (var i = 0; i < successUser.data.study.length; i++) {
-        console.log('index ' + i + ' Step 1')
-        const successUni = await axios.get(
-          `/uni/${successUser.data.study[i].uniId}`,
-          {
+    setCircle(true)
+    if (accessToken) {
+      const fetchData = async () => {
+        try {
+          const userUrl = `/user/${userId}`
+          const successUser = await axios.get(userUrl, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
+          })
+          setUser(successUser.data)
+
+          let uniLists = []
+          for (var i = 0; i < successUser.data.study.length; i++) {
+            const successUni = await axios.get(
+              `/uni/${successUser.data.study[i].uniId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            )
+            uniLists.push({
+              uniId: successUser.data.study[i].uniId,
+              uniName: successUni.data.uniName,
+              classOf: successUser.data.study[i].classOf,
+            })
           }
-        )
-        console.log('index ' + i + ' Step 2 ' + successUni)
-        uniLists.push({
-          uniName: successUni.data.uniName,
-          classOf: successUser.data.study[i].classOf,
-        })
+          setUnis(uniLists)
 
-        console.log('index ' + i + ' Step 3')
+          let clubLists = []
+          for (var i = 0; i < successUser.data.clubs.length; i++) {
+            const successClub = await axios.get(
+              `/club/${successUser.data.clubs[i]}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            )
+            clubLists.push(successClub.data)
+          }
+          setClubs(clubLists)
+
+          const successPost = await axios.get(`/post?user=${userId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+
+          let postLists = []
+          for (var i = 0; i < successPost.data.length; i++) {
+            postLists.push([successPost.data[i], successUser.data])
+          }
+          setPosts(postLists)
+        } catch (error) {
+          console.log('Error fetching data', error)
+        }
       }
-      setUnis(uniLists)
-
-      /*
-      await successUser.data.study.map(async (uni, index) => {
-        console.log('STEP3')
-        const successUni = await axios.get(`/uni/${uni.uniId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
-        console.log('STEP3.5' + successUni)
-        uniLists.push({
-          uniName: successUni.data.uniName,
-          classOf: successUser.data.study[index].classOf,
-        })
-        console.log('STEP4 push complete')
-        setUnis(uniLists)
-        console.log('STEP5 setunis')
-      })
-      */
-    } catch (error) {
-      console.log('Error fetching data', error)
+      fetchData()
+    } else {
+      console.log('Im here')
+      history.push('/login', { text: 'hellooooooo' })
     }
-  }
+    setCircle(false)
+  }, [history, setCircle, setUnis, accessToken])
 
-  function tester() {}
-
-  console.log('BLAS', blas)
-  console.log('UNIS', unis)
+  const drawer = (
+    <div>
+      <Box sx={{ textAlign: 'center' }}>
+        <h2>Individual</h2>
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar
+          alt='Memy Sharp'
+          src='https://picsum.photos/400/400'
+          sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
+        />
+        <div>
+          {user.fName} {user.lName}
+        </div>
+        <div>{user.username}</div>
+        <div>{user.isFrom}</div>
+        <div>{user.role}</div>
+      </Box>
+      <br />
+      <Divider />
+      <List>
+        {unis.map((uni, index) => {
+          return (
+            <ListItem key={index} button>
+              <ListItemIcon>
+                <SchoolIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={uni.uniName}
+                secondary={`Expected completion ${uni.classOf}`}
+                onClick={() => history.push(`/uni/${uni.uniId}`)}
+              />
+            </ListItem>
+          )
+        })}
+      </List>
+      <Divider />
+      <List>
+        {clubs.map((club, index) => {
+          return (
+            <ListItem key={index} button>
+              <ListItemIcon>
+                <GroupsIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={club.clubName}
+                secondary={club.desc}
+                onClick={() => history.push(`/club/${club._id}`)}
+              />
+            </ListItem>
+          )
+        })}
+      </List>
+    </div>
+  )
 
   return (
     <>
-      {blas.map((bla) => (
-        <h1>Hello</h1>
-      ))}
-      {unis.map((uni) => (
-        <>
-          <h1>{uni.uniName}</h1>
-          <h1>{uni.classOf}</h1>
-        </>
-      ))}
+      <Navbar />
+      <Box
+        component='nav'
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        aria-label='mailbox folders'
+      >
+        <Drawer
+          variant='temporary'
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          sx={{
+            display: { xs: 'block', md: 'none' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+              marginTop: '57px',
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </Box>
+      <Container disableGutters maxWidth='xl' className='container'>
+        <Grid container>
+          <Hidden mdDown>
+            <Grid item md={4}>
+              <Card>{drawer}</Card>
+            </Grid>
+          </Hidden>
+          <Hidden mdUp>
+            <Grid item xs={4}>
+              <Card height='190px'>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Avatar
+                    alt='Memy Sharp'
+                    src='https://picsum.photos/400/400'
+                    sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
+                    onClick={handleDrawerToggle}
+                  />
+                  <div>{/* {user.fName} {user.lName} */}</div>
+                </Box>
+              </Card>
+            </Grid>
+          </Hidden>
+          <Grid item xs={8}>
+            <Hidden mdDown>
+              <Post posts={posts} />
+            </Hidden>
+          </Grid>
+          <Hidden mdUp>
+            <Post posts={posts} />
+          </Hidden>
+        </Grid>
+      </Container>
     </>
   )
 }

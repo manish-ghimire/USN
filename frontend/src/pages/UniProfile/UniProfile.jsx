@@ -14,6 +14,9 @@ import Navbar from '../../components/Navbar/Navbar'
 import PostingBox from '../../components/PostingBox/PostingBox.jsx'
 import Post from '../../components/Post/Post.jsx'
 import Card from '../../components/Card/Card'
+import ArrowBackSharpIcon from '@mui/icons-material/ArrowBackSharp'
+import ArrowForwardSharpIcon from '@mui/icons-material/ArrowForwardSharp'
+import GroupsIcon from '@mui/icons-material/Groups'
 import { Avatar, Container, Grid, Hidden } from '@mui/material'
 
 const drawerWidth = 200
@@ -26,77 +29,76 @@ const UniProfile = ({ setCircle }) => {
   }
 
   const history = useHistory()
-  const { uniId } = useParams()
-  const [unis, setUnis] = useState([])
+  const [clubs, setClubs] = useState([])
+  const [uni, setUni] = useState([])
   const { uniID } = useParams()
   const [posts, setPosts] = useState([])
   const accessToken = localStorage.getItem('accessToken')
   useEffect(() => {
+    console.log(uniID)
     setCircle(true)
     if (accessToken) {
       const fetchData = async () => {
         try {
-          const successStudy = await axios.get(`/uni/${uniID}`, {
+          const successUni = await axios.get(`/uni/${uniID}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
           })
-          console.log('here')
-          setUnis(successStudy)
-          console.log('Success Uni Stuff', successStudy.data)
+          setUni(successUni.data)
+
+          let clubLists = []
+          for (var i = 0; i < successUni.data.clubs.length; i++) {
+            const successClub = await axios.get(
+              `/club/${successUni.data.clubs[i]}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            )
+            clubLists.push(successClub.data)
+          }
+          setClubs(clubLists)
+
+          const successPost = await axios.get(`/post?uni=${uniID}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+
+          console.log(successPost.data)
+          let postLists = []
+          for (var i = 0; i < successPost.data.length; i++) {
+            const successUser = await axios.get(
+              `/user/${successPost.data[i].userId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            )
+            postLists.push([successPost.data[i], successUser.data])
+          }
+          setPosts(postLists)
         } catch (error) {
           console.log('Error fetching data', error)
         }
       }
       fetchData()
-      console.log(unis)
     } else {
       console.log('Im here')
       history.push('/login', { text: 'hellooooooo' })
     }
     setCircle(false)
-  }, [history, setCircle, setUnis, accessToken])
-
-  // useEffect(() => {
-  //   setCircle(true)
-  //   if (accessToken) {
-  //     const fetchData = async () => {
-  //       try {
-  //         // const successPost = await axios.get(`/post/find?user=${userID}`, {
-  //         //   headers: {
-  //         //     Authorization: `Bearer ${accessToken}`,
-  //         //   },
-  //         // })
-  //         // console.log('Success post', successPost)
-  //         const posts = [
-  //           {
-  //             _id: 1,
-  //             text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
-  //             shares: 10,
-  //             likes: 52,
-  //           },
-  //           {
-  //             _id: 2,
-  //             text: 'This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. This is something related to user. ',
-  //             shares: 10,
-  //             likes: 52,
-  //           },
-  //         ]
-  //         setPosts(posts)
-  //       } catch (error) {
-  //         console.log('Error while getting posts', error)
-  //       }
-  //     }
-  //     fetchData()
-  //   } else {
-  //     console.log('Im here')
-  //     history.push('/login', { text: 'hellooooooo' })
-  //   }
-  //   setCircle(false)
-  // }, [history, setCircle, accessToken])
+  }, [history, setCircle, setUni, accessToken])
 
   const drawer = (
     <div>
+      <Box sx={{ textAlign: 'center' }}>
+        <h2>University</h2>
+      </Box>
+      <Divider />
       <Box
         sx={{
           display: 'flex',
@@ -110,52 +112,45 @@ const UniProfile = ({ setCircle }) => {
           src='https://picsum.photos/400/400'
           sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
         />
-        {/* <div>
-          {user.fName} {user.lName}
-        </div>
-        <div>{user.username}</div>
-        <div>{user.isFrom}</div>
-        <div>{user.role}</div> */}
       </Box>
       <br />
       <Divider />
       <List>
-        {['A', 'B', 'C'].map((item) => {
-          return item
-        })}
         <ListItem button>
           <ListItemIcon>
-            <SchoolIcon />
+            <ArrowBackSharpIcon />
           </ListItemIcon>
           <ListItemText
-            primary={'University of Canberra'}
-            secondary={'Expected completion 2021'}
-            onClick={() => console.log('list item clicked')}
+            primary={`29 followers`}
+            onClick={() => alert('Followers clicked')}
           />
         </ListItem>
         <ListItem button>
           <ListItemIcon>
-            <SchoolIcon />
+            <ArrowForwardSharpIcon />
           </ListItemIcon>
           <ListItemText
-            primary={'Frakfurt University'}
-            secondary={'2015-2021'}
-            onClick={() => console.log('list item clicked')}
+            primary={`20 following`}
+            onClick={() => alert('Followings clicked')}
           />
         </ListItem>
       </List>
       <Divider />
       <List>
-        <ListItem button>
-          <ListItemIcon>
-            <SchoolIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={'Engineering Society Club'}
-            secondary={'University of Canberra'}
-            onClick={() => console.log('list item clicked')}
-          />
-        </ListItem>
+        {clubs.map((club, index) => {
+          return (
+            <ListItem key={index} button>
+              <ListItemIcon>
+                <GroupsIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={club.clubName}
+                secondary={club.desc}
+                onClick={() => history.push(`/club/${club._id}`)}
+              />
+            </ListItem>
+          )
+        })}
       </List>
     </div>
   )
