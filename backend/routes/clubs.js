@@ -89,28 +89,6 @@ router.post('/register', verify, async (req, res) => {
 
 //Update Users
 // https://reqbin.com/
-<<<<<<< HEAD
-// put--> http://localhost:5000/api/club/:clubDisplayName
-// router.put(/:clubDisplayName?join=:id)
-// router.put(/:clubDisplayName?leave=:id)
-router.put('/:clubDisplayName', verify, async (req, res) => {
-  // const clubName = await club.findOne({clubDisplayName: req.params.clubDisplayName});
-
-  const joinClub = req.query.join
-  const leaveClub = req.query.leave
-  // console.log(leaveclub)
-  // if (clubDisplayName){
-  const clubName = await Club.findOne({
-    clubDisplayName: req.params.clubDisplayName,
-  })
-
-  async function clubUpdate(clubName) {
-    try {
-      if (clubName.clubAdmin.includes(req.user.id) || req.user.isAdmin) {
-        console.log({ includes: clubName.clubAdmin.includes(req.user.id) })
-        if (req.body.clubAdmin) {
-          const updatedClubAdmin = await clubName.updateOne({
-=======
 // put--> http://localhost:5000/api/club/:id
 // update club group by id only for admin
     router.put("/:id", verify, async (req, res) => {
@@ -126,7 +104,6 @@ router.put('/:clubDisplayName', verify, async (req, res) => {
             }
           });
           const clubToUser = await User.updateOne({
->>>>>>> 34f9caf13437be9934a5529eb4480e32cdbbc379
             $push: {
               clubAdmin: req.body.clubAdmin,
             },
@@ -149,107 +126,6 @@ router.put('/:clubDisplayName', verify, async (req, res) => {
       } else {
         return res.status(401).json('Not authenticated!')
       }
-<<<<<<< HEAD
-    } catch (err) {
-      return res.status(401).json(err)
-    }
-  }
-
-  async function joinClubGroup(joinClub) {
-    if (joinClub) {
-      // const clubName = await club.findOne({
-      //   clubDisplayName: req.params.clubDisplayName
-      // });
-      if (
-        clubName.clubMembers.includes(req.user.id) ||
-        clubName.clubMembers.includes(joinClub) ||
-        clubName.clubAdmin.includes(req.user.id) ||
-        clubName.clubAdmin.includes(joinClub)
-      ) {
-        return res.status(402).json({
-          error: 'already joined',
-        })
-      } else if (
-        (req.user.id === joinClub &&
-          !clubName.clubMembers.includes(req.user.id)) ||
-        req.user.isAdmin
-      ) {
-        const updateClubMember = await clubName.updateOne({
-          $push: {
-            clubMembers: req.user.id,
-          },
-        })
-        console.log('user joined!')
-        return res.status(200).json('user joined!')
-      }
-    }
-  }
-
-  async function leaveClubGroup(leaveClub) {
-    console.log('leaaaaaave')
-    if (leaveClub) {
-      if (req.user.id === leaveClub || req.user.isAdmin) {
-        const updatedClubMember = await clubName.updateOne({
-          $pull: {
-            clubMembers: leaveClub,
-          },
-        })
-        return res.status(200).json('Left club group!')
-      } else {
-        return res.status(200).json('You are not apart of this club group!')
-      }
-      if (clubName.clubAdmin.includes(req.user.id) || req.user.isAdmin) {
-        console.log('zzz')
-        if (clubName.clubAdmin.length < 2) {
-          if (req.body.clubAdmin) {
-            const updatedClubAdmin1 = await clubName.updateOne({
-              $push: {
-                clubAdmin: req.body.clubAdmin,
-              },
-            })
-            const updatedClubAdmin2 = await clubName.updateOne({
-              $pull: {
-                clubAdmin: req.user.id,
-                clubMembers: req.body.clubAdmin,
-              },
-            })
-            const userCMember = User.findById(req.user.id)
-            const userCAdmin = User.findById(req.body.clubAdmin)
-            if (userCMember) {
-              const updatedClubAdmintoUser = await userCMember.updateOne({
-                $pull: {
-                  clubs: req.user.id,
-                },
-              })
-            }
-            if (userCAdmin) {
-              const updatedClubAdmintoUser2 = await userCAdmin.updateOne({
-                $pull: {
-                  clubs: req.user.clubAdmin,
-                },
-              })
-            }
-            return res.status(200).json('admin updated')
-          } else {
-            return res.status(200).json('club group needs an admin')
-          }
-        } else {
-          console.log('>>>2')
-          const updatedClubMember = await clubName.updateOne({
-            $pull: {
-              clubAdmin: req.user.id,
-            },
-          })
-          const userCMember = User.findById(req.user.id)
-          if (userCMember) {
-            const updatedClubAdmintoUser = await userCMember.updateOne({
-              $pull: {
-                clubs: req.user.id,
-              },
-            })
-          }
-          // up to herre=========================================================
-=======
     });
      // http://localhost:5000/api/club/:id/join
 router.put("/:id/join", verify, async (req, res) => {
@@ -381,7 +257,6 @@ router.put("/:id/leave", verify, async (req, res) => {
         }
       }
 console.log({"leave":club});
->>>>>>> 34f9caf13437be9934a5529eb4480e32cdbbc379
 
           return res.status(200).json('admin updated')
         }
