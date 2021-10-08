@@ -18,6 +18,7 @@ const UserProfile = ({ setCircle }) => {
   const { userId } = useParams()
   const [user, setUser] = useState({})
   const [unis, setUnis] = useState([])
+    const [classOf, setClassOf] = useState([])
   // const [posts, setPosts] = useState([])
   const accessToken = localStorage.getItem('accessToken')
 
@@ -25,38 +26,45 @@ const UserProfile = ({ setCircle }) => {
     if (accessToken) {
       const fetchData = async () => {
         try {
-          const successUser = await axios.get(`/user/${userId}`, {
+          const userUrl = `/user/${userId}`
+          const successUser = await axios.get(userUrl, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
           })
-          setUser(successUser.data)
-          console.log(successUser.data)
+          // setUser(successUser.data)
 
+          const user = successUser.data
+          // user.study
+            console.log(user.study);
+          // const uniId = '615f9d6cf450994aac5b700b'
           const uniLists = []
-          successUser.data.study.map(async (uni, index) => {
-            const successUni = await axios.get(`/uni/${uni.uniId}`, {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            })
+        const unis =  user.study.map(async (uni, index)=>{
 
-            uniLists.push({
-              uniName: successUni.data.uniName,
-              classOf: successUser.data.study[index].classOf,
-            })
+          const successUni = await axios.get(`/uni/${uni.uniId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
           })
-          setUnis(uniLists)
+setUnis(successUni.data.uniName)
+
+      console.log(successUni)
+      const userz = user.study.map(async (user, index)=>{
+        setClassOf(user.classOf);
+      })
+
+     })
+
+
         } catch (error) {
           console.log('Error fetching data', error)
         }
       }
       fetchData()
     } else {
-      console.log('Im here')
       history.push('/login', { text: 'hellooooooo' })
     }
-  }, [accessToken, history, userId])
+  }, [accessToken, history])
 
   const posts = [
     {
@@ -72,14 +80,22 @@ const UserProfile = ({ setCircle }) => {
       likes: 52,
     },
   ]
+  const bla = [
+    { uniName: 'University of Canberra', classOf: '2019' },
+    { uniName: 'University of Sydney', classOf: '2021' },
+  ]
 
   return (
     <>
+
+      {/* {console.log('BLA', bla)} */}
+      {/* {console.log('USER', user)} */}
+      {/* {console.log('UNIS', unis)} */}
       <Navbar />
       <Container disableGutters maxWidth='xl' className='container'>
         <Grid container>
           <Hidden mdDown>
-            <Grid item md={4}>
+            <Grid item md={3}>
               <Card>
                 <Box
                   sx={{
@@ -87,6 +103,7 @@ const UserProfile = ({ setCircle }) => {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    paddingBottom: '20px',
                   }}
                 >
                   <Avatar
@@ -94,26 +111,23 @@ const UserProfile = ({ setCircle }) => {
                     src='https://picsum.photos/400/400'
                     sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
                   />
-                  <div>
-                    {user.fName} {user.lName}
+                  {/* <div>
+                    {user.fName} {user.lName}kkkkkkkk
                   </div>
                   <div>{user.username}</div>
                   <div>{user.isFrom}</div>
-                  <div>{user.role}</div>
+                  <div>{user.role}</div> */}
                 </Box>
-                <br />
                 <Divider />
                 <List>
-                  {unis.map((uni) => (
-                    <>{uni.uniName}</>
-                  ))}
+                   {console.log('UNIS')}
                   <ListItem button>
                     <ListItemIcon>
                       <SchoolIcon />
                     </ListItemIcon>
                     <ListItemText
-                      primary={'uni.uniName'}
-                      secondary={'uni.classOf'}
+                      primary={unis}
+                      secondary={classOf}
                       onClick={() => console.log('list item clicked')}
                     />
                   </ListItem>
@@ -133,37 +147,6 @@ const UserProfile = ({ setCircle }) => {
                 </List>
               </Card>
             </Grid>
-          </Hidden>
-          <Hidden mdUp>
-            <Grid item xs={12}>
-              <Card height='190px'>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Avatar
-                    alt='Memy Sharp'
-                    src='https://picsum.photos/400/400'
-                    sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
-                  />
-                  <div>
-                    {user.fName} {user.lName}
-                  </div>
-                </Box>
-              </Card>
-            </Grid>
-          </Hidden>
-          <Grid item xs={8}>
-            <Hidden mdDown>
-              <Post posts={posts} />
-            </Hidden>
-          </Grid>
-          <Hidden mdUp>
-            <Post posts={posts} />
           </Hidden>
         </Grid>
       </Container>
