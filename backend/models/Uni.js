@@ -30,7 +30,7 @@ const UniSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    following: {
+    followings: {
       type: Array,
       default: [],
     },
@@ -39,6 +39,10 @@ const UniSchema = new mongoose.Schema(
       max: 255,
     },
     uniAdmin: {
+      type: Array,
+      default: [],
+    },
+    clubs: {
       type: Array,
       default: [],
     },
