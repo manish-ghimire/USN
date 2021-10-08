@@ -36,6 +36,14 @@ router.get("/item/:itemId/comments", verify, async (req, res) => {
   res.status(200).json(com);
 });
 router.post("/item/", verify, async (req, res) => {
+  if (!req.body.itemName || !req.body.itemPrice){
+    console.log({
+      errors: 'itemName or itemPrice field is required',
+    })
+    return res.status(422).json({
+      error: 'itemName or itemPrice field is required',
+    })
+  }else{
   const newMark = new Market({
     userId: req.user.id,
     itemName: req.body.itemName,
@@ -54,6 +62,7 @@ router.post("/item/", verify, async (req, res) => {
     const saveMark = await newMark.save();
     res.status(200).json(saveMark);
   }
+}
   // }
   // catch (err) {
   //   res.status(500).json(err);
