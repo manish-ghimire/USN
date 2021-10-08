@@ -116,15 +116,6 @@ router.put('/:id', verify, async (req, res) => {
   const uniName = await Uni.findOne({
     _id: req.params.id,
   })
-  console.log({
-    userid: req.user.id,
-  })
-  console.log({
-    uniId: uniName._id,
-  })
-  console.log({
-    uniadmin: uniName.uniAdmin,
-  })
   if (uniName.uniAdmin.includes(req.user.id) || req.user.isAdmin) {
     if (req.body.uniAdmin !== req.user.id) {
       const updatedUniAdmin = await uniName.updateOne({
@@ -170,13 +161,22 @@ router.delete('/:id', verify, async (req, res) => {
 
 // ******************************************************
 
-router.get('/:uniDisplayName/find', verify, async (req, res) => {
-  const uniName = await Uni.findOne({
-    uniDisplayName: req.params.uniDisplayName,
+router.get('/:uniId/find', verify, async (req, res) => {
+  const uniId = await Uni.findOne({
+    uniDisplayName: req.params.uniId,
   })
+  if (!uniId) {
+    const uniId = await Uni.findOne({
+      _id: req.params.uniId,
+    })
   console.log(uniName._id)
   console.log('finduniclubs')
-  if (uniName) {
+    const club = await Club.find({ clubToUni: uniName._id })
+    if (club) {
+      res.status(200).json(club)
+      console.log(club)
+    }
+  }else{
     const club = await Club.find({ clubToUni: uniName._id })
     if (club) {
       res.status(200).json(club)

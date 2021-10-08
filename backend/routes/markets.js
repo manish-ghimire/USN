@@ -35,22 +35,31 @@ router.get('/item/:itemId/comments', verify, async (req, res) => {
   res.status(200).json(com)
 })
 router.post('/item/', verify, async (req, res) => {
-  const newMark = new Market({
-    userId: req.user.id,
-    itemName: req.body.itemName,
-    itemDesc: req.body.itemDesc,
-    itemPrice: req.body.itemPrice,
-    itemLocation: req.body.itemLocation,
-    img: req.body.img,
-    role: req.body.role,
-    postToId: req.body.postToId,
-  })
-  // try {
-  if (!newMark) {
-    res.status(422).json({ error: 'All fields are required' })
+  if (!req.body.itemName || !req.body.itemPrice) {
+    console.log({
+      errors: 'itemName or itemPrice field is required',
+    })
+    return res.status(422).json({
+      error: 'itemName or itemPrice field is required',
+    })
   } else {
-    const saveMark = await newMark.save()
-    res.status(200).json(saveMark)
+    const newMark = new Market({
+      userId: req.user.id,
+      itemName: req.body.itemName,
+      itemDesc: req.body.itemDesc,
+      itemPrice: req.body.itemPrice,
+      itemLocation: req.body.itemLocation,
+      img: req.body.img,
+      role: req.body.role,
+      postToId: req.body.postToId,
+    })
+    // try {
+    if (!newMark) {
+      res.status(422).json({ error: 'All fields are required' })
+    } else {
+      const saveMark = await newMark.save()
+      res.status(200).json(saveMark)
+    }
   }
   // }
   // catch (err) {

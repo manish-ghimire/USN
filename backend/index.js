@@ -14,6 +14,8 @@ const marketRoute = require("./routes/markets");
 const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");
 const commentRoute = require("./routes/comments");
+const courseRoute = require("./routes/courses");
+const facultyRoute = require("./routes/faculties");
 const jwt = require("jsonwebtoken");
 dotenv.config();
 app.use(express.json());
@@ -35,6 +37,8 @@ app.use("/api/comment", commentRoute);
 app.use("/api/club", clubRoute);
 app.use("/api/conversation", conversationRoute);
 app.use("/api/message", messageRoute);
+app.use("/api/course", courseRoute);
+app.use("/api/faculty", facultyRoute);
 
 
 app.listen(5000, () => {
