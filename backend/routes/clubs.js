@@ -106,7 +106,7 @@ router.post("/register", verify, async (req, res) => {
 
 //Update Users
 // https://reqbin.com/
-// put--> http://localhost:5000/api/club/:clubDisplayName
+// put--> http://localhost:5000/api/club/:id
 // update club group by id only for admin
     router.put("/:id", verify, async (req, res) => {
       const club = await Club.findOne({_id: req.params.id});
@@ -165,6 +165,7 @@ router.post("/register", verify, async (req, res) => {
         return res.status(401).json("Not club group admin!!");
       }
     });
+     // http://localhost:5000/api/club/:id/join
 router.put("/:id/join", verify, async (req, res) => {
   const club = await Club.findOne({_id: req.params.id});
   if (club.clubMembers.includes(req.user.id) || club.clubAdmin.includes(req.user.id)) {
@@ -173,17 +174,17 @@ router.put("/:id/join", verify, async (req, res) => {
             error: "already joined"
           });
 
-        }else if (req.user.id === req.body.userId && !club.clubMembers.includes(req.user.id) || req.user.isAdmin) {
+        }else if (!club.clubMembers.includes(req.user.id)) {
         //
                       const updateclubMember = await Club.updateOne({
                         $push: {
-                          clubMembers: req.body.userId
+                          clubMembers: req.user.id
                         }});
-                        const userSMember = await User.findById(req.body.userId);
-                        console.log("userSMember", userSMember);
-                        const clubMembertoUserUpdated = await userSMember.updateOne({
+                        const userCMember = await User.findById(req.body.userId);
+                        console.log("userCMember", userCMember);
+                        const clubMembertoUserUpdated = await userCMember.updateOne({
                           $push: {
-                            clubs: req.body.userId
+                            clubs: req.user.id
                           }
                         });
                       console.log("user joined!")
@@ -192,13 +193,17 @@ router.put("/:id/join", verify, async (req, res) => {
                       console.log('hrer');
                       const clubMemberUpdated = await Club.updateOne({
                         $push: {
-                          clubMembers: req.body.userId
+                          clubMembers: req.body.clubMember
                         }});
-                        const userSMember =  await User.findById(req.body.userId);
-                        console.log('herere')
-                        const clubMembertoUserUpdated = await userSMember.updateOne({
+                        const clubAdminUpdated = await Club.updateOne({
                           $push: {
-                            clubs: req.body.userId
+                            clubAdmin: req.body.clubAdmin
+                          }});
+                        const userCMember =  await User.findById(req.body.clubAdmin);
+                        console.log('herere')
+                        const clubMembertoUserUpdated = await userCMember.updateOne({
+                          $push: {
+                            clubs: req.body.clubAdmin
                           }
                         });
                       console.log("user joined!")
@@ -209,20 +214,28 @@ router.put("/:id/join", verify, async (req, res) => {
 console.log({"join":club});
 
 });
-
+ // http://localhost:5000/api/club/:id/leave
 router.put("/:id/leave", verify, async (req, res) => {
   const club = await Club.findOne({_id: req.params.id});
-  if (req.user.id === req.body.userId || req.user.isAdmin){
+  // console.log(club.clubMembers.includes(req.user.id))
+  if (club.clubMembers.includes(req.user.id)){
+    console.log("1member");
     const clubMemberUpdated = await Club.updateOne({
               $pull: {
-                clubMembers: req.body.userId
+                clubMembers: req.user.id
               }
             });
+            const userCMember = await User.findById(req.user.id);
+              if (userCMember){
+                const clubMembertoUserUpdated = await userCMember.updateOne({
+                  $pull: {
+                      clubs: req.user.id
+                    }
+                });
+              }
             return res.status(200).json("Left club group!");
-          }else{
-            return res.status(200).json("You are not apart of this club group!");
-          }
-                  if (club.clubAdmin.includes(req.user.id) || req.user.isAdmin) {
+          }else if (club.clubAdmin.includes(req.user.id) || req.user.isAdmin) {
+                    console.log(club.clubAdmin.includes(req.user.id))
                     console.log("zzz");
                     if (club.clubAdmin.length < 2) {
                       if (req.body.clubAdmin){
@@ -237,10 +250,10 @@ router.put("/:id/leave", verify, async (req, res) => {
                             clubMembers: req.body.clubAdmin
                           }
                         });
-                        const userSMember = await User.findById(req.user.id);
+                        const userCMember = await User.findById(req.user.id);
                           const userSAdmin = await User.findById(req.body.clubAdmin);
-                          if (userSMember){
-                            const clubAdmintoUserUpdated1 = await userSMember.updateOne({
+                          if (userCMember){
+                            const clubAdmintoUserUpdated1 = await userCMember.updateOne({
                               $pull: {
                                   clubs: req.user.id
                                 }
@@ -249,7 +262,7 @@ router.put("/:id/leave", verify, async (req, res) => {
                            if (userSAdmin){
                             const clubAdmintoUserUpdated2 = await userSAdmin.updateOne({
                               $pull: {
-                                  clubs: req.user.clubAdmin
+                                  clubs: req.body.clubAdmin
                                 }
                             });
                           }
@@ -259,24 +272,28 @@ router.put("/:id/leave", verify, async (req, res) => {
                       }
                     }else{
                       console.log(">>>2");
+                      if (club.clubAdmin.includes(req.body.clubAdmin)){
                       const clubMemberUpdated = await Club.updateOne({
                         $pull: {
-                          clubAdmin: req.user.id
+                          clubAdmin: req.body.clubAdmin
                         }
                       });
                       const userSAdmin = await User.findById(req.body.clubAdmin);
                       if (userSAdmin){
                        const clubAdmintoUserUpdated2 = await userSAdmin.updateOne({
                          $pull: {
-                             clubs: req.user.clubAdmin
+                             clubs: req.body.clubAdmin
                            }
                        });
                      }
-                      return res.status(200).json("admin updated");
-                    }
-                } else {
+                      return res.status(200).json("updated");
+                    } else if (!club.clubAdmin.includes(req.body.clubAdmin)){
+                    return res.status(200).json("No such User");
+                  } else{
             return res.status(200).json("You are not apart of this club group!");
           }
+        }
+      }
 console.log({"leave":club});
 
 });
