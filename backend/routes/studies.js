@@ -53,7 +53,7 @@ router.get("/", verify, async (req, res) => {
 router.post("/register", verify, async (req, res) => {
 
   try {
-    if (!req.body.studyGroup) {
+    if (!req.body.studyName) {
       console.log({
         errors: "Study Name field is required"
       });
@@ -69,7 +69,7 @@ router.post("/register", verify, async (req, res) => {
         // backend error stuff
         let errors = {};
         if (study.studyDisplayName === req.body.studyGroup.replace(/\s+/g, '')) {
-          errors.studyGroup = "study Name already exists";
+          errors.studyName = "study Name already exists";
         }
         return res.status(403).json({
           errors
@@ -103,15 +103,13 @@ router.post("/register", verify, async (req, res) => {
 // put--> http://localhost:5000/api/study/:studyDisplayName
 // update study group by id only for admin
 router.put("/:id", verify, async (req, res) => {
-  const study = await Study.findOne({
-    _id: req.params.id
-  });
-  console.log("isAdmin", req.user.isAdmin)
+  const study = await study.findOne({_id: req.params.id});
+  console.log("isAdmin",req.user.isAdmin)
   if (study.studyAdmin.includes(req.user.id) || req.user.isAdmin) {
     //       console.log({"includes":study.studyAdmin.includes(req.user.id)});
     // if(req.body.studyAdmin || req.body.studyMember){
     if (!study.studyAdmin.includes(req.body.studyAdmin)) {
-      const studyAdminUpdate = await Study.updateOne({
+      const studyAdminUpdate = await study.updateOne({
         $push: {
           studyAdmin: req.body.studyAdmin
         }
@@ -127,7 +125,7 @@ router.put("/:id", verify, async (req, res) => {
         studyMembers,
         ...other
       } = req.body;
-      const study = await Study.findById(req.params.id);
+      const study = await study.findById(req.params.id);
       const studyUpdated = await study.update({
         $set: other,
         $push: {
@@ -160,167 +158,142 @@ router.put("/:id", verify, async (req, res) => {
   }else{
     return res.status(401).json("Not study group admin!!");
   }
-
-  //   if (!study.studyMembers.includes(req.body.studyMember) || req.user.isAdmin) {
-  //     const {
-  //       studyAdmin,
-  //       studyMembers,
-  //       ...other
-  //     } = req.body;
-  //     const study = await Study.findById(req.params.id);
-  //     const studyUpdated = await study.update({
-  //       $set: other,
-  //       $push: {
-  //         studyMembers: req.body.studyMember,
-  //       },
-  //     }, {
-  //       multi: true,
-  //     })
-  //     const studyToUser = await User.findByIdAndUpdate(req.params.userId, {
-  //       $push: {
-  //         studyGroups: req.params.userId
-  //       }
-  //     });
-  //     console.log(
-  //       "2"
-  //     );
-  //     res.status(200).json('study group has been updated!')
-  // }
-    // else{
-    //     return res.status(401).json("Not study group admin!!");
-  //   // }
-  // } else{
-  //     return res.status(401).json("Not study group admin!!!");
-  // }
-  // if(!study.studyAdmin.includes(req.user.id)){
-  //   return res.status(401).json("Not study group admin!");
-  // } else {
-  //   return res.status(401).json("Not authenticated!");
-  // }
-
-//
-// console.log({"3":"studyUpdated"});
-// console.log({"update":study});
-
 });
+ // http://localhost:5000/api/study/:id/join
 router.put("/:id/join", verify, async (req, res) => {
-  const studyGroup = await Study.findOne({_id: req.params.id});
-  if (studyGroup.studyMembers.includes(req.user.id) || studyGroup.studyAdmin.includes(req.user.id)) {
-    console.log({error: "already joined"});
-          return res.status(402).json({
-            error: "already joined"
-          });
+const study = await study.findOne({_id: req.params.id});
+if (study.studyMembers.includes(req.user.id) || study.studyAdmin.includes(req.user.id)) {
+console.log({error: "already joined"});
+      return res.status(402).json({
+        error: "already joined"
+      });
 
-        }else if (req.user.id === req.body.userId && !studyGroup.studyMembers.includes(req.user.id) || req.user.isAdmin) {
-        //
-                      const updateStudyMember = await studyGroup.updateOne({
-                        $push: {
-                          studyMembers: req.body.userId
-                        }});
-                        const userSMember = await User.findById(req.body.userId);
-                        console.log("userSMember", userSMember);
-                        const studyMembertoUserUpdated = await userSMember.updateOne({
-                          $push: {
-                            studyGroups: req.body.userId
-                          }
-                        });
-                      console.log("user joined!")
-                      return res.status(200).json("user joined!");
-              } else if (studyGroup.studyAdmin.includes(req.user.id) || req.user.isAdmin) {
-                      console.log('hrer');
-                      const studyMemberUpdated = await studyGroup.updateOne({
-                        $push: {
-                          studyMembers: req.body.userId
-                        }});
-                        const userSMember =  await User.findById(req.body.userId);
-                        console.log('herere')
-                        const studyMembertoUserUpdated = await userSMember.updateOne({
-                          $push: {
-                            studyGroups: req.body.userId
-                          }
-                        });
-                      console.log("user joined!")
-                      return res.status(200).json("user joined!");
+    }else if (!study.studyMembers.includes(req.user.id)) {
+    //
+                  const updatestudyMember = await study.updateOne({
+                    $push: {
+                      studyMembers: req.user.id
+                    }});
+                    const userSMember = await User.findById(req.body.userId);
+                    console.log("userSMember", userSMember);
+                    const studyMembertoUserUpdated = await userSMember.updateOne({
+                      $push: {
+                        studyGroups: req.user.id
+                      }
+                    });
+                  console.log("user joined!")
+                  return res.status(200).json("user joined!");
+          } else if (study.studyAdmin.includes(req.user.id) || req.user.isAdmin) {
+                  console.log('hrer');
+                  const studyMemberUpdated = await study.updateOne({
+                    $push: {
+                      studyMembers: req.body.studyMember
+                    }});
+                    const studyAdminUpdated = await study.updateOne({
+                      $push: {
+                        studyAdmin: req.body.studyAdmin
+                      }});
+                    const userSMember =  await User.findById(req.body.studyAdmin);
+                    console.log('herere')
+                    const studyMembertoUserUpdated = await userSMember.updateOne({
+                      $push: {
+                        studyGroups: req.body.studyAdmin
+                      }
+                    });
+                  console.log("user joined!")
+                  return res.status(200).json("user joined!");
 
-                    }
+                }
 
-console.log({"join":studyGroup});
+console.log({"join":study});
 
 });
-
+// http://localhost:5000/api/study/:id/leave
 router.put("/:id/leave", verify, async (req, res) => {
-  const studyGroup = await Study.findOne({_id: req.params.id});
-  if (req.user.id === req.body.userId || req.user.isAdmin){
-    const studyMemberUpdated = await studyGroup.updateOne({
-              $pull: {
-                studyMembers: req.body.userId
-              }
-            });
-            return res.status(200).json("Left study group!");
-          }else{
-            return res.status(200).json("You are not apart of this study group!");
+const study = await study.findOne({_id: req.params.id});
+// console.log(study.studyMembers.includes(req.user.id))
+if (study.studyMembers.includes(req.user.id)){
+console.log("1member");
+const studyMemberUpdated = await study.updateOne({
+          $pull: {
+            studyMembers: req.user.id
           }
-                  if (studyGroup.studyAdmin.includes(req.user.id) || req.user.isAdmin) {
-                    console.log("zzz");
-                    if (studyGroup.studyAdmin.length < 2) {
-                      if (req.body.studyAdmin){
-                        const studyAdmiUpdated1 = await studyGroup.updateOne({
-                          $push: {
-                              studyAdmin: req.body.studyAdmin
+        });
+        const userSMember = await User.findById(req.user.id);
+          if (userSMember){
+            const studyMembertoUserUpdated = await userSMember.updateOne({
+              $pull: {
+                  studyGroups: req.user.id
+                }
+            });
+          }
+        return res.status(200).json("Left study group!");
+      }else if (study.studyAdmin.includes(req.user.id) || req.user.isAdmin) {
+                console.log(study.studyAdmin.includes(req.user.id))
+                console.log("zzz");
+                if (study.studyAdmin.length < 2) {
+                  if (req.body.studyAdmin){
+                    const studyAdmiUpdated1 = await study.updateOne({
+                      $push: {
+                          studyAdmin: req.body.studyAdmin
+                        }
+                    });
+                    const studyAdmiUpdated2 = await study.updateOne({
+                       $pull: {
+                        studyAdmin: req.user.id,
+                        studyMembers: req.body.studyAdmin
+                      }
+                    });
+                    const userSMember = await User.findById(req.user.id);
+                      const userSAdmin = await User.findById(req.body.studyAdmin);
+                      if (userSMember){
+                        const studyAdmintoUserUpdated1 = await userSMember.updateOne({
+                          $pull: {
+                              studyGroups: req.user.id
                             }
                         });
-                        const studyAdmiUpdated2 = await studyGroup.updateOne({
-                           $pull: {
-                            studyAdmin: req.user.id,
-                            studyMembers: req.body.studyAdmin
-                          }
-                        });
-                        const userSMember = await User.findById(req.user.id);
-                          const userSAdmin = await User.findById(req.body.studyAdmin);
-                          if (userSMember){
-                            const studyAdmintoUserUpdated1 = await userSMember.updateOne({
-                              $pull: {
-                                  studyGroups: req.user.id
-                                }
-                            });
-                          }
-                           if (userSAdmin){
-                            const studyAdmintoUserUpdated2 = await userSAdmin.updateOne({
-                              $pull: {
-                                  studyGroups: req.user.studyAdmin
-                                }
-                            });
-                          }
-                        return res.status(200).json("admin updated");
-                      }else{
-              return res.status(200).json("study group needs an admin");
                       }
-                    }else{
-                      console.log(">>>2");
-                      const studyMemberUpdated = await studyGroup.updateOne({
-                        $pull: {
-                          studyAdmin: req.user.id
-                        }
-                      });
-                      const userSAdmin = await User.findById(req.body.studyAdmin);
-                      if (userSAdmin){
-                       const studyAdmintoUserUpdated2 = await userSAdmin.updateOne({
-                         $pull: {
-                             studyGroups: req.user.studyAdmin
-                           }
-                       });
-                     }
-                      return res.status(200).json("admin updated");
+                       if (userSAdmin){
+                        const studyAdmintoUserUpdated2 = await userSAdmin.updateOne({
+                          $pull: {
+                              studyGroups: req.body.studyAdmin
+                            }
+                        });
+                      }
+                    return res.status(200).json("admin updated");
+                  }else{
+          return res.status(200).json("study group needs an admin");
+                  }
+                }else{
+                  console.log(">>>2");
+                  if (study.studyAdmin.includes(req.body.studyAdmin)){
+                  const studyMemberUpdated = await study.updateOne({
+                    $pull: {
+                      studyAdmin: req.body.studyAdmin
                     }
-                } else {
-            return res.status(200).json("You are not apart of this study group!");
-          }
-console.log({"leave":studyGroup});
+                  });
+                  const userSAdmin = await User.findById(req.body.studyAdmin);
+                  if (userSAdmin){
+                   const studyAdmintoUserUpdated2 = await userSAdmin.updateOne({
+                     $pull: {
+                         studyGroups: req.body.studyAdmin
+                       }
+                   });
+                 }
+                  return res.status(200).json("updated");
+                } else if (!study.studyAdmin.includes(req.body.studyAdmin)){
+                return res.status(200).json("No such User");
+              } else{
+        return res.status(200).json("You are not apart of this study group!");
+      }
+    }
+  }
+console.log({"leave":study});
 
 });
 
 
-// Delete studys
+// Delete studyGroups
 // https://reqbin.com/
 // delete--> http://localhost:5000/api/study/:studyDisplayName
 router.delete("/:studyDisplayName", verify, async (req, res) => {
