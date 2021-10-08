@@ -44,7 +44,7 @@ router.get('/', verify, async (req, res) => {
 // http://localhost:5000/api/study/register
 router.post('/register', verify, async (req, res) => {
   try {
-    if (!req.body.studyName) {
+    if (!req.body.studyGroup) {
       console.log({
         errors: 'Study Name field is required',
       })
@@ -66,8 +66,8 @@ router.post('/register', verify, async (req, res) => {
         })
       } else {
         const newStudy = new Study({
-          studyName: req.body.studyName,
-          studyDisplayName: req.body.studyName.replace(/\s+/g, ''),
+          studyGroup: req.body.studyGroup,
+          studyDisplayName: req.body.studyGroup.replace(/\s+/g, ''),
           studyAdmin: req.user.id,
           desc: req.body.desc,
           coverPicture: req.body.coverPicture,
@@ -304,7 +304,7 @@ router.delete('/:studyDisplayName', verify, async (req, res) => {
   if (studyName) {
     if (studyName.studyAdmin.includes(req.user.id) || req.user.isAdmin) {
       // await Study.deleteMany({
-      //   userId: studyName._id
+      //   userId: studyGroup._id
       // });
 
       await Study.findByIdAndDelete(studyName._id)
