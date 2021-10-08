@@ -45,6 +45,10 @@ const UniSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    facultyId: {
+      type: Array,
+      default: [],
+    },
   },
   { timestamps: true }
 )
