@@ -87,7 +87,7 @@ router.post('/register', verify, async (req, res) => {
   // })
   // }
 })
-// NOT WORKING
+
 router.put('/:id', verify, async (req, res) => {
   const club = await Club.findOne({ _id: req.params.id })
   console.log('isAdmin', req.user.isAdmin)
@@ -193,7 +193,6 @@ router.delete('/:clubId', verify, async (req, res) => {
 
 //**********************************************
 
-// NOT WORKING
 router.put('/:id/join', verify, async (req, res) => {
   const club = await Club.findOne({ _id: req.params.id })
   if (
