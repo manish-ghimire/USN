@@ -1,14 +1,9 @@
 const router = require('express').Router()
 const User = require('../models/User')
-const Uni = require('../models/Uni')
-const Study = require('../models/Study')
-const Club = require('../models/Club')
 const Post = require('../models/Post')
 const verify = require('./verify')
 const bcrypt = require('bcrypt')
 
-// Get User Via userId or Username
-// http://localhost:5000/api/users/:id or username
 router.get('/:id', verify, async (req, res) => {
   const usern = await User.findOne({ username: req.params.id })
   if (!usern) {
@@ -27,26 +22,12 @@ router.get('/:id', verify, async (req, res) => {
   }
 })
 
-// get all user via query
 router.get('/', verify, async (req, res) => {
-  // const role = req.query.Roles
   let users
-  // console.log(role)
-  // if (role) {
-  //   users = await Post.find({
-  //     role: {
-  //       $in: [role],
-  //     },
-  //   })
-  //   res.status(200).json(users)
-  // } else {
   users = await User.find()
   res.status(200).json(users)
-  // }
 })
 
-//Update User
-// put--> http://localhost:5000/api/users/:id
 router.put('/:id', verify, async (req, res) => {
   if (req.user.id === req.params.id || req.user.isAdmin) {
     if (req.body.password) {
@@ -57,7 +38,6 @@ router.put('/:id', verify, async (req, res) => {
         return res.status(500).json(err)
       }
     }
-    // try {
     if (req.body.isAdmin === req.user.isAdmin || req.user.isAdmin) {
       const user = await User.findById(req.params.id)
 
@@ -98,35 +78,17 @@ router.put('/:id', verify, async (req, res) => {
 
       return res.status(200).json('user has been updated')
     }
-    // } catch (err) {
-    //   res.status(500).json(err)
-    // }
   } else {
     res.status(401).json('Can not update!')
   }
-  //  if (reqUser._doc.isAdmin){
-  //    try {
-  //        const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-  //            $set: {isAdmin: req.body.isAdmin},
-  //        }, {
-  //            new: true
-  //        });
-  //        res.status(401).json("Can not update!");
-  //    } catch (err) {
-  //        res.status(500).json(err);
-  //    }
-  // }
 })
 
-// Delete User
 router.delete('/:id', verify, async (req, res) => {
-  // const reqUser = await User.findById(req.body.userId);
   console.log(req.user.isAdmin)
   if (req.user.id === req.params.id || req.user.isAdmin) {
     try {
       const user = await User.findById(req.params.id)
       try {
-        //delete all post from user
         await Post.deleteMany({
           username: user.username,
         })
@@ -143,51 +105,8 @@ router.delete('/:id', verify, async (req, res) => {
   }
 })
 
-// Get followers
-// router.get('/:userId/following', verify, async (req, res) => {
-//   try {
-//     const user = await User.findById(req.params.userId)
-//     console.log(user.following)
-//     const following = await Promise.all(
-//       user.following.map((followingId) => {
-//         console.log(followingId)
-//         return User.findById(followingId)
-//       })
-//     )
-//     let followingList = []
-//     following.map((followingUsers) => {
-//       const { _id, username, profilePicture } = followingUsers
-//       followingList.push({ _id, username, profilePicture })
-//     })
-//     res.status(200).json(followingList)
-//   } catch (err) {
-//     res.status(500).json(err)
-//   }
-// })
-// router.get('/:userId/followers', verify, async (req, res) => {
-//   try {
-//     const user = await User.findById(req.params.userId)
-//     console.log(user)
-//     const followers = await Promise.all(
-//       user.followers.map((followerId) => {
-//         return User.findById(followerId)
-//       })
-//     )
-//     let followerList = []
-//     followers.map((followerUsers) => {
-//       console.log(followerUsers)
-//       const { _id, username, profilePicture } = followerUsers
-//       console.log(followerUsers)
-//       followerList.push({ _id, username, profilePicture })
-//     })
-//     res.status(200).json(followerList)
-//   } catch (err) {
-//     res.status(500).json(err)
-//   }
-// })
+// ******************************************************
 
-//follow and unfollow
-// http://localhost:5000/api/users/:id/follow
 router.put('/:id/follow', verify, async (req, res) => {
   if (req.user.id !== req.params.id) {
     try {
@@ -209,7 +128,5 @@ router.put('/:id/follow', verify, async (req, res) => {
     res.status(403).json('you cant follow yourself')
   }
 })
-
-//unfollow
 
 module.exports = router

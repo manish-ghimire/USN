@@ -3,9 +3,7 @@ const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const verify = require('./verify')
-//Register
-// https://reqbin.com/
-// post--> http://localhost:5000/api/auth/register
+
 router.post('/register', async (req, res) => {
   try {
     if (
@@ -17,11 +15,9 @@ router.post('/register', async (req, res) => {
       console.log({
         errors: 'All fields are required or password length is less then 6',
       })
-      return res
-        .status(422)
-        .json({
-          error: 'All fields are required or password length is less then 6',
-        })
+      return res.status(422).json({
+        error: 'All fields are required or password length is less then 6',
+      })
     } else {
       // find email or username
       const user = await User.findOne({
@@ -71,10 +67,6 @@ router.post('/register', async (req, res) => {
   }
 })
 
-//Login
-// https://reqbin.com/
-// post--> http://localhost:5000/api/auth/login
-// store refresh token in mongodb
 let refreshTokens = []
 router.post('/login', (req, res) => {
   try {
@@ -159,38 +151,6 @@ router.post('/login', (req, res) => {
   }
 })
 
-// const verify = (req, res, next) => {
-//   const authHeader = req.headers.authorization;
-//   if (authHeader){
-//     const token = authHeader.split(" ")[1];
-//     // console.log(token);
-//     jwt.verify(token, "mySecretKey", (err, user) => {
-//       if (err){
-//         return res.status(403).json("Token is not valid");
-//       }
-//       req.user = user;
-//       next();
-//     });
-//   }
-//   else{
-//     res.status(401).json("Not authenticated!");
-//   }
-// }
-// // Delete User
-// // https://reqbin.com/
-// // http://localhost:5000/api/auth/users/:userId/
-// router.delete("/users/:userId", verify, (req, res) => {
-// if (req.user.userid == req.params.userId){
-//   res.status(200).json("user has been deleted");
-// }else{
-//   res.status(403).json("you are not allowed");
-// }
-// });
-
-// refresh token
-// https://reqbin.com/
-// http://localhost:5000/api/auth/refresh/
-
 router.post('/refresh', verify, (req, res) => {
   const refreshToken = req.body.token
 
@@ -225,8 +185,6 @@ router.post('/refresh', verify, (req, res) => {
 })
 
 router.post('/logout', verify, (req, res) => {
-  // const refreshToken = req.body.token;
-  // refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
   res.status(200).json('Logged Out Success!')
 })
 
