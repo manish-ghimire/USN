@@ -3,8 +3,7 @@ const Market = require("../models/Market");
 const User = require("../models/User");
 const verify = require("./verify");
 const Comment = require("../models/Comment");
-// http://localhost:5000/api/market/
-
+// post item comments
 router.post("/item/:itemId/comments", verify, async (req, res) => {
   const newCom = new Comment({
     userId: req.user.id,
@@ -18,12 +17,23 @@ router.post("/item/:itemId/comments", verify, async (req, res) => {
   }
   else{
     const savedCom = await newCom.save();
+    const oneItem = await Market.findById(req.params.itemId)
+    if (oneItem) {
+      const comToItemUpdate = await oneItem.updateOne({
+        $push: { commentId: '' + savedCom._id + '' },
+      })
+    }
     res.status(200).json(savedCom);
   }
   // }
   // catch (err) {
   //   res.status(500).json(err);
   // }
+});
+router.get("/item/:itemId/comments", verify, async (req, res) => {
+  const com = await Comment.find({commentToId: req.params.itemId});
+  console.log(com);
+  res.status(200).json(com);
 });
 router.post("/item/", verify, async (req, res) => {
   const newMark = new Market({
@@ -83,6 +93,9 @@ router.delete("/item/:itemId", verify, async (req, res) => {
     const post = await Market.findById(req.params.itemId);
     if (post.userId === req.user.id || req.user.isAdmin) {
         post.delete();
+        // await User.deleteMany({
+        //   userId: post._id
+        // });
       res.status(200).json("The post has been deleted!");
     } else {
       res.status(401).json("You can delete only your post!");
@@ -121,6 +134,16 @@ router.get("/item/:itemId", verify, async (req, res) => {
   }
 });
 
+
+
+router.get("/", verify, async (req, res) => {
+  const items = await Market.find();
+  res.status(200).json(items);
+});
+
+
+// extra
+
 router.get("/item", verify, async (req, res) => {
   const role = req.query.role;
   const userPosts = req.query.user;
@@ -142,17 +165,5 @@ router.get("/item", verify, async (req, res) => {
 });
 
 
-router.get("/", verify, async (req, res) => {
-  const items = await Market.find();
-  res.status(200).json(items);
-});
-
-
-// extra
-router.get("/item/:itemId/comments", verify, async (req, res) => {
-  const com = await Comment.find({commentToId: req.params.itemId});
-  console.log(com);
-  res.status(200).json(com);
-});
 
 module.exports = router;
