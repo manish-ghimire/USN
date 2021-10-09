@@ -6,7 +6,6 @@ import React from 'react'
 import Card from '../../components/Card/Card'
 import './Post.scss'
 import axios from 'axios'
-import { Box } from '@mui/system'
 
 const Post = ({ posts }) => {
   const history = useHistory()
@@ -23,6 +22,7 @@ const Post = ({ posts }) => {
           },
           body: {},
         })
+        console.log('Success from Post component', success)
       } catch (error) {
         console.log(error)
       }

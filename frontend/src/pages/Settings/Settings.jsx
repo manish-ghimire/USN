@@ -28,7 +28,6 @@ const Settings = () => {
   const isFrom = useRef()
   const uniID = useRef()
   const classOf = useRef()
-
   const [openUpdateUser, setOpenUpdateUser] = useState(false)
 
   const handleOpenUpdateUser = () => {
@@ -89,7 +88,6 @@ const Settings = () => {
   const uniFollowings = useRef()
   const uniDesc = useRef()
   const uniAdmin = useRef()
-
   const [openCreateUni, setOpenCreateUni] = useState(false)
 
   const handleOpenCreateUni = () => {
@@ -136,7 +134,6 @@ const Settings = () => {
   const postLikes = useRef()
   const postRole = useRef()
   const postToId = useRef()
-
   const [openCreatePost, setopenCreatePost] = useState(false)
 
   const handleOpenCreatePost = () => {
@@ -184,7 +181,6 @@ const Settings = () => {
   const marketlikes = useRef()
   const marketrole = useRef()
   const marketpostToId = useRef()
-
   const [openCreateItem, setopenCreateItem] = useState(false)
 
   const handleOpenCreateItem = () => {
