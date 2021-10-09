@@ -26,6 +26,7 @@ const PostingBox = () => {
             Authorization: `Bearer ${token}`,
           },
         })
+        console.log('Success from Posting component', successPosting)
       } catch (error) {
         console.log(error)
       }
