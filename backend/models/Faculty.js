@@ -15,20 +15,9 @@ const FacultySchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    followings: {
-      type: Array,
-      default: [],
-    },
     facultyDesc: {
       type: String,
       max: 255,
-    },
-    uniId: {
-      type: String,
-      required: true,
-    },
-    courseId: {
-      type: String,
     },
   },
   { timestamps: true }

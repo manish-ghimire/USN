@@ -29,10 +29,6 @@ const UniSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    followings: {
-      type: Array,
-      default: [],
-    },
     desc: {
       type: String,
       max: 255,
@@ -45,7 +41,7 @@ const UniSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    facultyId: {
+    courseId: {
       type: Array,
       default: [],
     },

@@ -35,7 +35,6 @@ const UserSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      min: 50,
       unique: true,
     },
     password: {

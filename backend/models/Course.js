@@ -15,11 +15,11 @@ const CourseSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    followings: {
-      type: Array,
-      default: [],
-    },
     courseDesc: {
+      type: String,
+      max: 255,
+    },
+    courseFees: {
       type: String,
       max: 255,
     },

@@ -4,11 +4,11 @@ const StudySchema = new mongoose.Schema(
   {
     studyName: {
       type: String,
-      require: true,
+      required: true,
     },
     studyDisplayName: {
       type: String,
-      require: true,
+      required: true,
     },
     profilePicture: {
       type: String,

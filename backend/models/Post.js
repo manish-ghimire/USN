@@ -21,7 +21,7 @@ const PostSchema = new mongoose.Schema(
     },
     role: {
       type: Array,
-      default: ['general'],
+      default: [],
     },
     postToId: {
       type: Array,

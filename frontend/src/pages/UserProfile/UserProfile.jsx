@@ -90,6 +90,7 @@ const UserProfile = ({ setCircle }) => {
             postLists.push([successPost.data[i], successUser.data])
           }
           setPosts(postLists)
+          console.log(postLists)
         } catch (error) {
           console.log('Error fetching data', error)
         }
