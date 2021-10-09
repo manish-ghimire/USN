@@ -8,6 +8,77 @@ const Faculty = require('../models/Faculty')
 const verify = require('./verify')
 
 //localhost:5000/api/course/
+router.post('/register', verify, async (req, res) => {
+  // try {
+    const uniName = await Uni.findOne({
+      uniAdmin: {$in : req.user.id}
+    })
+    if (!req.user.isAdmin || !uniName.uniAdmin.includes(req.user.id)) {
+      console.log({
+        errors: 'Admin only!',
+      })
+      return res.status(422).json({
+        error: 'Admin only!',
+      })
+    } else {
+      if (!req.body.courseName || !req.body.facultyId) {
+        console.log({
+          errors: 'courseName or facultyId field is required',
+        })
+        return res.status(422).json({
+          error: 'courseName or facultyId field is required',
+        })
+      } else {
+        const courseDisplayName = req.body.courseName.replace(/\s+/g, '')
+
+        const course = await Course.findOne({
+          courseDisplayName: courseDisplayName,
+        })
+console.log("course", course);
+        if (course) {
+          // backend error stuff
+          let errors = {}
+          if (courseDisplayName === course.courseDisplayName) {
+            errors.courseName = 'Course name already exists'
+          }
+
+          console.log({
+            errors: errors,
+          })
+          return res.status(403).json(errors)
+        } else {
+          console.log({ courseName: req.body.courseName })
+
+          const courseDisplayName = await req.body.courseName.replace(/\s+/g, '')
+
+
+          const newCourse = new Course({
+            courseName: req.body.courseName,
+            courseDisplayName: courseDisplayName,
+            courseDesc: req.body.courseDesc,
+            courseCode: req.body.courseCode,
+            courseVersion: req.body.courseVersion,
+            courseDuration: req.body.courseDuration,
+            courseFees: req.body.courseFees,
+            facultyId: req.body.facultyId,
+          })
+          const savedCourse = await newCourse.save()
+                // const facultyId = await Uni.findById(req.body.facultyId)
+                // if (facultyId) {
+                //   const oneFacultyIdUpdate = await facultyId.updateOne({
+                //     $push: { courseId: '' + newCourse._id + '' },
+                //   })
+                // }
+          return res.status(200).json(savedCourse)
+          console.log(savedCourse)
+        }
+      }
+    }
+  // } catch (err) {
+  //   res.status(500).json(err)
+  // }
+})
+
 
 router.get('/:id', verify, async (req, res) => {
   try {
@@ -47,75 +118,6 @@ router.get('/', verify, async (req, res) => {
   }
 })
 
-router.post('/register', verify, async (req, res) => {
-  // try {
-    const uniName = await Uni.findOne({
-      uniAdmin: {$in : req.user.id}
-    })
-    if (!req.user.isAdmin || !uniName.uniAdmin.includes(req.user.id)) {
-      console.log({
-        errors: 'Admin only!',
-      })
-      return res.status(422).json({
-        error: 'Admin only!',
-      })
-    } else {
-      if (!req.body.courseName || !req.body.facultyId) {
-        console.log({
-          errors: 'courseName or facultyId field is required',
-        })
-        return res.status(422).json({
-          error: 'courseName or facultyId field is required',
-        })
-      } else {
-        const courseDisplayName = req.body.courseName.replace(/\s+/g, '')
-
-        const course = await Uni.findOne({
-          courseDisplayName: courseDisplayName,
-        })
-
-        if (course) {
-          // backend error stuff
-          let errors = {}
-          if (courseDisplayName === course.courseDisplayName) {
-            errors.uniName = 'Course name already exists'
-          }
-
-          console.log({
-            errors: errors,
-          })
-          return res.status(403).json(errors)
-        } else {
-          console.log({ courseName: req.body.courseName })
-
-          const courseDisplayName = await req.body.courseName.replace(/\s+/g, '')
-
-
-          const newCourse = new Course({
-            courseName: req.body.courseName,
-            courseDisplayName: courseDisplayName,
-            courseDesc: req.body.courseDesc,
-            courseCode: req.body.courseCode,
-            courseVersion: req.body.courseVersion,
-            courseDuration: req.body.courseDuration,
-            facultyId: req.body.facultyId,
-          })
-          const savedCourse = await newCourse.save()
-                const oneCourse = await Faculty.findById(req.body.courseId)
-                if (oneCourse) {
-                  const courseIdUpdate = await oneCourse.updateOne({
-                    $push: { courseId: '' + newCourse._id + '' },
-                  })
-                }
-          return res.status(200).json(savedCourse)
-          console.log(savedCourse)
-        }
-      }
-    }
-  // } catch (err) {
-  //   res.status(500).json(err)
-  // }
-})
 
 router.put('/:id', verify, async (req, res) => {
   const uniName = await Uni.findOne({
@@ -123,9 +125,17 @@ router.put('/:id', verify, async (req, res) => {
   })
   if (uniName.uniAdmin.includes(req.user.id) || req.user.isAdmin) {
       const { uniAdmin, ...other } = req.body
-      const courseUpdate = await Course.findByIdAndUpdate(req.params.id,{
-        $set: other,
-      },{new: true})
+    const courseUpdate = await Course.findByIdAndUpdate(req.params.id,
+      {
+              $set: other,
+          courseDisplayName: other.courseName.replace(/\s+/g, '')
+        },
+
+      {
+        multi: true,
+        new: true,
+      }
+    )
       return res.status(200).json(courseUpdate)
   } else {
     return res.status(401).json('Not authenticated!')

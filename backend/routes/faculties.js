@@ -9,6 +9,68 @@ const verify = require('./verify')
 
 //localhost:5000/api/uni
 
+router.post('/register', verify, async (req, res) => {
+  // try {
+    const uniName = await Uni.findOne({
+      uniAdmin: {$in : req.user.id}
+    })
+    if (!req.user.isAdmin || !uniName.uniAdmin.includes(req.user.id)) {
+      console.log({
+        errors: 'Admin only!',
+      })
+      return res.status(422).json({
+        error: 'Admin only!',
+      })
+    } else {
+      if (!req.body.facultyName || req.body.courseId) {
+        console.log({
+          errors: 'facultyName or courseId field is required',
+        })
+        return res.status(422).json({
+          error: 'facultyName or courseId field is required',
+        })
+      } else {
+        const facultyDisplayName = req.body.facultyName.replace(/\s+/g, '')
+
+        const faculty = await Uni.findOne({
+          facultyDisplayName: facultyDisplayName,
+        })
+
+        if (faculty) {
+          // backend error stuff
+          let errors = {}
+          if (facultyDisplayName === faculty.facultyDisplayName) {
+            errors.uniName = 'Faculty name already exists'
+          }
+
+          console.log({
+            errors: errors,
+          })
+          return res.status(403).json(errors)
+        } else {
+          // try{
+          console.log({ facultyName: req.body.facultyName })
+
+          const facultyDisplayName = await req.body.facultyName.replace(/\s+/g, '')
+
+
+          const newFaculty = new Faculty({
+            facultyName: req.body.facultyName,
+            facultyDisplayName: facultyDisplayName,
+            facultyDesc: req.body.facultyDesc,
+          })
+          const savedFaculty = await newFaculty.save()
+          return res.status(200).json(savedFaculty)
+          console.log(savedFaculty)
+     //    } catch (err) {
+     //      res.status(500).json(err)
+     //    }
+      }
+    }
+  }
+
+})
+
 router.get('/:id', verify, async (req, res) => {
   console.log("1");
   try {
@@ -48,75 +110,6 @@ router.get('/', verify, async (req, res) => {
   }
 })
 
-router.post('/register', verify, async (req, res) => {
-  // try {
-    const uniName = await Uni.findOne({
-      uniAdmin: {$in : req.user.id}
-    })
-    if (!req.user.isAdmin || !uniName.uniAdmin.includes(req.user.id)) {
-      console.log({
-        errors: 'Admin only!',
-      })
-      return res.status(422).json({
-        error: 'Admin only!',
-      })
-    } else {
-      if (!req.body.facultyName || !req.body.uniId) {
-        console.log({
-          errors: 'facultyName or uniId field is required',
-        })
-        return res.status(422).json({
-          error: 'facultyName or uniId field is required',
-        })
-      } else {
-        const facultyDisplayName = req.body.facultyName.replace(/\s+/g, '')
-
-        const faculty = await Uni.findOne({
-          facultyDisplayName: facultyDisplayName,
-        })
-
-        if (faculty) {
-          // backend error stuff
-          let errors = {}
-          if (facultyDisplayName === faculty.facultyDisplayName) {
-            errors.uniName = 'Faculty name already exists'
-          }
-
-          console.log({
-            errors: errors,
-          })
-          return res.status(403).json(errors)
-        } else {
-          // try{
-          console.log({ facultyName: req.body.facultyName })
-
-          const facultyDisplayName = await req.body.facultyName.replace(/\s+/g, '')
-
-
-          const newFaculty = new Faculty({
-            facultyName: req.body.facultyName,
-            facultyDisplayName: facultyDisplayName,
-            facultyDesc: req.body.facultyDesc,
-            uniId: req.body.uniId,
-          })
-          const savedFaculty = await newFaculty.save()
-          const oneUni = await Uni.findById(req.body.uniId)
-          if (oneUni) {
-            const uniIdUpdate = await oneUni.updateOne({
-              $push: { facultyId: '' + newFaculty._id + '' },
-            })
-          }
-          return res.status(200).json(savedFaculty)
-          console.log(savedFaculty)
-     //    } catch (err) {
-     //      res.status(500).json(err)
-     //    }
-      }
-    }
-  }
-
-})
-
 router.put('/:id', verify, async (req, res) => {
   const uniName = await Uni.findOne({
       uniAdmin: {$in : req.user.id}
@@ -145,33 +138,6 @@ router.delete('/:id', verify, async (req, res) => {
     } else {
       return res.status(401).json('Not authenticated!')
     }
-})
-
-
-
-// ******************************************************
-
-router.get('/:uniId/find', verify, async (req, res) => {
-  const uniId = await Uni.findOne({
-    uniDisplayName: req.params.uniId,
-  })
-  if (!uniId) {
-    const uniId = await Uni.findOne({
-      _id: req.params.uniId,
-    })
-  console.log(uniName._id)
-    const club = await Club.find({ clubToUni: uniName._id })
-    if (club) {
-      res.status(200).json(club)
-      console.log(club)
-    }
-  }else{
-    const club = await Club.find({ clubToUni: uniName._id })
-    if (club) {
-      res.status(200).json(club)
-      console.log(club)
-    }
-  }
 })
 
 module.exports = router

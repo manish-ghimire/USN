@@ -165,7 +165,7 @@ router.delete('/:id', verify, async (req, res) => {
 
 // ******************************************************
 
-router.get('/:uniId/find', verify, async (req, res) => {
+router.get('/:uniId/clubs', verify, async (req, res) => {
   const uniId = await Uni.findOne({
     uniDisplayName: req.params.uniId,
   })
@@ -173,15 +173,15 @@ router.get('/:uniId/find', verify, async (req, res) => {
     const uniId = await Uni.findOne({
       _id: req.params.uniId,
     })
-    console.log(uniName._id)
+    console.log(uniId._id)
     console.log('finduniclubs')
-    const club = await Club.find({ clubToUni: uniName._id })
+    const club = await Club.find({ uniId: uniId._id })
     if (club) {
       res.status(200).json(club)
       console.log(club)
     }
   } else {
-    const club = await Club.find({ clubToUni: uniName._id })
+    const club = await Club.find({ uniId: uniId._id })
     if (club) {
       res.status(200).json(club)
       console.log(club)

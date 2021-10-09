@@ -23,10 +23,10 @@ router.post("/", verify, async (req, res) => {
 });
 
 // Get conversation
-router.get("/:id", verify, async (req, res) => {
+router.get("/:userId", verify, async (req, res) => {
   try {
     const conversation = await Conversation.find({
-      members: {$in: [req.params.id]},
+      members: {$in: [req.params.userId]},
     })
     res.status(200).json(conversation);
   }

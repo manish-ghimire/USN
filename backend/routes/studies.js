@@ -178,9 +178,9 @@ router.put('/:id', verify, async (req, res) => {
 // Delete studyGroups
 // https://reqbin.com/
 // delete--> http://localhost:5000/api/study/:studyId
-router.delete('/:studyId', verify, async (req, res) => {
+router.delete('/:id', verify, async (req, res) => {
   const studyGroup = await Study.findOne({
-    _id: req.params.studyId,
+    _id: req.params.id,
   })
   console.log(studyGroup)
   if (studyGroup) {
