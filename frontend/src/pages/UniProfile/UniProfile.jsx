@@ -17,9 +17,9 @@ import Card from '../../components/Card/Card'
 import ArrowBackSharpIcon from '@mui/icons-material/ArrowBackSharp'
 import ArrowForwardSharpIcon from '@mui/icons-material/ArrowForwardSharp'
 import GroupsIcon from '@mui/icons-material/Groups'
-import { Avatar, Container, Grid, Hidden } from '@mui/material'
+import { Avatar, Chip, Container, Grid, Hidden } from '@mui/material'
 
-const drawerWidth = 200
+const drawerWidth = 300
 
 const UniProfile = ({ setCircle }) => {
   const [mobileOpen, setMobileOpen] = React.useState(false)
@@ -31,16 +31,15 @@ const UniProfile = ({ setCircle }) => {
   const history = useHistory()
   const [clubs, setClubs] = useState([])
   const [uni, setUni] = useState([])
-  const { uniID } = useParams()
+  const { uniId } = useParams()
   const [posts, setPosts] = useState([])
   const accessToken = localStorage.getItem('accessToken')
   useEffect(() => {
-    console.log(uniID)
     setCircle(true)
     if (accessToken) {
       const fetchData = async () => {
         try {
-          const successUni = await axios.get(`/uni/${uniID}`, {
+          const successUni = await axios.get(`/uni/${uniId}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -61,7 +60,7 @@ const UniProfile = ({ setCircle }) => {
           }
           setClubs(clubLists)
 
-          const successPost = await axios.get(`/post?uni=${uniID}`, {
+          const successPost = await axios.get(`/post?uni=${uniId}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -93,12 +92,12 @@ const UniProfile = ({ setCircle }) => {
     setCircle(false)
   }, [history, setCircle, setUni, accessToken])
 
+  const handleFollow = (params) => {
+    alert('followed')
+  }
+
   const drawer = (
     <div>
-      <Box sx={{ textAlign: 'center' }}>
-        <h2>University</h2>
-      </Box>
-      <Divider />
       <Box
         sx={{
           display: 'flex',
@@ -112,6 +111,14 @@ const UniProfile = ({ setCircle }) => {
           src='https://picsum.photos/400/400'
           sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
         />
+        <Hidden mdDown>
+          <h3>{uni.uniName}</h3>
+          <br />
+          <Chip label='Follow me!' onClick={handleFollow} />
+        </Hidden>
+        <Hidden mdUp>
+          <h4>{uni.uniName}</h4>
+        </Hidden>
       </Box>
       <br />
       <Divider />
@@ -203,10 +210,10 @@ const UniProfile = ({ setCircle }) => {
                   <Avatar
                     alt='Memy Sharp'
                     src='https://picsum.photos/400/400'
-                    sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
+                    sx={{ width: 100, height: 100, margin: '0px 0 15px 0' }}
                     onClick={handleDrawerToggle}
                   />
-                  <div>{/* {user.fName} {user.lName} */}</div>
+                  <Chip label='Follow me!' onClick={handleFollow} />
                 </Box>
               </Card>
             </Grid>
@@ -217,9 +224,11 @@ const UniProfile = ({ setCircle }) => {
               <Post posts={posts} />
             </Hidden>
           </Grid>
-          <Hidden mdUp>
-            <Post posts={posts} />
-          </Hidden>
+          <Grid item xs={12}>
+            <Hidden mdUp>
+              <Post posts={posts} />
+            </Hidden>
+          </Grid>
         </Grid>
       </Container>
     </>

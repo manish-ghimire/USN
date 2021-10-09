@@ -88,7 +88,7 @@ function App() {
             />
             <Route
               exact
-              path='/uni/:uniID'
+              path='/uni/:uniId'
               component={() => (
                 <UniProfile
                   setCircle={(value) => setCircle(value)}
@@ -96,15 +96,8 @@ function App() {
                 />
               )}
             />
-            <Route path='/club/:clubID'
-              component={() => (
-                <Club
-                  setCircle={(value) => setCircle(value)}
-                  setSnackbar={(value) => setSnackbar(value)}
-                />
-              )}
-            />
-            <Route exact path='/club'
+            <Route
+              path='/club/:clubId'
               component={() => (
                 <Club
                   setCircle={(value) => setCircle(value)}
@@ -114,7 +107,17 @@ function App() {
             />
             <Route
               exact
-              path='/studygroup/:studygroupID'
+              path='/club'
+              component={() => (
+                <Club
+                  setCircle={(value) => setCircle(value)}
+                  setSnackbar={(value) => setSnackbar(value)}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/studygroup/:studygroupId'
               component={() => (
                 <StudyGroup
                   setCircle={(value) => setCircle(value)}
@@ -134,7 +137,7 @@ function App() {
             />
             <Route
               exact
-              path='/market/:itemID'
+              path='/market/:itemId'
               component={() => (
                 <Market
                   setCircle={(value) => setCircle(value)}
