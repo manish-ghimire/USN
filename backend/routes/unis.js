@@ -3,12 +3,112 @@ const User = require('../models/User')
 const Uni = require('../models/Uni')
 const Club = require('../models/Club')
 const Post = require('../models/Post')
+const Course = require('../models/Course')
+const Faculty = require('../models/Faculty')
 const verify = require('./verify')
 
-//localhost:5000/api/uni
+//http://localhost:5000/api/uni
+router.get('/:uniId/faculty', verify, async (req, res) => {
+  // try {
+    const uniId = await Uni.findOne({
+      uniDisplayName: req.params.uniId,
+    })
+    if (!uniId) {
+      const uniId = await Uni.findOne({
+        _id: req.params.uniId,
+      })
+      console.log(uniId);
+      // try {
+        const faculty = await Faculty.find({
+             uniId: {
+               $in: [req.params.uniId],
+             },
+           })
+        res.status(200).json(faculty)
+      // } catch (err) {
+      //   res.status(500).json(err)
+      // }
+    } else {
+      try {
+        const faculty = await Faculty.find({
+             uniId: {
+               $in: [uniId._id],
+             },
+           })
+        res.status(200).json(faculty)
+        console.log()
+      } catch (err) {
+        res.status(500).json(err)
+      }
+    }
+  // } catch (err) {
+  //   return res.status(401).json("Can't find uni")
+  // }
+})
+router.get('/:uniId/course', verify, async (req, res) => {
+  // try {
+    const uniId = await Uni.findOne({
+      uniDisplayName: req.params.uniId,
+    })
+    if (!uniId) {
+      const uniId = await Uni.findOne({
+        _id: req.params.uniId,
+      })
+      // console.log(uniId);
+      const faculty = await Faculty.find({
+           uniId: {
+             $in: [req.params.uniId],
+           },
+         })
+
+
+let fac = []
+  console.log(faculty);
+  console.log(faculty.length);
+for (var i = 0; i < faculty.length; i++) {
+const ids = faculty[i]._id
+  const cc = await Course.find({
+            facultyId: {
+              $in: [ids],
+            },
+          })
+            console.log(cc);
+        res.status(200).json(cc)
+      }
+    } else {
+      // try {
+        const faculty = await Faculty.find({
+             uniId: {
+               $in: [uniId._id],
+             },
+           })
+
+
+        let fac = []
+        console.log(faculty);
+        console.log(faculty.length);
+        for (var i = 0; i < faculty.length; i++) {
+        const ids = faculty[i]._id
+        const cc = await Course.find({
+              facultyId: {
+                $in: [ids],
+              },
+            })
+              console.log(cc);
+          res.status(200).json(cc)
+        }
+        console.log('not here')
+      // } catch (err) {
+      //   res.status(500).json(err)
+      // }
+    }
+  // } catch (err) {
+  //   return res.status(401).json("Can't find uni")
+  // }
+})
 
 router.get('/:uniId', verify, async (req, res) => {
-  try {
+  // try {
     const uniId = await Uni.findOne({
       uniDisplayName: req.params.uniId,
     })
@@ -31,13 +131,14 @@ router.get('/:uniId', verify, async (req, res) => {
         res.status(500).json(err)
       }
     }
-  } catch (err) {
-    return res.status(401).json("Can't find uni")
-  }
+  // } catch (err) {
+  //   return res.status(401).json("Can't find uni")
+  // }
 })
 
 router.get('/', verify, async (req, res) => {
   try {
+
     const uni = await Uni.find()
     res.status(200).json(uni)
   } catch (err) {

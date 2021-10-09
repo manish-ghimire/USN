@@ -29,7 +29,7 @@ const ClubSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    clubToUni: {
+    uniId: {
       type: String,
       required: true,
     },

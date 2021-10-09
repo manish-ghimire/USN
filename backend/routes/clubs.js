@@ -63,7 +63,7 @@ router.post('/register', verify, async (req, res) => {
       const newClub = new Club({
         clubName: req.body.clubName,
         clubDisplayName: req.body.clubName.replace(/\s+/g, ''),
-        clubToUni: req.body.clubToUni,
+        uniId: req.body.uniId,
         clubAdmin: req.user.id,
         desc: req.body.desc,
         coverPicture: req.body.coverPicture,
@@ -71,9 +71,9 @@ router.post('/register', verify, async (req, res) => {
       })
       newClub.save()
 
-      const oneUni = await Uni.findById(req.body.clubToUni)
+      const oneUni = await Uni.findById(req.body.uniId)
       if (oneUni) {
-        const clubToUniUpdate = await oneUni.updateOne({
+        const uniIdUpdate = await oneUni.updateOne({
           $push: { clubs: '' + newClub._id + '' },
         })
       }

@@ -101,7 +101,12 @@ router.post('/register', verify, async (req, res) => {
             facultyId: req.body.facultyId,
           })
           const savedCourse = await newCourse.save()
-
+                const oneCourse = await Faculty.findById(req.body.courseId)
+                if (oneCourse) {
+                  const courseIdUpdate = await oneCourse.updateOne({
+                    $push: { courseId: '' + newCourse._id + '' },
+                  })
+                }
           return res.status(200).json(savedCourse)
           console.log(savedCourse)
         }
