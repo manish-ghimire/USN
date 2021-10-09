@@ -234,7 +234,7 @@ router.put('/:id', verify, async (req, res) => {
 
 // like Post
 router.put('/:id/like', verify, async (req, res) => {
-  try {
+  // try {
     const post = await Post.findById(req.params.id)
     if (!post.likes.includes(req.user.id)) {
       await post.updateOne({ $push: { likes: req.user.id } })
@@ -243,9 +243,9 @@ router.put('/:id/like', verify, async (req, res) => {
       await post.updateOne({ $pull: { likes: req.user.id } })
       res.status(200).json('The post has been unliked')
     }
-  } catch (err) {
-    res.status(500).json(err)
-  }
+  // } catch (err) {
+  //   res.status(500).json(err)
+  // }
   // const commentsId = req.query.comments
   // if (commentsId) {
   //   console.log(commentsId)

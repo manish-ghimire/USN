@@ -63,10 +63,10 @@ router.post('/register', verify, async (req, res) => {
     } else {
       if (!req.body.facultyName || !req.body.uniId) {
         console.log({
-          errors: 'facultyName or facultyId field is required',
+          errors: 'facultyName or uniId field is required',
         })
         return res.status(422).json({
-          error: 'facultyName or facultyId field is required',
+          error: 'facultyName or uniId field is required',
         })
       } else {
         const facultyDisplayName = req.body.facultyName.replace(/\s+/g, '')
@@ -87,6 +87,7 @@ router.post('/register', verify, async (req, res) => {
           })
           return res.status(403).json(errors)
         } else {
+          // try{
           console.log({ facultyName: req.body.facultyName })
 
           const facultyDisplayName = await req.body.facultyName.replace(/\s+/g, '')
@@ -99,15 +100,21 @@ router.post('/register', verify, async (req, res) => {
             uniId: req.body.uniId,
           })
           const savedFaculty = await newFaculty.save()
-
+          const oneUni = await Uni.findById(req.body.uniId)
+          if (oneUni) {
+            const uniIdUpdate = await oneUni.updateOne({
+              $push: { facultyId: '' + newFaculty._id + '' },
+            })
+          }
           return res.status(200).json(savedFaculty)
           console.log(savedFaculty)
-        }
+     //    } catch (err) {
+     //      res.status(500).json(err)
+     //    }
       }
     }
-  // } catch (err) {
-  //   res.status(500).json(err)
-  // }
+  }
+
 })
 
 router.put('/:id', verify, async (req, res) => {
@@ -153,7 +160,6 @@ router.get('/:uniId/find', verify, async (req, res) => {
       _id: req.params.uniId,
     })
   console.log(uniName._id)
-  console.log('finduniclubs')
     const club = await Club.find({ clubToUni: uniName._id })
     if (club) {
       res.status(200).json(club)
