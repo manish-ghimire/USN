@@ -174,9 +174,9 @@ router.put('/:id', verify, async (req, res) => {
   }
 })
 
-router.delete('/:clubId', verify, async (req, res) => {
+router.delete('/:id', verify, async (req, res) => {
   const clubName = await Club.findOne({
-    _id: req.params.clubId,
+    _id: req.params.id,
   })
   console.log(clubName)
   if (clubName) {
