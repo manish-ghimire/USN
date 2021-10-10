@@ -11,16 +11,18 @@ const Post = ({ posts }) => {
   const history = useHistory()
   const accessToken = localStorage.getItem('accessToken')
 
-  const likeUnlike = (params) => {
-    console.log('Hopefully the post id', params)
-    console.log(accessToken)
+  const likeUnlike = (post_id, user_id) => {
+    console.log('The post id', post_id)
+    console.log('The user id', user_id)
+    // console.log('The user id', user_id)
+    console.log('The access token1 is:', accessToken)
     const fetchData = async () => {
       try {
-        const success = await axios.put(`/post/615e9edde84f4e0fa4cb4096/like`, {
+        console.log('The access token2 is:', accessToken)
+        const success = await axios.put(`/post/${post_id}/like`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-          body: {},
         })
         console.log('Success from Post component', success)
       } catch (error) {
@@ -31,43 +33,46 @@ const Post = ({ posts }) => {
   }
 
   return posts.map((post) => (
-    <Card key={post._id}>
-      <div className='avatar-area'>
-        <img
-          src='https://picsum.photos/200/200'
-          alt='User'
-          onClick={() => history.push(`/user/${post[1]._id}`)}
-        />
-        <div className='details'>
-          <div className='name'>{post[1].fName}</div>
-          <div className='org'>{post[1].currentCity}</div>
-        </div>
-      </div>
-      <Divider />
-      <div className='post-text'>{post[0].desc}</div>
-      <Divider />
-      <div className='react-links'>
-        <div className='lefthalf'></div>
-        <div className='righthalf'>
-          <div className='share'>
-            <span>
-              <Link to='/register'>
-                <ShareIcon />
-              </Link>
-            </span>
-            <span onClick={() => likeUnlike(post[0]._id)}>
-              <FavoriteIcon />
-              {post[0].likes.length === 0 ? '' : post[0].likes.length}
-              {post[0].likes.length === 0
-                ? 'Click me'
-                : post[0].likes.length === 1
-                ? ' Like'
-                : ' Likes'}
-            </span>
+    <>
+      {console.log(posts)}
+      <Card key={post._id}>
+        <div className='avatar-area'>
+          <img
+            src='https://picsum.photos/200/200'
+            alt='User'
+            onClick={() => history.push(`/user/${post[1]._id}`)}
+          />
+          <div className='details'>
+            <div className='name'>{post[1].fName}</div>
+            <div className='org'>{post[1].currentCity}</div>
           </div>
         </div>
-      </div>
-    </Card>
+        <Divider />
+        <div className='post-text'>{post[0].desc}</div>
+        <Divider />
+        <div className='react-links'>
+          <div className='lefthalf'></div>
+          <div className='righthalf'>
+            <div className='share'>
+              <span>
+                <Link to='/register'>
+                  <ShareIcon />
+                </Link>
+              </span>
+              <span onClick={() => likeUnlike(post[0]._id, post[1]._id)}>
+                <FavoriteIcon />
+                {post[0].likes.length === 0 ? '' : post[0].likes.length}
+                {post[0].likes.length === 0
+                  ? 'Click me'
+                  : post[0].likes.length === 1
+                  ? ' Like'
+                  : ' Likes'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </>
   ))
 }
 

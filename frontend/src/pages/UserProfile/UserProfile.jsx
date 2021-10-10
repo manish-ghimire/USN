@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import axios from 'axios'
+import './UserProfile.scss'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import Drawer from '@mui/material/Drawer'
@@ -14,6 +15,7 @@ import Post from '../../components/Post/Post.jsx'
 import Card from '../../components/Card/Card'
 import GroupsIcon from '@mui/icons-material/Groups'
 import ControlPointIcon from '@mui/icons-material/ControlPoint'
+import EditIcon from '@mui/icons-material/Edit'
 import {
   Autocomplete,
   Avatar,
@@ -22,6 +24,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogContentText,
   DialogTitle,
   Grid,
   Hidden,
@@ -33,9 +36,6 @@ const drawerWidth = 300
 const UserProfile = ({ setCircle }) => {
   // ALL CONSTANTS
   const [mobileOpen, setMobileOpen] = useState(false)
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen)
-  }
   const history = useHistory()
   const { userId } = useParams()
   const [user, setUser] = useState([])
@@ -106,6 +106,7 @@ const UserProfile = ({ setCircle }) => {
     }
     putData()
     setOpenUpdateStudy(false)
+    window.location.reload()
   }
   //******* UPDATE UNIVERSITY ENDS ******************* */
 
@@ -132,14 +133,13 @@ const UserProfile = ({ setCircle }) => {
           setTotalUnis(successTotalUnis.data)
 
           // DO NOT DELETE THIS
-          // const successRoles = await axios.get('/role', {
-          //   headers: {
-          //     Authorization: `Bearer ${accessToken}`,
-          //   },
-          // })
-          // setRoles(successRoles.data[0].roles)
+          const successRoles = await axios.get('/role', {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          setRoles(successRoles.data[0].roles)
 
-          console.log(successUser.data.study)
           if (successUser.data.study.length > 0) {
             let uniLists = []
             for (var i = 0; i < successUser.data.study.length; i++) {
@@ -200,6 +200,13 @@ const UserProfile = ({ setCircle }) => {
   const drawer = (
     <>
       <Card>
+        <Box sx={{ textAlign: 'right', color: 'gray' }}>
+          <EditIcon
+            className='editIcon'
+            fontSize='small'
+            onClick={() => setOpenUpdateUser(true)}
+          />
+        </Box>
         <Box
           sx={{
             display: 'flex',
@@ -213,19 +220,9 @@ const UserProfile = ({ setCircle }) => {
             src='https://picsum.photos/400/400'
             sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
           />
-          {user.fName ? (
-            <h3>
-              {user.fName} {user.lName}
-            </h3>
-          ) : (
-            <Button
-              variant='outlined'
-              size='small'
-              onClick={() => setOpenUpdateUser(true)}
-            >
-              Complete your profile !
-            </Button>
-          )}
+          <h3>
+            {user.fName} {user.lName}
+          </h3>
         </Box>
         <br />
         <Divider />
@@ -250,8 +247,10 @@ const UserProfile = ({ setCircle }) => {
             </ListItemIcon>
             <ListItemText
               primary={`Add ${
-                unis.length > 0 ? 'more universities' : 'a first university'
-              } to your profile`}
+                unis.length > 0
+                  ? 'more universities'
+                  : 'a first university to your profile'
+              } `}
               secondary={``}
               onClick={() => setOpenUpdateStudy(true)}
             />
@@ -295,10 +294,13 @@ const UserProfile = ({ setCircle }) => {
   const completeProfileDialog = (
     <>
       <Dialog open={openUpdateUser} onClose={() => setOpenUpdateUser(false)}>
-        <DialogTitle>Update {user.username}</DialogTitle>
+        <DialogTitle>Please enter your details</DialogTitle>
+        <DialogContentText>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fields left empty will also be
+          stored empty.
+        </DialogContentText>
         <Divider />
         <DialogContent>
-          {/* <DialogContentText>Fields are set as strings</DialogContentText> */}
           <Autocomplete
             multiple
             id='tags-outlined'
@@ -309,8 +311,8 @@ const UserProfile = ({ setCircle }) => {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label='Select roles'
-                placeholder='Select roles'
+                label='Select current roles'
+                placeholder='Select current roles'
               />
             )}
           />
@@ -319,6 +321,7 @@ const UserProfile = ({ setCircle }) => {
             margin='dense'
             id='fName'
             inputRef={fName}
+            value={user.fName}
             label='First name'
             type='text'
             fullWidth
@@ -329,6 +332,7 @@ const UserProfile = ({ setCircle }) => {
             margin='dense'
             id='lName'
             inputRef={lName}
+            value={user.lName}
             label='Last name'
             type='text'
             fullWidth
@@ -340,7 +344,8 @@ const UserProfile = ({ setCircle }) => {
             margin='dense'
             id='desc'
             inputRef={desc}
-            label='Description'
+            value={user.desc}
+            label='Few words about you...'
             type='text'
             fullWidth
             variant='standard'
@@ -350,7 +355,8 @@ const UserProfile = ({ setCircle }) => {
             margin='dense'
             id='currentCity'
             inputRef={currentCity}
-            label='Current City'
+            value={user.currentCity}
+            label='Current location'
             type='text'
             fullWidth
             variant='standard'
@@ -360,7 +366,8 @@ const UserProfile = ({ setCircle }) => {
             margin='dense'
             id='isFrom'
             inputRef={isFrom}
-            label='Is from'
+            value={user.isFrom}
+            label='Originally from'
             type='text'
             fullWidth
             variant='standard'

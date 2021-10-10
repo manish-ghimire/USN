@@ -6,7 +6,6 @@ const verify = require('./verify')
 
 // http://localhost:5000/api/post/
 
-
 // post comments
 router.post('/:id/comments', verify, async (req, res) => {
   const newCom = new Comment({
@@ -48,16 +47,14 @@ router.post('/', verify, async (req, res) => {
 })
 // get post comment
 router.get('/:id/comments', verify, async (req, res) => {
-
-    console.log('here')
-    const com = await Comment.find({ commentToId: req.params.id })
-    res.status(200).json(com)
+  console.log('here')
+  const com = await Comment.find({ commentToId: req.params.id })
+  res.status(200).json(com)
 })
 router.get('/:id', verify, async (req, res) => {
-
-    console.log('here')
-    const com = await Post.findById(req.params.id);
-    res.status(200).json(com)
+  console.log('here')
+  const com = await Post.findById(req.params.id)
+  res.status(200).json(com)
 })
 //Get All Post
 router.get('/', verify, async (req, res) => {
@@ -108,15 +105,16 @@ router.get('/', verify, async (req, res) => {
     posts = await Post.find()
 
     com = await Comment.find()
-    console.log({postandcom:[{post:posts},{com:com}]})
+    console.log({ postandcom: [{ post: posts }, { com: com }] })
     // res.status(200).json([{ posts: posts }, { comments: com }])
-        res.status(200).json(posts)
+    res.status(200).json(posts)
   }
 
   console.log('bototm here')
 })
 
 router.put('/:id/comments', verify, async (req, res) => {
+  console.log('STEP A')
   try {
     const post = await Post.findById(req.params.id)
 
@@ -175,6 +173,7 @@ router.put('/:id/comments', verify, async (req, res) => {
 })
 
 router.put('/:id', verify, async (req, res) => {
+  console.log('STEP B')
   try {
     const post = await Post.findById(req.params.id)
 
@@ -234,15 +233,16 @@ router.put('/:id', verify, async (req, res) => {
 
 // like Post
 router.put('/:id/like', verify, async (req, res) => {
+  console.log('STEP C')
   // try {
-    const post = await Post.findById(req.params.id)
-    if (!post.likes.includes(req.user.id)) {
-      await post.updateOne({ $push: { likes: req.user.id } })
-      res.status(200).json('The post has been liked')
-    } else {
-      await post.updateOne({ $pull: { likes: req.user.id } })
-      res.status(200).json('The post has been unliked')
-    }
+  const post = await Post.findById(req.params.id)
+  if (!post.likes.includes(req.user.id)) {
+    await post.updateOne({ $push: { likes: req.user.id } })
+    res.status(200).json('The post has been liked')
+  } else {
+    await post.updateOne({ $pull: { likes: req.user.id } })
+    res.status(200).json('The post has been unliked')
+  }
   // } catch (err) {
   //   res.status(500).json(err)
   // }
@@ -267,7 +267,6 @@ router.put('/:id/like', verify, async (req, res) => {
   // }
 })
 
-
 router.delete('/:id', verify, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
@@ -282,7 +281,7 @@ router.delete('/:id', verify, async (req, res) => {
     }
   } catch (err) {
     res.status(500).json(err)
-}
+  }
 })
 
 module.exports = router
