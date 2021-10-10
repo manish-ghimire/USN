@@ -60,8 +60,7 @@ router.post('/register', verify, async (req, res) => {
           const newUni = new Uni({
             uniName: req.body.uniName,
             uniDisplayName: uniDisplayName,
-            email: req.body.email,
-            uniAdmin: req.user.id,
+            email: req.body.email
           })
           const savedUni = await newUni.save()
 
