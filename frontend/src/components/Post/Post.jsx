@@ -8,24 +8,29 @@ import './Post.scss'
 import axios from 'axios'
 
 const Post = ({ posts }) => {
+  console.log("posts", posts);
   const history = useHistory()
   const accessToken = localStorage.getItem('accessToken')
 
-  const likeUnlike = (params) => {
-    console.log('Hopefully the post id', params)
-    console.log(accessToken)
+  const likeUnlike = (post_id, user_id) => {
+      console.log('The post id', post_id)
+      console.log('The user id', user_id)
+    console.log("accessToken1",accessToken)
+    // const userId = {
+    //   id:
+    // }
     const fetchData = async () => {
-      try {
-        const success = await axios.put(`/post/615e9edde84f4e0fa4cb4096/like`, {
+          console.log("accessToken2",accessToken)
+      // try {
+        const success = await axios.put(`/post/${post_id}/like`, {},  {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-          body: {},
         })
-        console.log('Success from Post component', success)
-      } catch (error) {
-        console.log(error)
-      }
+        console.log('return', success)
+      // } catch (error) {
+      //   console.log(error)
+      // }
     }
     fetchData()
   }
@@ -55,7 +60,7 @@ const Post = ({ posts }) => {
                 <ShareIcon />
               </Link>
             </span>
-            <span onClick={() => likeUnlike(post[0]._id)}>
+          <span onClick={() => likeUnlike(post[0]._id, post[1]._id)}>
               <FavoriteIcon />
               {post[0].likes.length === 0 ? '' : post[0].likes.length}
               {post[0].likes.length === 0

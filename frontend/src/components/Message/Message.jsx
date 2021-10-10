@@ -1,5 +1,5 @@
 import "./message.css";
-// import { format } from 'timeago.js';
+import { format } from 'timeago.js';
 
  const Message = ({ message, own, user }) => {
   return (
@@ -30,7 +30,7 @@ import "./message.css";
     </>
 )
 }
-<div className="messageBottom">{(message.createdAt)}</div>
+<div className="messageBottom">{format(message.createdAt)}</div>
 
 </div>
 </>

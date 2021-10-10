@@ -75,11 +75,7 @@ const Messenger = (props) => {
     // console.log("userID", userID)
     // console.log("user", user)
     console.log("conversation", conversations)
-    useEffect(() => {
-      // scrollRef.current.scrollIntoView({
-      //   behavior: "smooth"
-      // });
-    }, [messages]);
+
 console.log("messages" , messages)
     useEffect(() => {
       const getCon = async () => {
@@ -148,6 +144,9 @@ const handleSubmit = async (e) => {
       console.log(err);
     }
   }
+  useEffect(() => {
+     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+   }, [messages]);
 
           return (
             <>

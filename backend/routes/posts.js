@@ -7,7 +7,6 @@ const verify = require('./verify')
 // http://localhost:5000/api/post/
 
 
-// post comments
 router.post('/:id/comments', verify, async (req, res) => {
   const newCom = new Comment({
     userId: req.user.id,
@@ -32,7 +31,7 @@ router.post('/:id/comments', verify, async (req, res) => {
     res.status(500).json(err)
   }
 })
-//post
+
 router.post('/', verify, async (req, res) => {
   const newPost = new Post(req.body)
   try {
@@ -46,7 +45,7 @@ router.post('/', verify, async (req, res) => {
     res.status(500).json(err)
   }
 })
-// get post comment
+
 router.get('/:id/comments', verify, async (req, res) => {
 
     console.log('here')
@@ -59,7 +58,7 @@ router.get('/:id', verify, async (req, res) => {
     const com = await Post.findById(req.params.id);
     res.status(200).json(com)
 })
-//Get All Post
+
 router.get('/', verify, async (req, res) => {
   console.log('3')
   const role = req.query.role
@@ -234,7 +233,6 @@ router.put('/:id', verify, async (req, res) => {
 
 // like Post
 router.put('/:id/like', verify, async (req, res) => {
-  // try {
     const post = await Post.findById(req.params.id)
     if (!post.likes.includes(req.user.id)) {
       await post.updateOne({ $push: { likes: req.user.id } })
@@ -243,28 +241,6 @@ router.put('/:id/like', verify, async (req, res) => {
       await post.updateOne({ $pull: { likes: req.user.id } })
       res.status(200).json('The post has been unliked')
     }
-  // } catch (err) {
-  //   res.status(500).json(err)
-  // }
-  // const commentsId = req.query.comments
-  // if (commentsId) {
-  //   console.log(commentsId)
-  //   console.log('here like')
-  //   try {
-  //     const com = await Comment.findById(commentsId)
-  //     console.log(com)
-  //     if (!com.likes.includes(req.user.id)) {
-  //       await com.updateOne({ $push: { likes: req.user.id } })
-  //       res.status(200).json('The post has been liked')
-  //     } else {
-  //       await com.updateOne({ $pull: { likes: req.user.id } })
-  //       res.status(200).json('The post has been unliked')
-  //     }
-  //   } catch (err) {
-  //     res.status(500).json(err)
-  //   }
-  // } else {
-  // }
 })
 
 
