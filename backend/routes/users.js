@@ -41,6 +41,9 @@ router.put('/:id', verify, async (req, res) => {
     if (req.body.isAdmin === req.user.isAdmin || req.user.isAdmin) {
       const user = await User.findById(req.params.id)
       const { study, ...other } = req.body
+      if (other){
+        console.log('here')
+      }
       if (req.body.study) {
         const updatedUser = await user.update(
           {
@@ -62,23 +65,18 @@ router.put('/:id', verify, async (req, res) => {
     } else if (req.body.isAdmin !== req.user.isAdmin) {
       const user = await User.findById(req.params.id)
       const { isAdmin, study, ...other } = req.body
+        if (req.body.study) {
       const updatedUser = await user.update({
         $set: other,
         $push: {
           study: req.body.study,
         },
       })
-
-      return res.status(200).json('user has been updated')
-    } else if (req.body.isAdmin !== req.user.isAdmin) {
-      const user = await User.findById(req.params.id)
-      const { isAdmin, study, ...other } = req.body
+    }else {
       const updatedUser = await user.update({
         $set: other,
-        $push: {
-          study: req.body.study,
-        },
       })
+    }
 
       return res.status(200).json('user has been updated')
     }
