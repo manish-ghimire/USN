@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import './message.scss'
 import { format } from 'timeago.js'
-=======
-import "./message.css";
-import { format } from 'timeago.js';
->>>>>>> e0b983ae6137cbe5d30312df6d833796561b6f29
 
 const Message = ({ message, own, user }) => {
   return (
@@ -44,17 +39,7 @@ const Message = ({ message, own, user }) => {
         <div className='messageBottom'>{format(message.createdAt)}</div>
       </div>
     </>
-<<<<<<< HEAD
   )
-=======
-)
-}
-<div className="messageBottom">{format(message.createdAt)}</div>
-
-</div>
-</>
-)
->>>>>>> e0b983ae6137cbe5d30312df6d833796561b6f29
 }
 
 export default Message

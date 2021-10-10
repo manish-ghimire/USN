@@ -6,11 +6,6 @@ const verify = require('./verify')
 
 // http://localhost:5000/api/post/
 
-<<<<<<< HEAD
-// post comments
-=======
-
->>>>>>> e0b983ae6137cbe5d30312df6d833796561b6f29
 router.post('/:id/comments', verify, async (req, res) => {
   const newCom = new Comment({
     userId: req.user.id,
@@ -237,9 +232,6 @@ router.put('/:id', verify, async (req, res) => {
 
 // like Post
 router.put('/:id/like', verify, async (req, res) => {
-<<<<<<< HEAD
-  console.log('STEP C')
-  // try {
   const post = await Post.findById(req.params.id)
   if (!post.likes.includes(req.user.id)) {
     await post.updateOne({ $push: { likes: req.user.id } })
@@ -248,38 +240,6 @@ router.put('/:id/like', verify, async (req, res) => {
     await post.updateOne({ $pull: { likes: req.user.id } })
     res.status(200).json('The post has been unliked')
   }
-  // } catch (err) {
-  //   res.status(500).json(err)
-  // }
-  // const commentsId = req.query.comments
-  // if (commentsId) {
-  //   console.log(commentsId)
-  //   console.log('here like')
-  //   try {
-  //     const com = await Comment.findById(commentsId)
-  //     console.log(com)
-  //     if (!com.likes.includes(req.user.id)) {
-  //       await com.updateOne({ $push: { likes: req.user.id } })
-  //       res.status(200).json('The post has been liked')
-  //     } else {
-  //       await com.updateOne({ $pull: { likes: req.user.id } })
-  //       res.status(200).json('The post has been unliked')
-  //     }
-  //   } catch (err) {
-  //     res.status(500).json(err)
-  //   }
-  // } else {
-  // }
-=======
-    const post = await Post.findById(req.params.id)
-    if (!post.likes.includes(req.user.id)) {
-      await post.updateOne({ $push: { likes: req.user.id } })
-      res.status(200).json('The post has been liked')
-    } else {
-      await post.updateOne({ $pull: { likes: req.user.id } })
-      res.status(200).json('The post has been unliked')
-    }
->>>>>>> e0b983ae6137cbe5d30312df6d833796561b6f29
 })
 
 router.delete('/:id', verify, async (req, res) => {
