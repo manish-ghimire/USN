@@ -33,7 +33,7 @@ else{
 });
 
 router.get("/", verify, async (req, res) => {
-  if (req.user.isAdmin){
+  // if (req.user.isAdmin){
   try {
   // const  dbRolesId = "6159a45cdc7ce0db11feea7d";
   const roles = await Role.find();
@@ -42,9 +42,9 @@ router.get("/", verify, async (req, res) => {
   } catch (err) {
     return res.status(401).json("Can't find role");
   }
-}else{
-  res.status(401).json("Unauthorised!");
-}
+// }else{
+//   res.status(401).json("Unauthorised!");
+// }
 });
 
 router.delete("/", verify, async (req, res) => {
