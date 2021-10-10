@@ -5,14 +5,21 @@ const verify = require('./verify')
 const bcrypt = require('bcrypt')
 
 router.get('/:id', verify, async (req, res) => {
+  if (verify){
   const usern = await User.findOne({ username: req.params.id })
   if (!usern) {
     const user = await User.findById(req.params.id)
+    if (user._doc){
     const updatedUser = user._doc
     delete updatedUser.password
     console.log(updatedUser)
 
     res.status(200).json(updatedUser)
+  }else{
+    const updatedUser = user
+    delete updatedUser.password
+    console.log(updatedUser)
+  }
   } else {
     const updatedUser = usern._doc
     delete updatedUser.password
@@ -20,6 +27,10 @@ router.get('/:id', verify, async (req, res) => {
 
     res.status(200).json(updatedUser)
   }
+}
+else {
+      res.status(500).json("not login")
+}
 })
 
 router.get('/', verify, async (req, res) => {
@@ -108,6 +119,24 @@ router.delete('/:id', verify, async (req, res) => {
 })
 
 // ******************************************************
+router.get("/:id/followers", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    const followers = await Promise.all(
+      user.following.map((followerID) => {
+        return User.findById(followerID);
+      })
+    );
+    let followerList = [];
+    followers.map((follower) => {
+      const { _id, username, profilePicture } = follower;
+      followerList.push({ _id, username, profilePicture });
+    });
+    res.status(200).json(followerList)
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 
 router.put('/:id/follow', verify, async (req, res) => {
   if (req.user.id !== req.params.id) {
