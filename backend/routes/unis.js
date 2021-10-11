@@ -60,7 +60,7 @@ router.post('/register', verify, async (req, res) => {
           const newUni = new Uni({
             uniName: req.body.uniName,
             uniDisplayName: uniDisplayName,
-            email: req.body.email
+            email: req.body.email,
           })
           const savedUni = await newUni.save()
 
@@ -119,7 +119,7 @@ router.put('/:id', verify, async (req, res) => {
     _id: req.params.id,
   })
   if (uniName.uniAdmin.includes(req.user.id) || req.user.isAdmin) {
-    if (req.body.uniAdmin !== req.user.id) {
+    if (!uniName.uniAdmin.includes(req.user.id)) {
       const updatedUniAdmin = await uniName.updateOne({
         $push: {
           uniAdmin: req.body.uniAdmin,

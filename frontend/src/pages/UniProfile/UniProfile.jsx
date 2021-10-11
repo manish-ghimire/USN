@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { useHistory, useParams } from 'react-router'
+import React, { useState, useEffect, useRef } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
 import axios from 'axios'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
@@ -162,8 +162,18 @@ const UniProfile = ({ setCircle }) => {
   const [openCreateCourse, setOpenCreateCourse] = useState(false)
 
   const handleUpdateCoursesToUni = () => {
-    const body = { courseId: selectedCourses }
-    console.log('BODYYYY', selectedCourses)
+    console.log(selectedCourses)
+    let idOfSelectedCourses = []
+    selectedCourses.map((selectedCourse, index) => {
+      idOfSelectedCourses.push(selectedCourse._id)
+    })
+
+    // console.log('Uni IDDD', uniId)
+    // console.log('BODYYYY', idOfSelectedCourses)
+
+    const body = {
+      courseId: idOfSelectedCourses,
+    }
     const putData = async () => {
       try {
         const successCourse = await axios.put(`/uni/${uniId}`, body, {
@@ -171,16 +181,45 @@ const UniProfile = ({ setCircle }) => {
             Authorization: `Bearer ${accessToken}`,
           },
         })
+        console.log('SUCCESS', successCourse)
       } catch (error) {
         console.log('error', error)
       }
     }
-    // putData()
+    putData()
     setOpenCreateCourse(false)
     // window.location.reload()
   }
   // ***************** CREATE A COURSE ENDS *******************************
 
+  // ***** CREATE A CLUB ************
+  const clubName = useRef()
+  const clubDesc = useRef()
+  const [openCreateClub, setOpenCreateClub] = useState(false)
+  const handleCreateClub = (param) => {
+    const body = {
+      clubName: clubName.current.value,
+      desc: clubDesc.current.value,
+      uniId: uniId,
+    }
+    const putData = async () => {
+      try {
+        console.log('im hereeeeee')
+        const success = await axios.post(`/club/register`, body, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        console.log(success)
+      } catch (error) {
+        console.log('error', error)
+      }
+    }
+    putData()
+    setOpenCreateClub(false)
+    window.location.reload()
+  }
+  //******* CREATE A CLUB ********************/
   const dialogAddCourse = (
     <>
       <Dialog
@@ -206,6 +245,41 @@ const UniProfile = ({ setCircle }) => {
         <DialogActions>
           <Button onClick={() => setOpenCreateCourse(false)}>Cancel</Button>
           <Button onClick={handleUpdateCoursesToUni}>Update</Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  )
+
+  const dialogCreateClub = (
+    <>
+      <Dialog open={openCreateClub} onClose={() => setOpenCreateClub(false)}>
+        <DialogTitle>Please enter club details</DialogTitle>
+        <Divider />
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin='dense'
+            id='clubName'
+            inputRef={clubName}
+            label='Club Name'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='clubDesc'
+            inputRef={clubDesc}
+            label='Club Description'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenCreateClub(false)}>Cancel</Button>
+          <Button onClick={handleCreateClub}>Club</Button>
         </DialogActions>
       </Dialog>
     </>
@@ -253,7 +327,7 @@ const UniProfile = ({ setCircle }) => {
               </ListItemIcon>
               <ListItemText
                 primary={faculty.facultyName}
-                onClick={() => alert('Go to faculty page')}
+                // onClick={() => alert('Go to faculty page')}
               />
             </ListItem>
           ))}
@@ -275,7 +349,7 @@ const UniProfile = ({ setCircle }) => {
               </ListItemIcon>
               <ListItemText
                 primary={courses.courseName}
-                onClick={() => alert('Go to course page')}
+                // onClick={() => alert('Go to course page')}
               />
             </ListItem>
           ))}
@@ -293,13 +367,33 @@ const UniProfile = ({ setCircle }) => {
       </Card>
       <Card>
         <List>
+          <ListItem>
+            <ListItemIcon>
+              <LocalLibraryIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Clubs at this University'} />
+          </ListItem>
+          <Divider />
+          {clubs.map((club, index) => (
+            <ListItem key={index} button>
+              <ListItemIcon>
+                <ArrowRightIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={club.clubName}
+                onClick={() => alert('Go to club page')}
+                onClick={() => history.push(`/club/${club._id}`)}
+              />
+            </ListItem>
+          ))}
           <ListItem button>
             <ListItemIcon>
               <ControlPointIcon />
             </ListItemIcon>
             <ListItemText
-              primary={'Create a Club'}
-              onClick={() => alert('Create a club')}
+              // primary={`Add another faculty`}
+              secondary={`Add a club`}
+              onClick={() => setOpenCreateClub(true)}
             />
           </ListItem>
         </List>
@@ -342,6 +436,7 @@ const UniProfile = ({ setCircle }) => {
       <Navbar />
       {sidebarSkeleton}
       {dialogAddCourse}
+      {dialogCreateClub}
       <Container disableGutters maxWidth='xl' className='container'>
         <Grid container>
           <Hidden mdDown>

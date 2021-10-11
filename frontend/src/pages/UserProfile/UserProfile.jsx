@@ -111,7 +111,35 @@ const UserProfile = ({ setCircle }) => {
     setOpenUpdateStudy(false)
     window.location.reload()
   }
-  //******* UPDATE UNIVERSITY ENDS ******************* */
+  //******* UPDATE UNIVERSITY ENDS ********************/
+
+  // ***** CREATE A STUDY GROUP ************
+  const studyName = useRef()
+  const studyDesc = useRef()
+  const [openCreateStudyGroup, setOpenCreateStudyGroup] = useState(false)
+  const handleCreateStudyGroup = (param) => {
+    const body = {
+      studyName: studyName.current.value,
+      desc: studyDesc.current.value,
+    }
+    const putData = async () => {
+      try {
+        console.log('im hereeeeee')
+        const success = await axios.post(`/study/register`, body, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        console.log(success)
+      } catch (error) {
+        console.log('error', error)
+      }
+    }
+    putData()
+    setOpenCreateStudyGroup(false)
+    // window.location.reload()
+  }
+  //******* CREATE A STUDY GROUP ********************/
 
   // USE-EFFECTS
   useEffect(() => {
@@ -325,7 +353,7 @@ const UserProfile = ({ setCircle }) => {
             </ListItemIcon>
             <ListItemText
               primary={'Create a study group'}
-              onClick={() => alert('Create a study group')}
+              onClick={() => setOpenCreateStudyGroup(true)}
             />
           </ListItem>
         </List>
@@ -460,7 +488,7 @@ const UserProfile = ({ setCircle }) => {
           <TextField
             autoFocus
             margin='dense'
-            id='fName'
+            id='classOf'
             inputRef={classOf}
             label='Year'
             type='text'
@@ -472,6 +500,46 @@ const UserProfile = ({ setCircle }) => {
         <DialogActions>
           <Button onClick={() => setOpenUpdateStudy(false)}>Cancel</Button>
           <Button onClick={handleUpdateStudy}>Update</Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  )
+
+  const createStudyGroupDialog = (
+    <>
+      <Dialog
+        open={openCreateStudyGroup}
+        onClose={() => setOpenCreateStudyGroup(false)}
+      >
+        <DialogTitle>Study Group</DialogTitle>
+        <Divider />
+        <DialogContent>
+          <DialogContentText>Enter New Study Group Details</DialogContentText>
+
+          <TextField
+            autoFocus
+            margin='dense'
+            id='studyName'
+            inputRef={studyName}
+            label='Study Group Name'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='studyDesc'
+            inputRef={studyDesc}
+            label='Study Description'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenCreateStudyGroup(false)}>Cancel</Button>
+          <Button onClick={handleCreateStudyGroup}>Create</Button>
         </DialogActions>
       </Dialog>
     </>
@@ -513,6 +581,7 @@ const UserProfile = ({ setCircle }) => {
       <Navbar />
       {completeProfileDialog}
       {completeStudyDialog}
+      {createStudyGroupDialog}
       {sidebarSkeleton}
       <Container disableGutters maxWidth='xl' className='container'>
         <Grid container>

@@ -18,7 +18,7 @@ import { Avatar, Container, Grid, Hidden } from '@mui/material'
 const drawerWidth = 200
 
 const Club = ({ setCircle }) => {
-  const [mobileOpen, setMobileOpen] = React.useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
@@ -28,45 +28,44 @@ const Club = ({ setCircle }) => {
   const { clubID } = useParams()
   const [user, setUser] = useState({})
   const [study, setStudy] = useState([])
-    const [club, setClub] = useState([])
+  const [club, setClub] = useState([])
   const [posts, setPosts] = useState([])
   const accessToken = localStorage.getItem('accessToken')
 
   useEffect(() => {
-    setCircle(true)
-    if (accessToken) {
-      const fetchData = async () => {
-        try {
-          if (clubID){
-          const successStudy = await axios.get(`/club/${clubID}`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-          console.log("here");
-          setStudy(successStudy)
-            console.log('Success Club', successStudy.data)
-        }
-
-          const successClub = await axios.get(`/club/`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-          console.log("here");
-          setClub(successClub)
-          console.log('Success Club', successClub.data)
-        } catch (error) {
-          console.log('Error fetching data', error)
-        }
-      }
-      fetchData()
-      console.log(study);
-    } else {
-      console.log('Im here')
-      history.push('/login', { text: 'hellooooooo' })
-    }
-    setCircle(false)
+    // setCircle(true)
+    // if (accessToken) {
+    //   const fetchData = async () => {
+    //     try {
+    //       if (clubID) {
+    //         const successStudy = await axios.get(`/club/${clubID}`, {
+    //           headers: {
+    //             Authorization: `Bearer ${accessToken}`,
+    //           },
+    //         })
+    //         console.log('here')
+    //         setStudy(successStudy)
+    //         console.log('Success Club', successStudy.data)
+    //       }
+    //       const successClub = await axios.get(`/club/`, {
+    //         headers: {
+    //           Authorization: `Bearer ${accessToken}`,
+    //         },
+    //       })
+    //       console.log('here')
+    //       setClub(successClub)
+    //       console.log('Success Club', successClub.data)
+    //     } catch (error) {
+    //       console.log('Error fetching data', error)
+    //     }
+    //   }
+    //   fetchData()
+    //   console.log(study)
+    // } else {
+    //   console.log('Im here')
+    //   history.push('/login', { text: 'hellooooooo' })
+    // }
+    // setCircle(false)
   }, [history, setCircle, setClub, accessToken])
 
   const drawer = (
@@ -131,9 +130,18 @@ const Club = ({ setCircle }) => {
     </div>
   )
 
-  return (
+  // NO POSTS RELATED
+  let ifNoPosts
+  if (posts.length < 1) {
+    ifNoPosts = (
+      <Card>
+        <Box sx={{ textAlign: 'center' }}>No Posts to display.</Box>
+      </Card>
+    )
+  }
+
+  const sidebarSkeleton = (
     <>
-      <Navbar />
       <Box
         component='nav'
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
@@ -142,7 +150,7 @@ const Club = ({ setCircle }) => {
         <Drawer
           variant='temporary'
           open={mobileOpen}
-          onClose={handleDrawerToggle}
+          onClose={() => setMobileOpen(!mobileOpen)}
           ModalProps={{
             keepMounted: true,
           }}
@@ -151,22 +159,30 @@ const Club = ({ setCircle }) => {
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
-              marginTop: '57px',
+              // marginTop: '57px',
+              marginTop: '0px',
             },
           }}
         >
           {drawer}
         </Drawer>
       </Box>
+    </>
+  )
+
+  return (
+    <>
+      <Navbar />
+      {sidebarSkeleton}
       <Container disableGutters maxWidth='xl' className='container'>
         <Grid container>
           <Hidden mdDown>
             <Grid item md={4}>
-              <Card>{drawer}</Card>
+              {drawer}
             </Grid>
           </Hidden>
           <Hidden mdUp>
-            <Grid item xs={4}>
+            <Grid item xs={12}>
               <Card height='190px'>
                 <Box
                   sx={{
@@ -180,24 +196,25 @@ const Club = ({ setCircle }) => {
                     alt='Memy Sharp'
                     src='https://picsum.photos/400/400'
                     sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
-                    onClick={handleDrawerToggle}
+                    onClick={() => setMobileOpen(!mobileOpen)}
                   />
-                  <div>
-                    {user.fName} {user.lName}
-                  </div>
+                  <div>{/* {user.fName} {user.lName} */}</div>
                 </Box>
               </Card>
             </Grid>
           </Hidden>
           <Grid item xs={8}>
-            <PostingBox />
             <Hidden mdDown>
+              {ifNoPosts}
               <Post posts={posts} />
             </Hidden>
           </Grid>
-          <Hidden mdUp>
-            <Post posts={posts} />
-          </Hidden>
+          <Grid item xs={12}>
+            <Hidden mdUp>
+              {ifNoPosts}
+              <Post posts={posts} />
+            </Hidden>
+          </Grid>
         </Grid>
       </Container>
     </>

@@ -49,7 +49,7 @@ const Post = ({ posts }) => {
           >
             {post[1].fName}
           </div>
-          <span className='org'>{format(post[0].createdAt)}</span>
+          <div className='org'>{format(post[0].createdAt)}</div>
         </div>
       </div>
       <Divider />
