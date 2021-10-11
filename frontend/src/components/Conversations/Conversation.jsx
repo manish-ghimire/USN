@@ -2,14 +2,18 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import "./Conversation.css";
 
-const Conversation = ({accessToken, conversations, user}) => {
+const Conversation = ({accessToken, conversations, currentUser}) => {
 
 // console.log(user);
   const [theUser, setTheUser] = useState(null)
 useEffect(()=>{
-  console.log("zzz");
-  const followingId = conversations.members.find((m) => m !== user._id)
+  // try {
+  const followingId = conversations.members.find((m) => m !== currentUser._id)
+  console.log("followingIdzzzz",followingId)
+  if (followingId){
+
 const getUser = async () => {
+  // try{
   const successUser = await axios.get(`/user/${followingId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -17,30 +21,30 @@ const getUser = async () => {
     })
 
     setTheUser(successUser.data);
-    // console.log('successUser', successUser.data)
   }
+  // catch(err){
+  //   console.log(err)
+  // }
+    // console.log('successUser', successUser.data)
+  // }
   getUser()
-  const getMessages = async () => {
-    const successUser = await axios.get(`/message/${followingId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
+}else{
+  console.log("follow some users")
+}
+  // }catch (err){
+  //   console.log(err);
+  // }
 
-      setTheUser(successUser.data);
-      // console.log('successUser', successUser.data)
-    }
-    getUser()
-}, [accessToken, conversations, user])
+}, [accessToken, conversations])
 
   return (
     <div className="conversation">
       <img
         className="conversationImg"
-        src={user.profilePicture ? user.profilePicture : 'https://picsum.photos/400/400'}
+        src={currentUser.profilePicture ? currentUser.profilePicture : ''}
         alt=""/>
 
-      <span className="conversationName">{user.username}</span>
+      <span className="conversationName">{currentUser.username}</span>
     </div>
   )
 }
