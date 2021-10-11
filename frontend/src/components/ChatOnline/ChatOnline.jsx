@@ -56,7 +56,7 @@ const handleUserChatClick = async (user)=>{
           <div className="chatOnlineImgContainer">
             <img
               className="chatOnlineImg"
-              src={fo.profilePicture ? fo.profilePicture : ''}
+              src={fo.profilePicture ? fo.profilePicture : 'https://picsum.photos/400/400'}
               alt=""
             />
             <div className="chatOnlineBadge"></div>

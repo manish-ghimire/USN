@@ -75,7 +75,12 @@ router.post('/register', verify, async (req, res) => {
       })
 
       newStudy.save()
-
+      const oneUser = await User.findById(req.user.id)
+      if (oneUser) {
+        const uniIdUpdate = await oneUser.updateOne({
+          $push: { studyGroups: '' + newStudy._id + '' },
+        })
+      }
       return res.status(200).json(newStudy)
     }
   }

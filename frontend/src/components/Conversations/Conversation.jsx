@@ -41,7 +41,7 @@ const getUser = async () => {
     <div className="conversation">
       <img
         className="conversationImg"
-        src={currentUser.profilePicture ? currentUser.profilePicture : ''}
+        src={currentUser.profilePicture ? currentUser.profilePicture : 'https://picsum.photos/400/400'}
         alt=""/>
 
       <span className="conversationName">{currentUser.username}</span>
