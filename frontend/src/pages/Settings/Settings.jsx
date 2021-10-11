@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import axios from 'axios'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
@@ -8,8 +8,31 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Navbar from '../../components/Navbar/Navbar'
+import { Autocomplete } from '@mui/material'
 
 const Settings = () => {
+  const [faculties, setFaculties] = useState([])
+  const [selectedFaculty, setSelectedFaculty] = useState([])
+  const accessToken = localStorage.getItem('accessToken')
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const successFaculties = await axios.get(`/faculty`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        setFaculties(successFaculties.data)
+      } catch (error) {
+        console.log('Error fetching data', error)
+      }
+    }
+    fetchData()
+  }, [])
+
+  console.log('Faculties', faculties)
+
   // ***************** UPDATE A USER *******************************
   const userID = useRef()
   const username = useRef()
@@ -30,12 +53,6 @@ const Settings = () => {
   const classOf = useRef()
   const [openUpdateUser, setOpenUpdateUser] = useState(false)
 
-  const handleOpenUpdateUser = () => {
-    setOpenUpdateUser(true)
-  }
-  const handleCloseUpdateUser = () => {
-    setOpenUpdateUser(false)
-  }
   const handleUpdateUser = () => {
     const body = {
       token: localStorage.getItem('accessToken'),
@@ -90,12 +107,6 @@ const Settings = () => {
   const uniAdmin = useRef()
   const [openCreateUni, setOpenCreateUni] = useState(false)
 
-  const handleOpenCreateUni = () => {
-    setOpenCreateUni(true)
-  }
-  const handleCloseCreateUni = () => {
-    setOpenCreateUni(false)
-  }
   const handleCreateUni = () => {
     const body = {
       token: localStorage.getItem('accessToken'),
@@ -134,14 +145,8 @@ const Settings = () => {
   const postLikes = useRef()
   const postRole = useRef()
   const postToId = useRef()
-  const [openCreatePost, setopenCreatePost] = useState(false)
+  const [openCreatePost, setOpenCreatePost] = useState(false)
 
-  const handleOpenCreatePost = () => {
-    setopenCreatePost(true)
-  }
-  const handleCloseCreatePost = () => {
-    setopenCreatePost(false)
-  }
   const handleCreatePost = () => {
     const body = {
       token: localStorage.getItem('accessToken'),
@@ -167,7 +172,7 @@ const Settings = () => {
       }
     }
     putData()
-    setopenCreatePost(false)
+    setOpenCreatePost(false)
   }
   // ***************** CREATE A POST ENDS *******************************
 
@@ -181,14 +186,8 @@ const Settings = () => {
   const marketlikes = useRef()
   const marketrole = useRef()
   const marketpostToId = useRef()
-  const [openCreateItem, setopenCreateItem] = useState(false)
+  const [openCreateItem, setOpenCreateItem] = useState(false)
 
-  const handleOpenCreateItem = () => {
-    setopenCreateItem(true)
-  }
-  const handleCloseCreateItem = () => {
-    setopenCreateItem(false)
-  }
   const handleCreateItem = () => {
     const token = localStorage.getItem('accessToken')
     const body = {
@@ -217,31 +216,93 @@ const Settings = () => {
       }
     }
     putData()
-    setopenCreateItem(false)
+    setOpenCreateItem(false)
   }
   // ***************** CREATE A MARKET ITEM ENDS *******************************
+
+  // ***************** CREATE A FACULTY *******************************
+  const facultyName = useRef()
+  const facultyDesc = useRef()
+  const [openCreateFaculty, setOpenCreateFaculty] = useState(false)
+
+  const handleCreateFaculty = () => {
+    const token = localStorage.getItem('accessToken')
+    const body = {
+      facultyName: facultyName.current.value,
+      facultyDesc: facultyDesc.current.value,
+    }
+    const putData = async () => {
+      try {
+        const successFaculty = await axios.post(`/faculty/register`, body, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      } catch (error) {
+        console.log('error', error)
+      }
+    }
+    putData()
+    setOpenCreateFaculty(false)
+  }
+  // ***************** CREATE A FACULTY ENDS *******************************
+
+  // ***************** CREATE A COURSE *******************************
+  const courseName = useRef()
+  const courseDesc = useRef()
+  const [openCreateCourse, setOpenCreateCourse] = useState(false)
+
+  const handleCreateCourse = () => {
+    console.log('Selected faculty', selectedFaculty)
+    const token = localStorage.getItem('accessToken')
+    const body = {
+      courseName: courseName.current.value,
+      courseDesc: courseDesc.current.value,
+      facultyId: selectedFaculty._id,
+    }
+    const putData = async () => {
+      try {
+        const successCourse = await axios.post(`/course/register`, body, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      } catch (error) {
+        console.log('error', error)
+      }
+    }
+    putData()
+    setOpenCreateCourse(false)
+  }
+  // ***************** CREATE A COURSE ENDS *******************************
 
   return (
     <div>
       <Navbar />
 
       <div>
-        <Button variant='outlined' onClick={handleOpenUpdateUser}>
+        <Button variant='outlined' onClick={() => setOpenUpdateUser(true)}>
           Update a user
         </Button>
-        <Button variant='outlined' onClick={handleOpenCreateUni}>
+        <Button variant='outlined' onClick={() => setOpenCreateUni(true)}>
           Create a university
         </Button>
-        <Button variant='outlined' onClick={handleOpenCreatePost}>
+        <Button variant='outlined' onClick={() => setOpenCreatePost(true)}>
           Create a post
         </Button>
-        <Button variant='outlined' onClick={handleOpenCreateItem}>
+        <Button variant='outlined' onClick={() => setOpenCreateItem(true)}>
           Create a market item
+        </Button>
+        <Button variant='outlined' onClick={() => setOpenCreateFaculty(true)}>
+          Create a faculty
+        </Button>
+        <Button variant='outlined' onClick={() => setOpenCreateCourse(true)}>
+          Create a course
         </Button>
       </div>
 
       {/***************** UPDATE A USER *******************************/}
-      <Dialog open={openUpdateUser} onClose={handleCloseUpdateUser}>
+      <Dialog open={openUpdateUser} onClose={() => setOpenUpdateUser(false)}>
         <DialogTitle>Update a user</DialogTitle>
         <DialogContent>
           <DialogContentText>Fields are set as strings</DialogContentText>
@@ -418,14 +479,14 @@ const Settings = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseUpdateUser}>Cancel</Button>
+          <Button onClick={() => setOpenUpdateUser(false)}>Cancel</Button>
           <Button onClick={handleUpdateUser}>Update a user</Button>
         </DialogActions>
       </Dialog>
       {/***************** UPDATE A USER ENDS *******************************/}
 
       {/***************** CREATE A UNIVERSITY *******************************/}
-      <Dialog open={openCreateUni} onClose={handleCloseCreateUni}>
+      <Dialog open={openCreateUni} onClose={() => setOpenCreateUni(false)}>
         <DialogTitle>Create a university</DialogTitle>
         <DialogContent>
           <DialogContentText>Fields are set as strings</DialogContentText>
@@ -522,14 +583,14 @@ const Settings = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseCreateUni}>Cancel</Button>
+          <Button onClick={() => setOpenCreateUni(false)}>Cancel</Button>
           <Button onClick={handleCreateUni}>Create a university</Button>
         </DialogActions>
       </Dialog>
       {/***************** CREATE A UNIVERSITY ENDS *******************************/}
 
       {/***************** CREATE A POST *******************************/}
-      <Dialog open={openCreatePost} onClose={handleCloseCreatePost}>
+      <Dialog open={openCreatePost} onClose={() => setOpenCreatePost(false)}>
         <DialogTitle>Create a Post</DialogTitle>
         <DialogContent>
           <DialogContentText>Fields are set as strings</DialogContentText>
@@ -596,14 +657,14 @@ const Settings = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseCreatePost}>Cancel</Button>
+          <Button onClick={() => setOpenCreatePost(false)}>Cancel</Button>
           <Button onClick={handleCreatePost}>Create a Post</Button>
         </DialogActions>
       </Dialog>
       {/***************** CREATE A POST ENDS *******************************/}
 
       {/***************** CREATE A MARKET ITEM *******************************/}
-      <Dialog open={openCreateItem} onClose={handleCloseCreateItem}>
+      <Dialog open={openCreateItem} onClose={() => setOpenCreateItem(false)}>
         <DialogTitle>Create a market item</DialogTitle>
         <DialogContent>
           <DialogContentText>Fields are set as strings</DialogContentText>
@@ -700,11 +761,100 @@ const Settings = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseCreateItem}>Cancel</Button>
+          <Button onClick={() => setOpenCreateItem(false)}>Cancel</Button>
           <Button onClick={handleCreateItem}>Create a Post</Button>
         </DialogActions>
       </Dialog>
       {/***************** CREATE A MARKET ITEM ENDS *******************************/}
+
+      {/***************** CREATE A FACULTY *******************************/}
+      <Dialog
+        open={openCreateFaculty}
+        onClose={() => setOpenCreateFaculty(false)}
+      >
+        <DialogTitle>Create a faculty</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Fields are set as strings</DialogContentText>
+
+          <TextField
+            autoFocus
+            margin='dense'
+            id='facultyName'
+            inputRef={facultyName}
+            label='Faculty Name'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='facultyDesc'
+            inputRef={facultyDesc}
+            label='Faculty Description'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenCreateFaculty(false)}>Cancel</Button>
+          <Button onClick={handleCreateFaculty}>Create a Faculty</Button>
+        </DialogActions>
+      </Dialog>
+      {/***************** CREATE A FACULTY ENDS *******************************/}
+
+      {/***************** CREATE A Course *******************************/}
+      <Dialog
+        open={openCreateCourse}
+        onClose={() => setOpenCreateCourse(false)}
+      >
+        <DialogTitle>Create a Course</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Fields are set as strings</DialogContentText>
+
+          <TextField
+            autoFocus
+            margin='dense'
+            id='courseName'
+            inputRef={courseName}
+            label='Course Name'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='courseDesc'
+            inputRef={courseDesc}
+            label='Course Description'
+            type='text'
+            fullWidth
+            variant='standard'
+          />
+          <Autocomplete
+            // multiple
+            id='tags-outlined'
+            onChange={(event, value) => setSelectedFaculty(value)}
+            options={faculties}
+            getOptionLabel={(option) => option.facultyName}
+            filterSelectedOptions
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label='Select a faculty'
+                placeholder='Select a faculty'
+              />
+            )}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenCreateCourse(false)}>Cancel</Button>
+          <Button onClick={handleCreateCourse}>Create a Course</Button>
+        </DialogActions>
+      </Dialog>
+      {/***************** CREATE A Course ENDS *******************************/}
     </div>
   )
 }

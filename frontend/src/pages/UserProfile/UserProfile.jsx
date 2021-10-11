@@ -31,7 +31,7 @@ import {
   TextField,
 } from '@mui/material'
 
-const drawerWidth = 300
+const drawerWidth = 350
 
 const UserProfile = ({ setCircle }) => {
   // ALL CONSTANTS
@@ -45,6 +45,7 @@ const UserProfile = ({ setCircle }) => {
   const [clubs, setClubs] = useState([])
   const [posts, setPosts] = useState([])
   const [roles, setRoles] = useState([])
+  const [position, setPosition] = useState([])
   const [selectedRoles, setSelectedRoles] = useState([])
   const accessToken = localStorage.getItem('accessToken')
 
@@ -90,10 +91,12 @@ const UserProfile = ({ setCircle }) => {
       study: {
         uniId: selectedUni,
         classOf: classOf.current.value,
+        position: position,
       },
     }
     const putData = async () => {
       try {
+        console.log('im hereeeeee')
         const successUser = await axios.put(`/user/${userId}`, body, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -129,10 +132,8 @@ const UserProfile = ({ setCircle }) => {
               Authorization: `Bearer ${accessToken}`,
             },
           })
-          console.log(successTotalUnis.data)
           setTotalUnis(successTotalUnis.data)
 
-          // DO NOT DELETE THIS
           const successRoles = await axios.get('/role', {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -152,9 +153,11 @@ const UserProfile = ({ setCircle }) => {
                 }
               )
               uniLists.push({
+                sn: i + 1,
                 uniId: successUser.data.study[i].uniId,
                 uniName: successUni.data.uniName,
                 classOf: successUser.data.study[i].classOf,
+                position: successUser.data.study[i].position,
               })
             }
             setUnis(uniLists)
@@ -197,6 +200,93 @@ const UserProfile = ({ setCircle }) => {
     setCircle(false)
   }, [history, setCircle, userId, setUnis, accessToken])
 
+  //UNI RELATED
+  let ifUnis
+  if (unis.length > 0) {
+    ifUnis = unis.map((uni) => (
+      <List key={uni.sn}>
+        <ListItem button>
+          <ListItemIcon>
+            <SchoolIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={uni.uniName}
+            secondary={`${uni.position} / Year ${uni.classOf}`}
+            onClick={() => history.push(`/uni/${uni.uniId}`)}
+          />
+        </ListItem>
+      </List>
+    ))
+    let addMoreUnis = (
+      <List>
+        <ListItem button>
+          <ListItemIcon>
+            <ControlPointIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={`Add more universities`}
+            secondary={``}
+            onClick={() => setOpenUpdateStudy(true)}
+          />
+        </ListItem>
+      </List>
+    )
+    ifUnis.push(addMoreUnis)
+  } else {
+    ifUnis = (
+      <List>
+        <ListItem button>
+          <ListItemIcon>
+            <ControlPointIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={`No University details yet`}
+            secondary={``}
+            onClick={() => setOpenUpdateStudy(true)}
+          />
+        </ListItem>
+      </List>
+    )
+  }
+
+  //CLUBS RELATED
+  let ifClubs
+  if (clubs.length > 0) {
+    ifClubs = clubs.map((club) => (
+      <List key={club._id}>
+        <ListItem button>
+          <ListItemIcon>
+            <GroupsIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={club.clubName}
+            secondary={club.desc}
+            onClick={() => history.push(`/club/${club._id}`)}
+          />
+        </ListItem>
+      </List>
+    ))
+  } else {
+    ifClubs = (
+      <ListItem button>
+        <ListItemIcon>
+          <GroupsIcon />
+        </ListItemIcon>
+        <ListItemText primary={'No clubs joined yet'} secondary={''} />
+      </ListItem>
+    )
+  }
+
+  // NO POSTS RELATED
+  let ifNoPosts
+  if (posts.length < 1) {
+    ifNoPosts = (
+      <Card>
+        <Box sx={{ textAlign: 'center' }}>No Posts to display.</Box>
+      </Card>
+    )
+  }
+
   const drawer = (
     <>
       <Card>
@@ -224,56 +314,9 @@ const UserProfile = ({ setCircle }) => {
             {user.fName} {user.lName}
           </h3>
         </Box>
-        <br />
-        <Divider />
-        <List>
-          {unis.map((uni, index) => {
-            return (
-              <ListItem key={index} button>
-                <ListItemIcon>
-                  <SchoolIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={uni.uniName}
-                  secondary={`Class of ${uni.classOf}`}
-                  onClick={() => history.push(`/uni/${uni.uniId}`)}
-                />
-              </ListItem>
-            )
-          })}
-          <ListItem button>
-            <ListItemIcon>
-              <ControlPointIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary={`Add ${
-                unis.length > 0
-                  ? 'more universities'
-                  : 'a first university to your profile'
-              } `}
-              secondary={``}
-              onClick={() => setOpenUpdateStudy(true)}
-            />
-          </ListItem>
-        </List>
-        <Divider />
-        <List>
-          {clubs.map((club, index) => {
-            return (
-              <ListItem key={index} button>
-                <ListItemIcon>
-                  <GroupsIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={club.clubName}
-                  secondary={club.desc}
-                  onClick={() => history.push(`/club/${club._id}`)}
-                />
-              </ListItem>
-            )
-          })}
-        </List>
       </Card>
+      <Card>{ifUnis}</Card>
+      <Card>{ifClubs}</Card>
       <Card>
         <List>
           <ListItem button>
@@ -281,9 +324,8 @@ const UserProfile = ({ setCircle }) => {
               <ControlPointIcon />
             </ListItemIcon>
             <ListItemText
-              primary={'Create a Club'}
-              secondary={'click here if you wish to create a club'}
-              onClick={() => alert('Club create form')}
+              primary={'Create a study group'}
+              onClick={() => alert('Create a study group')}
             />
           </ListItem>
         </List>
@@ -321,7 +363,7 @@ const UserProfile = ({ setCircle }) => {
             margin='dense'
             id='fName'
             inputRef={fName}
-            value={user.fName}
+            defaultValue={user.fName}
             label='First name'
             type='text'
             fullWidth
@@ -332,7 +374,7 @@ const UserProfile = ({ setCircle }) => {
             margin='dense'
             id='lName'
             inputRef={lName}
-            value={user.lName}
+            defaultValue={user.lName}
             label='Last name'
             type='text'
             fullWidth
@@ -344,7 +386,7 @@ const UserProfile = ({ setCircle }) => {
             margin='dense'
             id='desc'
             inputRef={desc}
-            value={user.desc}
+            defaultValue={user.desc}
             label='Few words about you...'
             type='text'
             fullWidth
@@ -355,7 +397,7 @@ const UserProfile = ({ setCircle }) => {
             margin='dense'
             id='currentCity'
             inputRef={currentCity}
-            value={user.currentCity}
+            defaultValue={user.currentCity}
             label='Current location'
             type='text'
             fullWidth
@@ -366,7 +408,7 @@ const UserProfile = ({ setCircle }) => {
             margin='dense'
             id='isFrom'
             inputRef={isFrom}
-            value={user.isFrom}
+            defaultValue={user.isFrom}
             label='Originally from'
             type='text'
             fullWidth
@@ -383,7 +425,7 @@ const UserProfile = ({ setCircle }) => {
   const completeStudyDialog = (
     <>
       <Dialog open={openUpdateStudy} onClose={() => setOpenUpdateStudy(false)}>
-        <DialogTitle>Update University</DialogTitle>
+        <DialogTitle>University Details</DialogTitle>
         <Divider />
         <DialogContent>
           {/* <DialogContentText>Fields are set as strings</DialogContentText> */}
@@ -402,15 +444,28 @@ const UserProfile = ({ setCircle }) => {
               />
             )}
           />
+          <br />
+          <Autocomplete
+            // multiple
+            id='tags-outlined'
+            onChange={(event, value) => setPosition(value)}
+            options={roles}
+            getOptionLabel={(option) => option}
+            filterSelectedOptions
+            renderInput={(params) => (
+              <TextField {...params} label='Position' placeholder='Position' />
+            )}
+          />
+
           <TextField
             autoFocus
             margin='dense'
             id='fName'
             inputRef={classOf}
-            label='Class of'
+            label='Year'
             type='text'
             fullWidth
-            // style={{ width: 350 }}
+            style={{ width: 350 }}
             variant='standard'
           />
         </DialogContent>
@@ -490,11 +545,13 @@ const UserProfile = ({ setCircle }) => {
           </Hidden>
           <Grid item xs={8}>
             <Hidden mdDown>
+              {ifNoPosts}
               <Post posts={posts} />
             </Hidden>
           </Grid>
           <Grid item xs={12}>
             <Hidden mdUp>
+              {ifNoPosts}
               <Post posts={posts} />
             </Hidden>
           </Grid>

@@ -6,41 +6,36 @@ import React from 'react'
 import Card from '../../components/Card/Card'
 import './Post.scss'
 import axios from 'axios'
+import { format } from 'timeago.js'
 
 const Post = ({ posts }) => {
-  console.log('posts', posts)
   const history = useHistory()
   const accessToken = localStorage.getItem('accessToken')
 
   const likeUnlike = (post_id, user_id) => {
-    console.log('The post id', post_id)
-    console.log('The user id', user_id)
-    console.log('accessToken1', accessToken)
-    // const userId = {
-    //   id:
-    // }
     const fetchData = async () => {
       console.log('accessToken2', accessToken)
-      // try {
-      const success = await axios.put(
-        `/post/${post_id}/like`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-      console.log('return', success)
-      // } catch (error) {
-      //   console.log(error)
-      // }
+      try {
+        const success = await axios.put(
+          `/post/${post_id}/like`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        console.log('return', success)
+      } catch (error) {
+        console.log(error)
+      }
     }
     fetchData()
+    window.location.reload()
   }
 
   return posts.map((post) => (
-    <Card key={post._id}>
+    <Card key={post[0]._id}>
       <div className='avatar-area'>
         <img
           src='https://picsum.photos/200/200'
@@ -48,8 +43,13 @@ const Post = ({ posts }) => {
           onClick={() => history.push(`/user/${post[1]._id}`)}
         />
         <div className='details'>
-          <div className='name'>{post[1].fName}</div>
-          <div className='org'>{post[1].currentCity}</div>
+          <div
+            className='name'
+            onClick={() => history.push(`/user/${post[1]._id}`)}
+          >
+            {post[1].fName}
+          </div>
+          <span className='org'>{format(post[0].createdAt)}</span>
         </div>
       </div>
       <Divider />

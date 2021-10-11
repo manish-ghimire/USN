@@ -17,9 +17,26 @@ import Card from '../../components/Card/Card'
 import ArrowBackSharpIcon from '@mui/icons-material/ArrowBackSharp'
 import ArrowForwardSharpIcon from '@mui/icons-material/ArrowForwardSharp'
 import GroupsIcon from '@mui/icons-material/Groups'
-import { Avatar, Chip, Container, Grid, Hidden } from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit'
+import ControlPointIcon from '@mui/icons-material/ControlPoint'
+import LocalLibraryIcon from '@mui/icons-material/LocalLibrary'
+import ArrowRightIcon from '@mui/icons-material/ArrowRight'
+import {
+  Autocomplete,
+  Avatar,
+  Button,
+  Chip,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  Hidden,
+  TextField,
+} from '@mui/material'
 
-const drawerWidth = 300
+const drawerWidth = 350
 
 const UniProfile = ({ setCircle }) => {
   const [mobileOpen, setMobileOpen] = React.useState(false)
@@ -31,20 +48,43 @@ const UniProfile = ({ setCircle }) => {
   const history = useHistory()
   const [clubs, setClubs] = useState([])
   const [uni, setUni] = useState([])
+  const [roles, setRoles] = useState([])
+  const [selectedRoles, setSelectedRoles] = useState([])
   const { uniId } = useParams()
   const [posts, setPosts] = useState([])
+  const [courses, setCourses] = useState([])
+  const [totalCourses, setTotalCourses] = useState([])
+  const [selectedCourses, setSelectedCourses] = useState([])
+  const [faculties, setFaculties] = useState([])
   const accessToken = localStorage.getItem('accessToken')
+  const currentUser = JSON.parse(localStorage.getItem('currentUser')).user
+  const currentUni = JSON.parse(localStorage.getItem('currentUni'))
   useEffect(() => {
     setCircle(true)
     if (accessToken) {
       const fetchData = async () => {
         try {
+          const successTotalCourses = await axios.get(`/course`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          setTotalCourses(successTotalCourses.data)
+
           const successUni = await axios.get(`/uni/${uniId}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
           })
           setUni(successUni.data)
+          localStorage.setItem('currentUni', JSON.stringify(successUni.data))
+
+          const successRoles = await axios.get('/role', {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          setRoles(successRoles.data[0].roles)
 
           let clubLists = []
           for (var i = 0; i < successUni.data.clubs.length; i++) {
@@ -65,8 +105,6 @@ const UniProfile = ({ setCircle }) => {
               Authorization: `Bearer ${accessToken}`,
             },
           })
-
-          console.log(successPost.data)
           let postLists = []
           for (var i = 0; i < successPost.data.length; i++) {
             const successUser = await axios.get(
@@ -80,6 +118,34 @@ const UniProfile = ({ setCircle }) => {
             postLists.push([successPost.data[i], successUser.data])
           }
           setPosts(postLists)
+
+          let coursesLists = []
+          for (var i = 0; i < successUni.data.courseId.length; i++) {
+            const successCourses = await axios.get(
+              `/course/${successUni.data.courseId[i]}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            )
+            coursesLists.push(successCourses.data)
+          }
+          setCourses(coursesLists)
+
+          let facultiesLists = []
+          for (var i = 0; i < coursesLists.length; i++) {
+            const successFaculties = await axios.get(
+              `/faculty/${coursesLists[i].facultyId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            )
+            facultiesLists.push(successFaculties.data)
+          }
+          setFaculties(facultiesLists)
         } catch (error) {
           console.log('Error fetching data', error)
         }
@@ -92,79 +158,157 @@ const UniProfile = ({ setCircle }) => {
     setCircle(false)
   }, [history, setCircle, setUni, accessToken])
 
-  const handleFollow = (params) => {
-    alert('followed')
-  }
+  // ***************** CREATE A COURSE *******************************
+  const [openCreateCourse, setOpenCreateCourse] = useState(false)
 
-  const drawer = (
-    <div>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
+  const handleUpdateCoursesToUni = () => {
+    const body = { courseId: selectedCourses }
+    console.log('BODYYYY', selectedCourses)
+    const putData = async () => {
+      try {
+        const successCourse = await axios.put(`/uni/${uniId}`, body, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+      } catch (error) {
+        console.log('error', error)
+      }
+    }
+    // putData()
+    setOpenCreateCourse(false)
+    // window.location.reload()
+  }
+  // ***************** CREATE A COURSE ENDS *******************************
+
+  const dialogAddCourse = (
+    <>
+      <Dialog
+        open={openCreateCourse}
+        onClose={() => setOpenCreateCourse(false)}
       >
-        <Avatar
-          alt='Memy Sharp'
-          src='https://picsum.photos/400/400'
-          sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
-        />
-        <Hidden mdDown>
-          <h3>{uni.uniName}</h3>
-          <br />
-          <Chip label='Follow me!' onClick={handleFollow} />
-        </Hidden>
-        <Hidden mdUp>
-          <h4>{uni.uniName}</h4>
-        </Hidden>
-      </Box>
-      <br />
-      <Divider />
-      <List>
-        <ListItem button>
-          <ListItemIcon>
-            <ArrowBackSharpIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={`29 followers`}
-            onClick={() => alert('Followers clicked')}
+        <DialogTitle>Please select courses</DialogTitle>
+        <Divider />
+        <DialogContent>
+          <Autocomplete
+            multiple
+            style={{ width: 350 }}
+            id='tags-outlined'
+            onChange={(event, value) => setSelectedCourses(value)}
+            options={totalCourses}
+            getOptionLabel={(option) => option.courseName}
+            filterSelectedOptions
+            renderInput={(params) => (
+              <TextField {...params} label='Select select courses' />
+            )}
           />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <ArrowForwardSharpIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={`20 following`}
-            onClick={() => alert('Followings clicked')}
-          />
-        </ListItem>
-      </List>
-      <Divider />
-      <List>
-        {clubs.map((club, index) => {
-          return (
-            <ListItem key={index} button>
-              <ListItemIcon>
-                <GroupsIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary={club.clubName}
-                secondary={club.desc}
-                onClick={() => history.push(`/club/${club._id}`)}
-              />
-            </ListItem>
-          )
-        })}
-      </List>
-    </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenCreateCourse(false)}>Cancel</Button>
+          <Button onClick={handleUpdateCoursesToUni}>Update</Button>
+        </DialogActions>
+      </Dialog>
+    </>
   )
 
-  return (
+  const drawer = (
     <>
-      <Navbar />
+      <Card>
+        <Box sx={{ textAlign: 'right', color: 'gray' }}>
+          <EditIcon
+            className='editIcon'
+            fontSize='small'
+            onClick={() => console.log('edit clicked')}
+          />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Avatar
+            alt='Memy Sharp'
+            src='https://picsum.photos/400/400'
+            sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
+          />
+          <h3>{uni.uniName}</h3>
+        </Box>
+      </Card>
+      <Card>
+        <List>
+          <ListItem>
+            <ListItemIcon>
+              <LocalLibraryIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Faculties'} />
+          </ListItem>
+          <Divider />
+          {faculties.map((faculty, index) => (
+            <ListItem key={index} button>
+              <ListItemIcon>
+                <ArrowRightIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={faculty.facultyName}
+                onClick={() => alert('Go to faculty page')}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Card>
+      <Card>
+        <List>
+          <ListItem>
+            <ListItemIcon>
+              <LocalLibraryIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Courses offered'} />
+          </ListItem>
+          <Divider />
+          {courses.map((courses, index) => (
+            <ListItem key={index} button>
+              <ListItemIcon>
+                <ArrowRightIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={courses.courseName}
+                onClick={() => alert('Go to course page')}
+              />
+            </ListItem>
+          ))}
+          <ListItem button>
+            <ListItemIcon>
+              <ControlPointIcon />
+            </ListItemIcon>
+            <ListItemText
+              // primary={`Add another faculty`}
+              secondary={`Add a course`}
+              onClick={() => setOpenCreateCourse(true)}
+            />
+          </ListItem>
+        </List>
+      </Card>
+      <Card>
+        <List>
+          <ListItem button>
+            <ListItemIcon>
+              <ControlPointIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={'Create a Club'}
+              onClick={() => alert('Create a club')}
+            />
+          </ListItem>
+        </List>
+      </Card>
+    </>
+  )
+
+  const sidebarSkeleton = (
+    <>
       <Box
         component='nav'
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
@@ -173,7 +317,7 @@ const UniProfile = ({ setCircle }) => {
         <Drawer
           variant='temporary'
           open={mobileOpen}
-          onClose={handleDrawerToggle}
+          onClose={() => setMobileOpen(!mobileOpen)}
           ModalProps={{
             keepMounted: true,
           }}
@@ -182,22 +326,31 @@ const UniProfile = ({ setCircle }) => {
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
-              marginTop: '57px',
+              // marginTop: '57px',
+              marginTop: '0px',
             },
           }}
         >
           {drawer}
         </Drawer>
       </Box>
+    </>
+  )
+
+  return (
+    <>
+      <Navbar />
+      {sidebarSkeleton}
+      {dialogAddCourse}
       <Container disableGutters maxWidth='xl' className='container'>
         <Grid container>
           <Hidden mdDown>
             <Grid item md={4}>
-              <Card>{drawer}</Card>
+              {drawer}
             </Grid>
           </Hidden>
           <Hidden mdUp>
-            <Grid item xs={4}>
+            <Grid item xs={12}>
               <Card height='190px'>
                 <Box
                   sx={{
@@ -210,22 +363,23 @@ const UniProfile = ({ setCircle }) => {
                   <Avatar
                     alt='Memy Sharp'
                     src='https://picsum.photos/400/400'
-                    sx={{ width: 100, height: 100, margin: '0px 0 15px 0' }}
-                    onClick={handleDrawerToggle}
+                    sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
+                    onClick={() => setMobileOpen(!mobileOpen)}
                   />
-                  <Chip label='Follow me!' onClick={handleFollow} />
+                  <div>{/* {user.fName} {user.lName} */}</div>
                 </Box>
               </Card>
             </Grid>
           </Hidden>
           <Grid item xs={8}>
-            <PostingBox />
             <Hidden mdDown>
+              <PostingBox roles={roles} />
               <Post posts={posts} />
             </Hidden>
           </Grid>
           <Grid item xs={12}>
             <Hidden mdUp>
+              <PostingBox roles={roles} />
               <Post posts={posts} />
             </Hidden>
           </Grid>

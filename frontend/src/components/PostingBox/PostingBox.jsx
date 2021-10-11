@@ -2,21 +2,21 @@ import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import './PostingBox.scss'
-import { Button, TextField } from '@mui/material'
+import { Autocomplete, Button, TextField } from '@mui/material'
 import Card from '../../components/Card/Card'
 
-const PostingBox = () => {
+const PostingBox = ({ roles }) => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser')).user
   const { uniId } = useParams()
   const token = localStorage.getItem('accessToken')
   const [content, setContent] = useState('')
+  const [selectedRoles, setSelectedRoles] = useState('')
 
   const handleClick = (params) => {
     const body = {
       userId: currentUser._id,
       desc: content,
-      img: 'link',
-      role: 'student',
+      role: selectedRoles,
       postToId: uniId,
     }
     const pushData = async () => {
@@ -32,10 +32,11 @@ const PostingBox = () => {
       }
     }
     pushData()
+    window.location.reload()
   }
 
   return (
-    <Card height='190px'>
+    <Card height='255px'>
       <TextField
         fullWidth
         id='outlined-multiline-static'
@@ -44,6 +45,19 @@ const PostingBox = () => {
         placeholder='Write your thoughts...'
         onChange={(e) => setContent(e.target.value)}
       />
+      <div className='show-to'>
+        <Autocomplete
+          multiple
+          id='tags-outlined'
+          onChange={(event, value) => setSelectedRoles(value)}
+          options={roles}
+          getOptionLabel={(option) => option}
+          filterSelectedOptions
+          renderInput={(params) => (
+            <TextField {...params} label='Show posts only to' />
+          )}
+        />
+      </div>
       <div className='post-button'>
         <Button onClick={handleClick} variant='contained'>
           POST NOW !

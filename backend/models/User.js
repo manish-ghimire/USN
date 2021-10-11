@@ -9,6 +9,9 @@ const UniDetailSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  position: {
+    type: String,
+  },
 })
 
 const UserSchema = new mongoose.Schema(
