@@ -1,16 +1,21 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+   "start": "nodemon index.js"
+  },
+  "engines": {
+    "node": "v16.10.0"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/plugin-syntax-jsx": "^7.14.5",
+    "@mui/icons-material": "^5.0.3",
     "axios": "^0.21.4",
     "bcrypt": "^5.0.1",
+    "core-js": "^3.18.2",
     "cors": "^2.8.5",
     "dotenv": "^8.6.0",
     "express": "^4.17.1",
@@ -20,6 +25,13 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.3",
     "nodemon": "^2.0.7",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "react-scripts": "^0.9.5",
+    "socket.io": "^4.2.0"
+  },
+  "keywords": [],
+  "description": "",
+  "devDependencies": {
+    "@babel/core": "^7.15.8"
   }
 }

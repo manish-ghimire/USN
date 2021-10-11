@@ -215,7 +215,11 @@ const UserProfile = ({ setCircle }) => {
           for (var k = 0; k < successPost.data.length; k++) {
             postLists.push([successPost.data[k], successUser.data])
           }
-          setPosts(postLists)
+          setPosts(postLists.sort((p1, p2) => {
+            console.log("p1", p1[0].createdAt)
+              console.log("p2", p2[0].createdAt)
+          return new Date(p2[0].createdAt) - new Date(p1[0].createdAt);
+        }));
         } catch (error) {
           console.log('Error fetching data', error)
         }
@@ -615,13 +619,13 @@ const UserProfile = ({ setCircle }) => {
           <Grid item xs={8}>
             <Hidden mdDown>
               {ifNoPosts}
-              <Post posts={posts} />
+                {posts.map((p, index) => (<Post key={index} posts={p} />))}
             </Hidden>
           </Grid>
           <Grid item xs={12}>
             <Hidden mdUp>
               {ifNoPosts}
-              <Post posts={posts} />
+                  {posts.map((p, index) => (<Post key={index} posts={p} />))}
             </Hidden>
           </Grid>
         </Grid>

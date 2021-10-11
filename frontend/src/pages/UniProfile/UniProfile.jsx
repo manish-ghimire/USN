@@ -105,6 +105,7 @@ const UniProfile = ({ setCircle }) => {
               Authorization: `Bearer ${accessToken}`,
             },
           })
+
           let postLists = []
           for (var i = 0; i < successPost.data.length; i++) {
             const successUser = await axios.get(
@@ -117,7 +118,12 @@ const UniProfile = ({ setCircle }) => {
             )
             postLists.push([successPost.data[i], successUser.data])
           }
-          setPosts(postLists)
+          // setPosts(postLists)
+          setPosts(postLists.sort((p1, p2) => {
+            console.log("p1", p1[0].createdAt)
+              console.log("p2", p2[0].createdAt)
+          return new Date(p2[0].createdAt) - new Date(p1[0].createdAt);
+        }));
 
           let coursesLists = []
           for (var i = 0; i < successUni.data.courseId.length; i++) {
@@ -158,6 +164,7 @@ const UniProfile = ({ setCircle }) => {
     setCircle(false)
   }, [history, setCircle, setUni, accessToken])
 
+console.log(posts);
   // ***************** CREATE A COURSE *******************************
   const [openCreateCourse, setOpenCreateCourse] = useState(false)
 
@@ -469,13 +476,13 @@ const UniProfile = ({ setCircle }) => {
           <Grid item xs={8}>
             <Hidden mdDown>
               <PostingBox roles={roles} />
-              <Post posts={posts} />
+              {posts.map((p, index) => (<Post key={index} posts={p} />))}
             </Hidden>
           </Grid>
           <Grid item xs={12}>
             <Hidden mdUp>
               <PostingBox roles={roles} />
-              <Post posts={posts} />
+      {posts.map((p, index) => (<Post key={index} posts={p} />))}
             </Hidden>
           </Grid>
         </Grid>
