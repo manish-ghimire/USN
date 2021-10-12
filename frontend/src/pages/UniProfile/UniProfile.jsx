@@ -162,18 +162,14 @@ const UniProfile = ({ setCircle }) => {
   const [openCreateCourse, setOpenCreateCourse] = useState(false)
 
   const handleUpdateCoursesToUni = () => {
-    console.log(selectedCourses)
     let idOfSelectedCourses = []
     selectedCourses.map((selectedCourse, index) => {
       idOfSelectedCourses.push(selectedCourse._id)
     })
+    console.log('uni1', uni.courseId)
+    console.log('uni2', idOfSelectedCourses)
 
-    // console.log('Uni IDDD', uniId)
-    // console.log('BODYYYY', idOfSelectedCourses)
-
-    const body = {
-      courseId: idOfSelectedCourses,
-    }
+    const body = { courseId: uni.courseId.concat(idOfSelectedCourses) }
     const putData = async () => {
       try {
         const successCourse = await axios.put(`/uni/${uniId}`, body, {
@@ -188,7 +184,7 @@ const UniProfile = ({ setCircle }) => {
     }
     putData()
     setOpenCreateCourse(false)
-    // window.location.reload()
+    window.location.reload()
   }
   // ***************** CREATE A COURSE ENDS *******************************
 

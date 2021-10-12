@@ -19,6 +19,7 @@ const PostingBox = ({ roles }) => {
       role: selectedRoles,
       postToId: uniId,
     }
+
     const pushData = async () => {
       try {
         const successPosting = await axios.post(`/post/`, body, {

@@ -57,12 +57,12 @@ const Login = ({ setCircle, setSnackbar }) => {
     <div className='login-container'>
       <div className='leftDiv'>
         <img src={Logo} alt='USN logo' width='100px' />
-        <div className='left-slogan'>Bla bla blaaa !</div>
+        <div className='left-slogan'>University Social Network !</div>
       </div>
       <div className='rightDiv'>
         <div className='slogan-form-box'>
           <img src={Logo} alt='USN logo' width='200px' />
-          <div className='slogan'>Join USNow!</div>
+          <div className='slogan'>Login USNow!</div>
           <form noValidate autoComplete='off' onSubmit={handleSubmit}>
             <TextField
               required
