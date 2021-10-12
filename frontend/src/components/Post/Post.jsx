@@ -1,14 +1,18 @@
 import { Link, useHistory } from 'react-router-dom'
 import { Divider } from '@mui/material'
-import ShareIcon from '@mui/icons-material/Share'
+import ShareIcon from '@mui/icons-material/Share';
 import FavoriteIcon from '@mui/icons-material/Favorite'
-import React from 'react'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import React, {useState} from 'react'
 import Card from '../../components/Card/Card'
 import './Post.scss'
 import axios from 'axios'
 import { format } from 'timeago.js'
 
 const Post = ({ posts }) => {
+  console.log("posts", posts)
+const [like, setLike] = useState(posts[0].likes.length)
+
   const history = useHistory()
   const accessToken = localStorage.getItem('accessToken')
 
@@ -34,50 +38,50 @@ const Post = ({ posts }) => {
     window.location.reload()
   }
 
-  return posts.map((post) => (
-    <Card key={post[0]._id}>
+
+  return (
+
+    <Card key={posts[0]._id}>
       <div className='avatar-area'>
         <img
           src='https://picsum.photos/200/200'
           alt='User'
-          onClick={() => history.push(`/user/${post[1]._id}`)}
+          onClick={() => history.push(`/user/${posts[1]._id}`)}
         />
         <div className='details'>
           <div
             className='name'
-            onClick={() => history.push(`/user/${post[1]._id}`)}
+            onClick={() => history.push(`/user/${posts[1]._id}`)}
           >
-            {post[1].fName}
+            {posts[1].fName}
           </div>
-          <div className='org'>{format(post[0].createdAt)}</div>
+          <div className='org'>{format(posts[0].createdAt)}</div>
         </div>
       </div>
       <Divider />
-      <div className='post-text'>{post[0].desc}</div>
+      <div className='post-text'>{posts[0].desc}</div>
       <Divider />
       <div className='react-links'>
         <div className='lefthalf'></div>
         <div className='righthalf'>
           <div className='share'>
-            <span>
+            <span className="shareIcon">
               <Link to='/register'>
                 <ShareIcon />
               </Link>
             </span>
-            <span onClick={() => likeUnlike(post[0]._id, post[1]._id)}>
-              <FavoriteIcon />
-              {post[0].likes.length === 0 ? '' : post[0].likes.length}
-              {post[0].likes.length === 0
-                ? 'Click me'
-                : post[0].likes.length === 1
-                ? ' Like'
-                : ' Likes'}
+          <span className="postFavorite" onClick={() => likeUnlike(posts[0]._id, posts[1]._id)}>
+
+              {posts[0].likes.length ? <FavoriteIcon /> : <FavoriteBorderIcon/>}
+
+
             </span>
+              <span className="postLikeCounter">{like}</span>
           </div>
         </div>
       </div>
     </Card>
-  ))
+  )
 }
 
 export default Post

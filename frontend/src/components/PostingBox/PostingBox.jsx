@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useState, useRef } from 'react'
+import { useParams,  } from 'react-router-dom'
 import axios from 'axios'
 import './PostingBox.scss'
 import { Autocomplete, Button, TextField } from '@mui/material'
@@ -11,6 +11,7 @@ const PostingBox = ({ roles }) => {
   const token = localStorage.getItem('accessToken')
   const [content, setContent] = useState('')
   const [selectedRoles, setSelectedRoles] = useState('')
+  const [file, setFile] = useState(null)
 
   const handleClick = (params) => {
     const body = {
@@ -43,7 +44,7 @@ const PostingBox = ({ roles }) => {
         id='outlined-multiline-static'
         multiline
         rows={3}
-        placeholder='Write your thoughts...'
+        placeholder='Write your study hack...'
         onChange={(e) => setContent(e.target.value)}
       />
       <div className='show-to'>
