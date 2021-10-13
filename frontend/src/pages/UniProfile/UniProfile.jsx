@@ -296,7 +296,7 @@ const UniProfile = ({ setCircle }) => {
           <EditIcon
             className='editIcon'
             fontSize='small'
-            onClick={() => console.log('edit clicked')}
+            onClick={() => console.log('Uni edit clicked')}
           />
         </Box>
         <Box

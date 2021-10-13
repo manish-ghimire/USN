@@ -1,17 +1,16 @@
 import { Link, useHistory } from 'react-router-dom'
 import { Divider } from '@mui/material'
-import ShareIcon from '@mui/icons-material/Share';
+import ShareIcon from '@mui/icons-material/Share'
 import FavoriteIcon from '@mui/icons-material/Favorite'
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import React, {useState} from 'react'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import React, { useState } from 'react'
 import Card from '../../components/Card/Card'
 import './Post.scss'
 import axios from 'axios'
 import { format } from 'timeago.js'
 
 const Post = ({ posts }) => {
-  console.log("posts", posts)
-const [like, setLike] = useState(posts[0].likes.length)
+  const [like, setLike] = useState(posts[0].likes.length)
 
   const history = useHistory()
   const accessToken = localStorage.getItem('accessToken')
@@ -38,9 +37,7 @@ const [like, setLike] = useState(posts[0].likes.length)
     window.location.reload()
   }
 
-
   return (
-
     <Card key={posts[0]._id}>
       <div className='avatar-area'>
         <img
@@ -65,18 +62,22 @@ const [like, setLike] = useState(posts[0].likes.length)
         <div className='lefthalf'></div>
         <div className='righthalf'>
           <div className='share'>
-            <span className="shareIcon">
+            <span className='shareIcon'>
               <Link to='/register'>
                 <ShareIcon />
               </Link>
             </span>
-          <span className="postFavorite" onClick={() => likeUnlike(posts[0]._id, posts[1]._id)}>
-
-              {posts[0].likes.length ? <FavoriteIcon /> : <FavoriteBorderIcon/>}
-
-
+            <span
+              className='postFavorite'
+              onClick={() => likeUnlike(posts[0]._id, posts[1]._id)}
+            >
+              {posts[0].likes.length ? (
+                <FavoriteIcon />
+              ) : (
+                <FavoriteBorderIcon />
+              )}
             </span>
-              <span className="postLikeCounter">{like}</span>
+            <span className='postLikeCounter'>{like}</span>
           </div>
         </div>
       </div>

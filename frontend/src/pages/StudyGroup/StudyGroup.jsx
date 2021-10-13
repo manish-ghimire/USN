@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { useHistory, useParams } from 'react-router'
+import React, { useState, useEffect, useRef } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
 import axios from 'axios'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
@@ -9,13 +9,35 @@ import ListItem from '@mui/material/ListItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import SchoolIcon from '@mui/icons-material/School'
+import Typography from '@mui/material/Typography'
 import Navbar from '../../components/Navbar/Navbar'
 import PostingBox from '../../components/PostingBox/PostingBox.jsx'
 import Post from '../../components/Post/Post.jsx'
 import Card from '../../components/Card/Card'
-import { Avatar, Container, Grid, Hidden } from '@mui/material'
+import ArrowBackSharpIcon from '@mui/icons-material/ArrowBackSharp'
+import ArrowForwardSharpIcon from '@mui/icons-material/ArrowForwardSharp'
+import GroupsIcon from '@mui/icons-material/Groups'
+import EditIcon from '@mui/icons-material/Edit'
+import ControlPointIcon from '@mui/icons-material/ControlPoint'
+import LocalLibraryIcon from '@mui/icons-material/LocalLibrary'
+import ArrowRightIcon from '@mui/icons-material/ArrowRight'
+import {
+  Autocomplete,
+  Avatar,
+  Button,
+  Chip,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  Hidden,
+  TextField,
+} from '@mui/material'
+import { format } from 'timeago.js'
 
-const drawerWidth = 200
+const drawerWidth = 350
 
 const StudyGroup = ({ setCircle }) => {
   const [mobileOpen, setMobileOpen] = React.useState(false)
@@ -25,103 +47,177 @@ const StudyGroup = ({ setCircle }) => {
   }
 
   const history = useHistory()
-  const { studygroupID } = useParams()
-  const [user, setUser] = useState({})
-  const [study, setStudy] = useState([])
+  const [club, setClub] = useState([])
+  const [uni, setUni] = useState([])
+  const [roles, setRoles] = useState([])
+  const [selectedRoles, setSelectedRoles] = useState([])
+  const { clubId } = useParams()
   const [posts, setPosts] = useState([])
+  const [courses, setCourses] = useState([])
+  const [totalCourses, setTotalCourses] = useState([])
+  const [selectedCourses, setSelectedCourses] = useState([])
+  const [faculties, setFaculties] = useState([])
   const accessToken = localStorage.getItem('accessToken')
-
+  const currentUser = JSON.parse(localStorage.getItem('currentUser')).user
+  const currentUni = JSON.parse(localStorage.getItem('currentUni'))
   useEffect(() => {
     setCircle(true)
     if (accessToken) {
       const fetchData = async () => {
         try {
-          const successStudy = await axios.get(`/study/${studygroupID}`, {
+          const successClub = await axios.get(`/club/${clubId}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
           })
-          console.log("here");
-          setStudy(successStudy)
-          console.log('Success studygroup', successStudy.data)
+          setClub(successClub.data)
+          localStorage.setItem('currentClub', JSON.stringify(successClub.data))
+
+          const successRoles = await axios.get('/role', {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          setRoles(successRoles.data[0].roles)
+
+          const successUni = await axios.get(`/uni/${successClub.data.uniId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          setUni(successUni.data)
+
+          const successPost = await axios.get(`/post?club=${clubId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+
+          let postLists = []
+          for (var i = 0; i < successPost.data.length; i++) {
+            const successUser = await axios.get(
+              `/user/${successPost.data[i].userId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            )
+            postLists.push([successPost.data[i], successUser.data])
+          }
+          setPosts(
+            postLists.sort((p1, p2) => {
+              console.log('p1', p1[0].createdAt)
+              console.log('p2', p2[0].createdAt)
+              return new Date(p2[0].createdAt) - new Date(p1[0].createdAt)
+            })
+          )
         } catch (error) {
           console.log('Error fetching data', error)
         }
       }
       fetchData()
-      console.log(study);
     } else {
       console.log('Im here')
       history.push('/login', { text: 'hellooooooo' })
     }
     setCircle(false)
-  }, [history, setCircle, accessToken])
+  }, [history, setCircle, setUni, accessToken])
 
   const drawer = (
-    <div>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Avatar
-          alt='Memy Sharp'
-          src='https://picsum.photos/400/400'
-          sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
-        />
-        <div>
-          {user.fName} {user.lName}
-        </div>
-        <div>{user.username}</div>
-        <div>{user.isFrom}</div>
-        <div>{user.role}</div>
-      </Box>
-      <br />
-      <Divider />
-      <List>
-        <ListItem button>
-          <ListItemIcon>
-            <SchoolIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={'University of Canberra'}
-            secondary={'Expected completion 2021'}
-            onClick={() => console.log('list item clicked')}
+    <>
+      <Card>
+        <Box sx={{ textAlign: 'right', color: 'gray' }}>
+          <EditIcon
+            className='editIcon'
+            fontSize='small'
+            onClick={() => console.log('Club edit clicked')}
           />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <SchoolIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={'Frakfurt University'}
-            secondary={'2015-2021'}
-            onClick={() => console.log('list item clicked')}
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Avatar
+            alt='Memy Sharp'
+            src='https://picsum.photos/400/400'
+            sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
           />
-        </ListItem>
-      </List>
-      <Divider />
-      <List>
-        <ListItem button>
-          <ListItemIcon>
-            <SchoolIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={'Engineering Society Club'}
-            secondary={'University of Canberra'}
-            onClick={() => console.log('list item clicked')}
-          />
-        </ListItem>
-      </List>
-    </div>
+          <h3>{club.clubName}</h3>
+        </Box>
+      </Card>
+      <Card>
+        <List>
+          <ListItem>
+            <ListItemIcon>
+              <LocalLibraryIcon />
+            </ListItemIcon>
+            <ListItemText primary={'About us'} />
+          </ListItem>
+          <Divider />
+          <ListItem button>
+            <ListItemText
+              primary={club.desc}
+              // onClick={() => alert('Go to faculty page')}
+            />
+          </ListItem>
+        </List>
+      </Card>
+      <Card>
+        <List>
+          <ListItem>
+            <ListItemIcon>
+              <LocalLibraryIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Facts'} />
+          </ListItem>
+          <Divider />
+          <ListItem button>
+            <ListItemIcon>
+              <ArrowRightIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={`${
+                club.clubMembers
+                  ? club.clubMembers.length + 'Club members in total'
+                  : 'No club members yet'
+              } `}
+            />
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon>
+              <ArrowRightIcon />
+            </ListItemIcon>
+            <ListItemText primary={`Club launched ${format(club.createdAt)}`} />
+          </ListItem>
+        </List>
+      </Card>
+      <Card>
+        <List>
+          <ListItem>
+            <ListItemIcon>
+              <LocalLibraryIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Members'} />
+          </ListItem>
+          <Divider />
+          <ListItem button>
+            <ListItemIcon>
+              <ArrowRightIcon />
+            </ListItemIcon>
+            <ListItemText primary={`Member's names will be listed here`} />
+          </ListItem>
+        </List>
+      </Card>
+    </>
   )
 
-  return (
+  const sidebarSkeleton = (
     <>
-      <Navbar />
       <Box
         component='nav'
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
@@ -130,7 +226,7 @@ const StudyGroup = ({ setCircle }) => {
         <Drawer
           variant='temporary'
           open={mobileOpen}
-          onClose={handleDrawerToggle}
+          onClose={() => setMobileOpen(!mobileOpen)}
           ModalProps={{
             keepMounted: true,
           }}
@@ -139,22 +235,30 @@ const StudyGroup = ({ setCircle }) => {
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
-              marginTop: '57px',
+              // marginTop: '57px',
+              marginTop: '0px',
             },
           }}
         >
           {drawer}
         </Drawer>
       </Box>
+    </>
+  )
+
+  return (
+    <>
+      <Navbar />
+      {sidebarSkeleton}
       <Container disableGutters maxWidth='xl' className='container'>
         <Grid container>
           <Hidden mdDown>
             <Grid item md={4}>
-              <Card>{drawer}</Card>
+              {drawer}
             </Grid>
           </Hidden>
           <Hidden mdUp>
-            <Grid item xs={4}>
+            <Grid item xs={12}>
               <Card height='190px'>
                 <Box
                   sx={{
@@ -168,24 +272,29 @@ const StudyGroup = ({ setCircle }) => {
                     alt='Memy Sharp'
                     src='https://picsum.photos/400/400'
                     sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
-                    onClick={handleDrawerToggle}
+                    onClick={() => setMobileOpen(!mobileOpen)}
                   />
-                  <div>
-                    {user.fName} {user.lName}
-                  </div>
+                  <div>{/* {user.fName} {user.lName} */}</div>
                 </Box>
               </Card>
             </Grid>
           </Hidden>
           <Grid item xs={8}>
-            <PostingBox />
             <Hidden mdDown>
-              <Post posts={posts} />
+              <PostingBox roles={roles} postToId={clubId} />
+              {posts.map((p, index) => (
+                <Post key={index} posts={p} />
+              ))}
             </Hidden>
           </Grid>
-          <Hidden mdUp>
-            <Post posts={posts} />
-          </Hidden>
+          <Grid item xs={12}>
+            <Hidden mdUp>
+              <PostingBox roles={roles} postToId={clubId} />
+              {posts.map((p, index) => (
+                <Post key={index} posts={p} />
+              ))}
+            </Hidden>
+          </Grid>
         </Grid>
       </Container>
     </>

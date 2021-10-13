@@ -131,7 +131,7 @@ const Club = ({ setCircle }) => {
           <EditIcon
             className='editIcon'
             fontSize='small'
-            onClick={() => console.log('edit clicked')}
+            onClick={() => console.log('Club edit clicked')}
           />
         </Box>
         <Box
@@ -182,8 +182,10 @@ const Club = ({ setCircle }) => {
             </ListItemIcon>
             <ListItemText
               primary={`${
-                club.clubMembers ? club.clubMembers.length : 'No members yet'
-              } Club members in total`}
+                club.clubMembers
+                  ? club.clubMembers.length + 'Club members in total'
+                  : 'No club members yet'
+              } `}
             />
           </ListItem>
           <ListItem button>
