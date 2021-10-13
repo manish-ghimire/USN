@@ -60,7 +60,6 @@ const UniProfile = ({ setCircle }) => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser')).user
   const currentUni = JSON.parse(localStorage.getItem('currentUni'))
   useEffect(() => {
-    setCircle(true)
     if (accessToken) {
       const fetchData = async () => {
         try {
@@ -162,7 +161,6 @@ const UniProfile = ({ setCircle }) => {
       console.log('Im here')
       history.push('/login', { text: 'hellooooooo' })
     }
-    setCircle(false)
   }, [history, setCircle, setUni, accessToken])
 
   console.log(posts)

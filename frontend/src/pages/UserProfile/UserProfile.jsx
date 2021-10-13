@@ -143,9 +143,9 @@ const UserProfile = ({ setCircle }) => {
 
   // USE-EFFECTS
   useEffect(() => {
-    setCircle(true)
     if (accessToken) {
       const fetchData = async () => {
+        setCircle(true)
         try {
           const userUrl = `/user/${userId}`
           const successUser = await axios.get(userUrl, {
@@ -215,11 +215,11 @@ const UserProfile = ({ setCircle }) => {
           for (var k = 0; k < successPost.data.length; k++) {
             postLists.push([successPost.data[k], successUser.data])
           }
-          setPosts(postLists.sort((p1, p2) => {
-            console.log("p1", p1[0].createdAt)
-              console.log("p2", p2[0].createdAt)
-          return new Date(p2[0].createdAt) - new Date(p1[0].createdAt);
-        }));
+          setPosts(
+            postLists.sort((p1, p2) => {
+              return new Date(p2[0].createdAt) - new Date(p1[0].createdAt)
+            })
+          )
         } catch (error) {
           console.log('Error fetching data', error)
         }
@@ -227,6 +227,7 @@ const UserProfile = ({ setCircle }) => {
       fetchData()
     } else {
       console.log('Im here')
+      setCircle(false)
       history.push('/login', { text: 'hellooooooo' })
     }
     setCircle(false)
@@ -619,13 +620,17 @@ const UserProfile = ({ setCircle }) => {
           <Grid item xs={8}>
             <Hidden mdDown>
               {ifNoPosts}
-                {posts.map((p, index) => (<Post key={index} posts={p} />))}
+              {posts.map((p, index) => (
+                <Post key={index} posts={p} />
+              ))}
             </Hidden>
           </Grid>
           <Grid item xs={12}>
             <Hidden mdUp>
               {ifNoPosts}
-                  {posts.map((p, index) => (<Post key={index} posts={p} />))}
+              {posts.map((p, index) => (
+                <Post key={index} posts={p} />
+              ))}
             </Hidden>
           </Grid>
         </Grid>
