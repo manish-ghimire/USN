@@ -35,6 +35,7 @@ import {
   Hidden,
   TextField,
 } from '@mui/material'
+import { format } from 'timeago.js'
 
 const drawerWidth = 350
 
@@ -70,7 +71,14 @@ const Club = ({ setCircle }) => {
             },
           })
           setClub(successClub.data)
-          console.log('Success club', successClub.data)
+          localStorage.setItem('currentClub', JSON.stringify(successClub.data))
+
+          const successRoles = await axios.get('/role', {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          setRoles(successRoles.data[0].roles)
 
           const successUni = await axios.get(`/uni/${successClub.data.uniId}`, {
             headers: {
@@ -78,6 +86,32 @@ const Club = ({ setCircle }) => {
             },
           })
           setUni(successUni.data)
+
+          const successPost = await axios.get(`/post?club=${clubId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+
+          let postLists = []
+          for (var i = 0; i < successPost.data.length; i++) {
+            const successUser = await axios.get(
+              `/user/${successPost.data[i].userId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            )
+            postLists.push([successPost.data[i], successUser.data])
+          }
+          setPosts(
+            postLists.sort((p1, p2) => {
+              console.log('p1', p1[0].createdAt)
+              console.log('p2', p2[0].createdAt)
+              return new Date(p2[0].createdAt) - new Date(p1[0].createdAt)
+            })
+          )
         } catch (error) {
           console.log('Error fetching data', error)
         }
@@ -89,8 +123,6 @@ const Club = ({ setCircle }) => {
     }
     setCircle(false)
   }, [history, setCircle, setUni, accessToken])
-
-  console.log('CLUB', club)
 
   const drawer = (
     <>
@@ -128,9 +160,6 @@ const Club = ({ setCircle }) => {
           </ListItem>
           <Divider />
           <ListItem button>
-            <ListItemIcon>
-              <ArrowRightIcon />
-            </ListItemIcon>
             <ListItemText
               primary={club.desc}
               // onClick={() => alert('Go to faculty page')}
@@ -153,9 +182,32 @@ const Club = ({ setCircle }) => {
             </ListItemIcon>
             <ListItemText
               primary={`${
-                club.clubMembers ? club.clubMembers.length : 'No'
-              } Club members`}
+                club.clubMembers ? club.clubMembers.length : 'No members yet'
+              } Club members in total`}
             />
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon>
+              <ArrowRightIcon />
+            </ListItemIcon>
+            <ListItemText primary={`Club launched ${format(club.createdAt)}`} />
+          </ListItem>
+        </List>
+      </Card>
+      <Card>
+        <List>
+          <ListItem>
+            <ListItemIcon>
+              <LocalLibraryIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Members'} />
+          </ListItem>
+          <Divider />
+          <ListItem button>
+            <ListItemIcon>
+              <ArrowRightIcon />
+            </ListItemIcon>
+            <ListItemText primary={`Member's names will be listed here`} />
           </ListItem>
         </List>
       </Card>
@@ -227,7 +279,7 @@ const Club = ({ setCircle }) => {
           </Hidden>
           <Grid item xs={8}>
             <Hidden mdDown>
-              <PostingBox roles={roles} />
+              <PostingBox roles={roles} postToId={clubId} />
               {posts.map((p, index) => (
                 <Post key={index} posts={p} />
               ))}
@@ -235,7 +287,7 @@ const Club = ({ setCircle }) => {
           </Grid>
           <Grid item xs={12}>
             <Hidden mdUp>
-              <PostingBox roles={roles} />
+              <PostingBox roles={roles} postToId={clubId} />
               {posts.map((p, index) => (
                 <Post key={index} posts={p} />
               ))}

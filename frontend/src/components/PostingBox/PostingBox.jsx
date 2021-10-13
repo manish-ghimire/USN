@@ -1,13 +1,12 @@
 import React, { useState, useRef } from 'react'
-import { useParams,  } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import './PostingBox.scss'
 import { Autocomplete, Button, TextField } from '@mui/material'
 import Card from '../../components/Card/Card'
 
-const PostingBox = ({ roles }) => {
+const PostingBox = ({ roles, postToId }) => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser')).user
-  const { uniId } = useParams()
   const token = localStorage.getItem('accessToken')
   const [content, setContent] = useState('')
   const [selectedRoles, setSelectedRoles] = useState('')
@@ -18,7 +17,7 @@ const PostingBox = ({ roles }) => {
       userId: currentUser._id,
       desc: content,
       role: selectedRoles,
-      postToId: uniId,
+      postToId: postToId,
     }
 
     const pushData = async () => {
