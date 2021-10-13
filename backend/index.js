@@ -1,8 +1,8 @@
 const express = require('express')
 const path = require('path')
 const app = express()
-// const PORT = process.env.PORT || 5000
-// const PORTSOCK = process.env.PORTSOCK || 4000
+const PORT = process.env.PORT || 5000
+const PORTSOCK = process.env.PORTSOCK || 4000
 const dotenv = require('dotenv')
 const mongoose = require('mongoose')
 const authRoute = require('./routes/auth')
@@ -20,12 +20,16 @@ const commentRoute = require('./routes/comments')
 const courseRoute = require('./routes/courses')
 const facultyRoute = require('./routes/faculties')
 const jwt = require('jsonwebtoken')
-const io = require('socket.io')(process.env.PORTSOCKET || 4000, {
+const http = require('http');
+const server = http.createServer(app);
+const io = require("socket.io")(PORTSOCK, {
   cors: {
-    origin: '*',
-    // origin: "https://whispering-mesa-01789.herokuapp.com/",
-  },
-})
+    origin: "*",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["*"],
+    credentials: true
+  }
+});
 
 let users = []
 console.log('users1', users)
@@ -37,7 +41,7 @@ const addUser = (userId, socketId) => {
 
 const removeUser = (socketId) => {
   users = users.filter((user) => user.socketId !== socketId)
-  console.log('eremove', users)
+  console.log('remove', users)
 }
 
 const getUser = (userId) => {
@@ -47,7 +51,7 @@ const getUser = (userId) => {
 console.log('users2', users)
 io.on('connection', (socket) => {
   //when ceonnect
-  console.log(`a user connected ${process.env.PORT}!`)
+  console.log(`a user connected ${PORTSOCK}!`)
 
   //take userId and socketId from user
   socket.on('addUser', (userId) => {
@@ -56,22 +60,21 @@ io.on('connection', (socket) => {
   })
 
   //send and get message
-  socket.on('sendMessage', ({ senderId, receiverId, text }) => {
-    const user = getUser(receiverId)
-    io.to(user.socketId).emit('getMessage', {
+  socket.on("sendMessage", ({ senderId, receiverId, text }) => {
+    const user = getUser(receiverId);
+    io.to(user.socketId).emit("getMessage", {
       senderId,
       text,
-    })
-  })
+    });
+  });
 
   //when disconnect
   socket.on('disconnect', () => {
-    console.log(`a user disconnected ${process.env.PORT}!`)
+    console.log(`a user disconnected ${PORTSOCK}!`)
     removeUser(socket.id)
     io.emit('getUsers', users)
   })
 })
-
 //*********************************************************************
 
 dotenv.config()
@@ -110,6 +113,6 @@ app.use('/api/faculty', facultyRoute)
 //   res.sendFile(path.join(__dirname, '/client/build', 'index.html'));
 // });
 
-app.listen(process.env.PORT || 5000, () => {
-  console.log(`Backend is running on ${process.env.PORT}!`)
+app.listen(PORT, () => {
+  console.log(`Backend is running on ${PORT}!`)
 })

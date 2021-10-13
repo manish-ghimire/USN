@@ -128,10 +128,10 @@ const handleSubmit = async (e) => {
       (member) => member !== userID
     )
 
-console.log(receiverId)
+console.log("receiverId", receiverId)
     socket.current.emit("sendMessage", {
       senderId: userID,
-      receiverId,
+      receiverId: receiverId,
       text: newMessage,
     })
 
