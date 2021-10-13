@@ -119,9 +119,28 @@ router.delete('/:id', verify, async (req, res) => {
 })
 
 // ******************************************************
-router.get("/:id/followers", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.userId);
+router.get("/:id/followers", verify, async (req, res) => {
+  // try {
+    const user = await User.findById(req.user.id);
+    const followers = await Promise.all(
+      user.followers.map((followerID) => {
+        return User.findById(followerID);
+      })
+    );
+    let followerList = [];
+    followers.map((follower) => {
+      const { _id, username, profilePicture } = follower;
+      followerList.push({ _id, username, profilePicture });
+    });
+    res.status(200).json(followerList)
+  // } catch (err) {
+  //   res.status(500).json(err);
+  // }
+});
+
+router.get("/:id/followings", verify, async (req, res) => {
+  // try {
+    const user = await User.findById(req.user.id);
     const followers = await Promise.all(
       user.following.map((followerID) => {
         return User.findById(followerID);
@@ -133,11 +152,10 @@ router.get("/:id/followers", async (req, res) => {
       followerList.push({ _id, username, profilePicture });
     });
     res.status(200).json(followerList)
-  } catch (err) {
-    res.status(500).json(err);
-  }
+  // } catch (err) {
+  //   res.status(500).json(err);
+  // }
 });
-
 router.put('/:id/follow', verify, async (req, res) => {
   if (req.user.id !== req.params.id) {
     try {
