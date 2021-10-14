@@ -45,27 +45,27 @@ const Market = () => {
       <Navbar />
       <Container maxWidth='xl' className='container'>
         <Grid container spacing={2} justifyContent={'center'} padding={3}>
-          {items.map((item) => (
-            <Grid item xs={6} sm={3}>
-              <Card sx={{ maxWidth: 345 }}>
+          {items.map((item, index) => (
+            <Grid item xs={6} sm={4} md={3}>
+              <Card sx={{ maxWidth: 345, minHeight: 350, maxHeight: 350 }}>
                 <CardMedia
                   component='img'
-                  height='150'
-                  image='https://picsum.photos/150/150'
+                  Height='150'
+                  image={`https://picsum.photos/id/${index + 0}/150/345`}
                 />
                 <CardContent>
                   <Typography gutterBottom variant='h5' component='div'>
                     {item.itemName.substring(0, 18)}
                   </Typography>
                   <Typography variant='body2' color='text.secondary'>
-                    Lizards are a widespread group of squamate reptiles, with
-                    over 6,000 species, ranging across all continents except
-                    Antarctica
+                    {item.itemDesc.substring(0, 150)}
                   </Typography>
                 </CardContent>
-                <CardActions>
-                  <Button size='small'>Share</Button>
-                  <Button size='small'>Learn More</Button>
+                <CardActions className='amount-cta'>
+                  <Button size='small'>A${item.itemPrice}</Button>
+                  <Button variant='contained' size='small'>
+                    Buy now !
+                  </Button>
                 </CardActions>
               </Card>
             </Grid>
