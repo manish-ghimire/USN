@@ -4,47 +4,37 @@ import "./Conversation.css";
 
 const Conversation = ({accessToken, conversations, currentUser}) => {
 
-// console.log(user);
-  const [theUser, setTheUser] = useState(null)
+  const [user, setUser] = useState(null)
+    console.log("currentUser", currentUser)
 useEffect(()=>{
-  // try {
+
+  // console.log("conversations", conversations.members.find((m) => m !== currentUser._id))
   const followingId = conversations.members.find((m) => m !== currentUser._id)
-  console.log("followingIdzzzz",followingId)
-  if (followingId){
+  console.log("followingId", followingId)
+  // if (followingId){
 
 const getUser = async () => {
-  // try{
   const successUser = await axios.get(`/user/${followingId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-
-    setTheUser(successUser.data);
+    console.log("successUser.data", successUser.data)
+    setUser(successUser.data);
   }
-  // catch(err){
-  //   console.log(err)
-  // }
-    // console.log('successUser', successUser.data)
-  // }
+
   getUser()
-}else{
-  console.log("follow some users")
-}
-  // }catch (err){
-  //   console.log(err);
-  // }
 
-}, [accessToken, conversations])
-
+}, [accessToken, setUser, conversations])
+console.log("user", user)
   return (
     <div className="conversation">
-      <img
+   <img
         className="conversationImg"
-        src={currentUser.profilePicture ? currentUser.profilePicture : 'https://picsum.photos/400/400'}
+        src={user?.profilePicture ? user.profilePicture : 'https://picsum.photos/400/400'}
         alt=""/>
 
-      <span className="conversationName">{currentUser.username}</span>
+      <span className="conversationName">{user?.username}</span>
     </div>
   )
 }

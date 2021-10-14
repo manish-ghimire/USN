@@ -32,9 +32,11 @@ const io = require("socket.io")(PORTSOCK, {
 });
 
 let users = []
-console.log('users1', users)
+
 const addUser = (userId, socketId) => {
-  console.log('userIad', !users.some((user) => user.userId === userId))
+  console.log("userIdAdd", userId)
+    console.log("socketIdAdd", socketId)
+  console.log('userAdd', !users.some((user) => {console.log(user)}))
   !users.some((user) => user.userId === userId) &&
     users.push({ userId, socketId })
 }
@@ -60,8 +62,10 @@ io.on('connection', (socket) => {
   })
 
   //send and get message
-  socket.on("sendMessage", ({ senderId, receiverId, text }) => {
-    const user = getUser(receiverId);
+  socket.on("sendMessage", ({ senderId, recID, text }) => {
+    console.log("recID",recID)
+    const user = getUser(recID);
+    console.log('user', user)
     io.to(user.socketId).emit("getMessage", {
       senderId,
       text,
