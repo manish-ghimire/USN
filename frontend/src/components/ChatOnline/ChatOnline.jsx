@@ -2,82 +2,120 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import "./ChatOnline.css";
 
-const ChatOnline = ({onlineUsers, currentId, setCurrentChat, accessToken, userFollowings, userFollowers }) => {
+const ChatOnline = ({onlineUsers, currentId, setCurrentChat, setNewChat, accessToken}) => {
+const [currentChatfollowings, setCurrentChatfollowings] = useState([]);
+const [currentChatfollowers, setCurrentChatfollowers] = useState([]);
 const [userOnline, setUserOnline] = useState([]);
 const [currentChatUser, setCurrentChatUser] = useState([]);
-const [currentChatfollow, setCurrentChatfollow] = useState([]);
-
-setUserOnline(onlineUsers)
-
-useEffect(() => {
-const getMyFollowers = async () =>{
-  // console.log("currentId", currentId)
-
-
-
-const followData = []
-for (var i = 0; i < userOnline.length; i++) {
-  const follow = await axios.get(`/user/${userOnline[i]}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
-  console.log("followData", followData);
-  followData.push(follow.data)
-}
-setCurrentChatfollow(followData)
-}
-  getMyFollowers();
-}, []);
+console.log("onlineUsers111", onlineUsers)
+console.log("currentId111", currentId)
 
 
 
 useEffect(() => {
-const followers = userFollowers.filter((f) => onlineUsers.includes(f._id))
-const followings = userFollowings.filter((f) => onlineUsers.includes(f._id))
-
-// setUserOnline([...new Set([...followers, ...followings])])
-
-console.log("newusers", [...new Set([...followers, ...followings])]);
-}, [])
-
-const handleUserChatClick = async (user)=>{
-
-  console.log("submit user", user)
-  console.log("currentIdchat", currentId)
-  const getTwoUsers = await axios.get(`/conversation/find/${currentId}/${user._id}`, {
+  const getFollowings = async () => {
+    const res = await axios.get(`/user/${currentId}/followings`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-      console.log("getTwoUsers.data", getTwoUsers.data)
-    setCurrentChat(getTwoUsers.data)
-console.log(user);
+        console.log("res.data1", res.data)
+    setCurrentChatfollowings(res.data);
+  };
 
-    const body = {
-      senderId: currentId,
-      receiverId: user,
-    }
-    const PostTwoUsers = await axios.post(`/conversation`, body, {
+  const getFollowers = async () => {
+    const res = await axios.get(`/user/${currentId}/followers`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    console.log("res.data2", res.data)
+    setCurrentChatfollowers(res.data);
+  };
+  getFollowings()
+  getFollowers();
+}, [currentId]);
+
+useEffect(() => {
+
+  const followers = currentChatfollowers.filter((f) => onlineUsers.includes(f._id))
+    const followings = currentChatfollowings.filter((f) => onlineUsers.includes(f._id))
+  console.log("followers", followers)
+  console.log("followings", followings)
+const datas = [...followers,...followings]
+  const follow = [...new Set(datas.map(u => {return u._id}))];
+  const follow2 = [...new Set(datas.map(u => {return u.username}))];
+
+
+  const follow3 = follow.map(u=>{
+return {_id:u}
+})
+const follow4 = follow2.map(u2=>{
+return {username:u2}
+})
+const data = [...follow3, ...follow4]
+
+// const data2 = data.filter(u3=>{
+//   return [{_id:u3.id, u:u3.username}]
+// })
+console.log("data2", data)
+
+  //
+  //   return [{_id:u},
+  //   {follow2.map(u2=>{
+  //         return {username:u2}
+  //   })}]
+  // })
+
+    setUserOnline(data)
+}, [onlineUsers, setUserOnline]);
+
+
+const handleUserChatClick = async (user) => {
+  console.log('insidechatclick');
+  try {
+    const res = await axios.get(`/conversation/find/${currentId}/${user._id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    if(!res.data){
+      const body = {
+        senderId: currentId,
+        receiverId: user._id
+        }
+      const res = await axios.post(`/conversation`, body, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       })
-        console.log("PostTwoUsers", PostTwoUsers)
+      console.log("res1", res)
+    setNewChat(res);
+  }
+  else{
+    console.log("res2")
+    const res2 = await axios.get(`/conversation/find/${currentId}/${user._id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    setCurrentChat(res2.data);
+  }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-}
-
-// console.log("userOnline", userOnline)
-// console.log("followers", followers)
-// console.log("currentChatfollow", currentChatfollow)
-// console.log("followings", followings)
-// console.log("userOnline", userOnline)
+console.log("currentChatfollowings", currentChatfollowings)
+console.log("currentChatfollowers", currentChatfollowers)
+console.log("userOnline", userOnline)
+console.log("onlineUsers", onlineUsers)
 
   return (
     <>
     <div className="chatOnline">
 {
-      currentChatfollow.map((o)=>(
+      userOnline.map((o)=>(
         <div className="chatOnlineFollowing"  onClick={()=>handleUserChatClick(o)}>
           <div className="chatOnlineImgContainer">
             <img

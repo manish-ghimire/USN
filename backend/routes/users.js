@@ -12,18 +12,18 @@ router.get('/:id', verify, async (req, res) => {
     if (user._doc){
     const updatedUser = user._doc
     delete updatedUser.password
-    console.log(updatedUser)
+    console.log("updatedUser", updatedUser)
 
     res.status(200).json(updatedUser)
   }else{
     const updatedUser = user
     delete updatedUser.password
-    console.log(updatedUser)
+    console.log("updatedUser2", updatedUser)
   }
   } else {
     const updatedUser = usern._doc
     delete updatedUser.password
-    console.log(updatedUser)
+    console.log("updatedUser3", updatedUser)
 
     res.status(200).json(updatedUser)
   }
@@ -141,17 +141,17 @@ router.get("/:id/followers", verify, async (req, res) => {
 router.get("/:id/followings", verify, async (req, res) => {
   // try {
     const user = await User.findById(req.user.id);
-    const followers = await Promise.all(
-      user.following.map((followerID) => {
-        return User.findById(followerID);
+    const following = await Promise.all(
+      user.following.map((followingID) => {
+        return User.findById(followingID);
       })
     );
-    let followerList = [];
-    followers.map((follower) => {
-      const { _id, username, profilePicture } = follower;
-      followerList.push({ _id, username, profilePicture });
+    let followingList = [];
+    following.map((following) => {
+      const { _id, username, profilePicture } = following;
+      followingList.push({ _id, username, profilePicture });
     });
-    res.status(200).json(followerList)
+    res.status(200).json(followingList)
   // } catch (err) {
   //   res.status(500).json(err);
   // }
