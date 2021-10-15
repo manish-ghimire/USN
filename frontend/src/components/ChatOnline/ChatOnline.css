@@ -25,8 +25,8 @@
   border-radius: 50%;
   background-color: limegreen;
   position: absolute;
-  top: 2px;
-  right: 2px;
+  top: 0px;
+  left: 32px;
 }
 
 @media only screen and (max-width: 768px) {

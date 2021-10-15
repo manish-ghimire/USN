@@ -53,21 +53,20 @@ return {_id:u}
 const follow4 = follow2.map(u2=>{
 return {username:u2}
 })
+
+
 const data = [...follow3, ...follow4]
+let data2 = []
+for(let x = 0; x < data.length/2; x++) {
+data2.push({...data[x + data.length/2], ...data[x]})
+}
 
-// const data2 = data.filter(u3=>{
-//   return [{_id:u3.id, u:u3.username}]
-// })
-console.log("data2", data)
 
-  //
-  //   return [{_id:u},
-  //   {follow2.map(u2=>{
-  //         return {username:u2}
-  //   })}]
-  // })
 
-    setUserOnline(data)
+
+console.log("data2", data2)
+console.log("data", data)
+    setUserOnline(data2)
 }, [onlineUsers, setUserOnline]);
 
 
