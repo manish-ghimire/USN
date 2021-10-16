@@ -13,6 +13,7 @@ const Post = ({ posts }) => {
   const [like, setLike] = useState(posts[0].likes.length)
 
   const history = useHistory()
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'))
   const accessToken = localStorage.getItem('accessToken')
 
   const likeUnlike = (post_id) => {
@@ -29,11 +30,12 @@ const Post = ({ posts }) => {
           }
         )
         console.log('like return', success)
-        if (success.data.likes.includes(posts[1]._id)) {
+        if (success.data.likes.includes(currentUser.user._id)) {
           setLike(like + 1)
-          console.log('Included')
+          console.log('Now Included')
         } else {
           setLike(like - 1)
+          console.log('Now NOT Included')
         }
       } catch (error) {
         console.log(error)
