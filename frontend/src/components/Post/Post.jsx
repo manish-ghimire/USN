@@ -15,7 +15,7 @@ const Post = ({ posts }) => {
   const history = useHistory()
   const accessToken = localStorage.getItem('accessToken')
 
-  const likeUnlike = (post_id, user_id) => {
+  const likeUnlike = (post_id) => {
     const fetchData = async () => {
       console.log('accessToken2', accessToken)
       try {
@@ -28,13 +28,18 @@ const Post = ({ posts }) => {
             },
           }
         )
-        console.log('return', success)
+        console.log('like return', success)
+        if (success.data.likes.includes(posts[1]._id)) {
+          setLike(like + 1)
+          console.log('Included')
+        } else {
+          setLike(like - 1)
+        }
       } catch (error) {
         console.log(error)
       }
     }
     fetchData()
-    window.location.reload()
   }
 
   return (
@@ -71,11 +76,7 @@ const Post = ({ posts }) => {
               className='postFavorite'
               onClick={() => likeUnlike(posts[0]._id, posts[1]._id)}
             >
-              {posts[0].likes.length ? (
-                <FavoriteIcon />
-              ) : (
-                <FavoriteBorderIcon />
-              )}
+              {like > 0 ? <FavoriteIcon /> : <FavoriteBorderIcon />}
             </span>
             <span className='postLikeCounter'>{like}</span>
           </div>

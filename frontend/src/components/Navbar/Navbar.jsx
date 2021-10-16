@@ -135,6 +135,12 @@ const Navbar = () => {
       <MenuItem onClick={() => history.push('/studygroup/1')}>
         StudyGroup
       </MenuItem>
+      <MenuItem onClick={() => history.push('/market')}>All users</MenuItem>
+      <Divider />
+      <MenuItem onClick={() => history.push('/market')}>All Unis</MenuItem>
+      <MenuItem onClick={() => history.push('/market')}>Marketplace</MenuItem>
+      <MenuItem onClick={() => history.push('/market')}>Marketplace</MenuItem>
+      <MenuItem onClick={() => history.push('/market')}>Marketplace</MenuItem>
       <MenuItem onClick={() => history.push('/market')}>Marketplace</MenuItem>
     </Menu>
   )

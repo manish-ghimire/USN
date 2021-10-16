@@ -83,7 +83,7 @@ const UserProfile = ({ setCircle }) => {
   }
   //******* UPDATE USER ENDS ******************* */
 
-  // ***** UPDATE A University ************
+  // ***** UPDATE University to profile ************
   const classOf = useRef()
   const [openUpdateStudy, setOpenUpdateStudy] = useState(false)
   const handleUpdateStudy = (param) => {
@@ -102,16 +102,31 @@ const UserProfile = ({ setCircle }) => {
             Authorization: `Bearer ${accessToken}`,
           },
         })
-        console.log(successUser)
       } catch (error) {
         console.log('error', error)
       }
     }
     putData()
+
+    // *********************************
+
+    setUnis([
+      ...unis,
+      {
+        sn: unis.length + 1,
+        uniId: body.study.uniId._id,
+        uniName: body.study.uniId.uniName,
+        classOf: body.study.classOf,
+        position: body.study.position,
+      },
+    ])
+
+    // *********************************
+
     setOpenUpdateStudy(false)
-    window.location.reload()
+    // window.location.reload()
   }
-  //******* UPDATE UNIVERSITY ENDS ********************/
+  //******* UPDATE UNIVERSITY to profile ENDS ********************/
 
   // ***** CREATE A STUDY GROUP ************
   const studyName = useRef()
@@ -188,6 +203,7 @@ const UserProfile = ({ setCircle }) => {
                 position: successUser.data.study[i].position,
               })
             }
+            console.log('THIS IS AFFECTING')
             setUnis(uniLists)
           }
 
@@ -257,7 +273,7 @@ const UserProfile = ({ setCircle }) => {
             <ControlPointIcon />
           </ListItemIcon>
           <ListItemText
-            primary={`Add more universities`}
+            primary={`Add more universities to your profile`}
             secondary={``}
             onClick={() => setOpenUpdateStudy(true)}
           />
