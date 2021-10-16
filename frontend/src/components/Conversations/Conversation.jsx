@@ -2,39 +2,16 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import "./Conversation.css";
 
-const Conversation = ({conversation, currentUser, accessToken}) => {
-//
-//   const [user, setUser] = useState(null)
-//     console.log("currentUser", currentUser)
-// useEffect(()=>{
-//
-//   // console.log("conversations", conversations.members.find((m) => m !== currentUser._id))
-//   const followingId = conversations.members.find((m) => m !== currentUser._id)
-//   console.log("followingId", followingId)
-//   // if (followingId){
-//
-// const getUser = async () => {
-//   const successUser = await axios.get(`/user/${followingId}`, {
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//       },
-//     })
-//     console.log("successUser.data", successUser.data)
-//     setUser(successUser.data);
-//   }
-//
-//   getUser()
-//
-// }, [accessToken, setUser, conversations])
-// console.log("user", user)
+const Conversation = ({conversation, onlineUsers, currentUser, accessToken}) => {
 const [user, setUser] = useState(null)
-console.log("currentUser",currentUser)
+const [userOnlne, setUserOnline] = useState(null)
+console.log("currentUser", currentUser)
   useEffect(() => {
     const followId = conversation.members.find((m) => m !== currentUser._id);
-// console.log("followId", conversation.members.find((m) => {if (m !== currentUser._id){
+console.log("followId", conversation.members.find((m) => m !== currentUser._id));
 //   console.log("m", )
 // }} ))
-    const getUser = async () => {
+    const getFollowId = async () => {
       try {
         const res = await axios(`/user/${followId}`, {
           headers: {
@@ -42,12 +19,14 @@ console.log("currentUser",currentUser)
           },
         })
         setUser(res.data);
+        console.log("setuser", res.data)
       } catch (err) {
         console.log(err);
       }
     };
-    getUser();
-  }, [currentUser, conversation]);
+    getFollowId();
+
+}, [currentUser, conversation]);
 
 console.log("user", user)
   return (
