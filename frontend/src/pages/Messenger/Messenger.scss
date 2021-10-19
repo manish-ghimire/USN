@@ -8,9 +8,11 @@
 }
 
 .chatMenuInput {
-  width: 90%;
+  width: 100%;
   padding: 10px 0;
+  background-color: transparent;
   border: none;
+  font-size: 1em;
   border-bottom: 1px solid gray;
 }
 
@@ -71,6 +73,12 @@
   font-size: 50px;
   color: rgb(224, 220, 220);
   cursor: default;
+}
+.user-center{
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid gray;
+      padding: 10px 0;
 }
 
 @media screen and (max-width: 768px) {

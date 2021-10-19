@@ -428,7 +428,7 @@ const UserProfile = ({ setCircle }) => {
             sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
           />
           <h3>
-            {user.fName} {user.lName}
+          {user.fName} {user.lName}
           </h3>
           <h5>{user.followers ? user.followers.length : '0'} Followers</h5>
           {currentUser._id === userId ? (
