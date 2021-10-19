@@ -61,6 +61,10 @@ const UserSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    followingUni: {
+      type: Array,
+      default: [],
+    },
     role: {
       type: Array,
       default: ['general'],

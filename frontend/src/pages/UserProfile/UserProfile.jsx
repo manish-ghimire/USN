@@ -437,8 +437,7 @@ const UserProfile = ({ setCircle }) => {
               sx={{ marginTop: 2 }}
               onClick={() => followMe(user._id)}
             >
-              <AlarmOnIcon sx={{ marginRight: 2 }} />
-              Follow !
+              {user.followers}
             </Button>
           )}
         </Box>
