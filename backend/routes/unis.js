@@ -114,6 +114,25 @@ router.get('/', verify, async (req, res) => {
 })
 
 //UPDATE
+router.put('/:id/follow', verify, async (req, res) => {
+  try {
+    const uni = await Uni.findById(req.params.id)
+    const currentUser = await User.findById(req.user.id)
+    if (!uni.followers.includes(req.user.id)) {
+      await uni.updateOne({ $push: { followers: req.user.id } })
+      await currentUser.updateOne({ $push: { following: req.params.id } })
+      res.status(200).json('user has been followed')
+    } else {
+      await uni.updateOne({ $pull: { followers: req.user.id } })
+      await currentUser.updateOne({ $pull: { following: req.params.id } })
+      res.status(200).json('user has been unfollowed')
+    }
+  } catch (err) {
+    res.status(500).json(err)
+  }
+})
+
+
 router.put('/:id', verify, async (req, res) => {
   const uniName = await Uni.findOne({
     _id: req.params.id,
