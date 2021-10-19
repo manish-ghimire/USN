@@ -160,7 +160,6 @@ const UserProfile = ({ setCircle }) => {
   }
   //******* CREATE A STUDY GROUP ********************/
 
-  console.log(studyGroups)
   // USE-EFFECTS
   useEffect(() => {
     if (accessToken) {
@@ -404,13 +403,17 @@ const UserProfile = ({ setCircle }) => {
   const drawer = (
     <>
       <Card>
-        <Box sx={{ textAlign: 'right', color: 'gray' }}>
-          <EditIcon
-            className='editIcon'
-            fontSize='small'
-            onClick={() => setOpenUpdateUser(true)}
-          />
-        </Box>
+        {user._id === currentUser._id ? (
+          <Box sx={{ textAlign: 'right', color: 'gray' }}>
+            <EditIcon
+              className='editIcon'
+              fontSize='small'
+              onClick={() => setOpenUpdateUser(true)}
+            />
+          </Box>
+        ) : (
+          ''
+        )}
         <Box
           sx={{
             display: 'flex',
@@ -437,7 +440,9 @@ const UserProfile = ({ setCircle }) => {
               sx={{ marginTop: 2 }}
               onClick={() => followMe(user._id)}
             >
-              {user.followers}
+              {user.followers && user.followers.includes(currentUser._id)
+                ? 'Unfollow'
+                : 'Follow'}
             </Button>
           )}
         </Box>

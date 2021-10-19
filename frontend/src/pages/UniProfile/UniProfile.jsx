@@ -333,8 +333,9 @@ const UniProfile = ({ setCircle }) => {
             sx={{ marginTop: 2 }}
             onClick={() => followMe(uni._id)}
           >
-            <AlarmOnIcon sx={{ marginRight: 2 }} />
-            Follow !
+            {uni.followers && uni.followers.includes(currentUser._id)
+              ? 'Unfollow'
+              : 'Follow'}
           </Button>
         </Box>
       </Card>
@@ -392,39 +393,41 @@ const UniProfile = ({ setCircle }) => {
           </ListItem>
         </List>
       </Card>
-      <Card>
-        <List>
-          <ListItem>
-            <ListItemIcon>
-              <LocalLibraryIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Clubs at this University'} />
-          </ListItem>
-          <Divider />
-          {clubs.map((club, index) => (
-            <ListItem key={index} button>
+      {currentUser.isAdmin && (
+        <Card color='#498994'>
+          <List>
+            <ListItem>
               <ListItemIcon>
-                <ArrowRightIcon />
+                <LocalLibraryIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Clubs at this University'} />
+            </ListItem>
+            <Divider />
+            {clubs.map((club, index) => (
+              <ListItem key={index} button>
+                <ListItemIcon>
+                  <ArrowRightIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={club.clubName}
+                  onClick={() => alert('Go to club page')}
+                  onClick={() => history.push(`/club/${club._id}`)}
+                />
+              </ListItem>
+            ))}
+            <ListItem button>
+              <ListItemIcon>
+                <ControlPointIcon />
               </ListItemIcon>
               <ListItemText
-                primary={club.clubName}
-                onClick={() => alert('Go to club page')}
-                onClick={() => history.push(`/club/${club._id}`)}
+                // primary={`Add another faculty`}
+                secondary={`Add a club`}
+                onClick={() => setOpenCreateClub(true)}
               />
             </ListItem>
-          ))}
-          <ListItem button>
-            <ListItemIcon>
-              <ControlPointIcon />
-            </ListItemIcon>
-            <ListItemText
-              // primary={`Add another faculty`}
-              secondary={`Add a club`}
-              onClick={() => setOpenCreateClub(true)}
-            />
-          </ListItem>
-        </List>
-      </Card>
+          </List>
+        </Card>
+      )}
     </>
   )
 
