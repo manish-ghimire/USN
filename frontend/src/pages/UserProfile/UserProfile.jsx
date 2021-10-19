@@ -15,6 +15,7 @@ import Post from '../../components/Post/Post.jsx'
 import Card from '../../components/Card/Card'
 import GroupsIcon from '@mui/icons-material/Groups'
 import ControlPointIcon from '@mui/icons-material/ControlPoint'
+import AlarmOnIcon from '@mui/icons-material/AlarmOn'
 import EditIcon from '@mui/icons-material/Edit'
 import {
   Autocomplete,
@@ -48,6 +49,7 @@ const UserProfile = ({ setCircle }) => {
   const [roles, setRoles] = useState([])
   const [position, setPosition] = useState([])
   const [selectedRoles, setSelectedRoles] = useState([])
+  const currentUser = JSON.parse(localStorage.getItem('currentUser')).user
   const accessToken = localStorage.getItem('accessToken')
 
   // ***** UPDATE A USER ************
@@ -265,6 +267,25 @@ const UserProfile = ({ setCircle }) => {
     setCircle(false)
   }, [history, setCircle, userId, setUnis, accessToken])
 
+  // Follow me function
+  const followMe = async (userId) => {
+    const body = { ...user, followers: currentUser._id }
+
+    const successPut = await axios.put(`/user/${userId}/follow`, body, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+
+    const successGet = await axios.get(`/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    console.log(successGet.data)
+    setUser(successGet.data)
+  }
+
   //UNI RELATED
   let ifUnis
   if (unis.length > 0) {
@@ -406,6 +427,20 @@ const UserProfile = ({ setCircle }) => {
           <h3>
             {user.fName} {user.lName}
           </h3>
+          <h5>{user.followers ? user.followers.length : '0'} Followers</h5>
+          {currentUser._id === userId ? (
+            ''
+          ) : (
+            <Button
+              variant='contained'
+              size='small'
+              sx={{ marginTop: 2 }}
+              onClick={() => followMe(user._id)}
+            >
+              <AlarmOnIcon sx={{ marginRight: 2 }} />
+              Follow !
+            </Button>
+          )}
         </Box>
       </Card>
       <Card>{ifUnis}</Card>
@@ -671,7 +706,7 @@ const UserProfile = ({ setCircle }) => {
                     sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
                     onClick={() => setMobileOpen(!mobileOpen)}
                   />
-                  <div>{/* {user.fName} {user.lName} */}</div>
+                  {/* <div> {user.fName} {user.lName} </div> */}
                 </Box>
               </Card>
             </Grid>

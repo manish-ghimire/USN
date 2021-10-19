@@ -159,13 +159,19 @@ const UniProfile = ({ setCircle }) => {
   const followMe = async (uniId) => {
     const body = { ...uni, followers: currentUser._id }
 
-    const success = await axios.put(`/uni/${uniId}/follow`, body, {
+    const successPut = await axios.put(`/uni/${uniId}/follow`, body, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-    // setUni(success.data)
-    console.log(success.data)
+
+    const successGet = await axios.get(`/uni/${uniId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    console.log(successGet.data)
+    setUni(successGet.data)
   }
 
   // ***************** CREATE A COURSE *******************************
@@ -320,6 +326,7 @@ const UniProfile = ({ setCircle }) => {
             sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
           />
           <h3>{uni.uniName}</h3>
+          <h5>{uni.followers ? uni.followers.length : '0'} Followers</h5>
           <Button
             variant='contained'
             size='small'
