@@ -19,7 +19,7 @@
   border: 1px solid white;
 }
 
-.chatOnlineBadge {
+.chatOnlineBadge, .chatOnlineBadgeOffline{
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -29,6 +29,10 @@
   left: 32px;
 }
 
+.chatOnlineBadgeOffline{
+
+  background-color: gray;
+}
 @media only screen and (max-width: 768px) {
   .messenger {
     flex-direction: column;

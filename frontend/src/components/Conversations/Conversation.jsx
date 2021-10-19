@@ -5,11 +5,11 @@ import "./Conversation.css";
 const Conversation = ({conversation, onlineUsers, currentUser, accessToken}) => {
 const [user, setUser] = useState(null)
 const [userOnlne, setUserOnline] = useState(null)
-console.log("currentUser", currentUser)
+console.log("currentUser", currentUser._id)
   useEffect(() => {
-    const followId = conversation.members.find((m) => m !== currentUser._id);
-console.log("followId", conversation.members.find((m) => m !== currentUser._id));
-//   console.log("m", )
+    const followId = conversation.members.find((m) => m !== currentUser.user._id);
+console.log("followId", conversation.members.find((m) => m !== currentUser.user._id));
+  // console.log("ccc", conversation)
 // }} ))
     const getFollowId = async () => {
       try {

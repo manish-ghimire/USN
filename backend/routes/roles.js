@@ -37,7 +37,7 @@ router.get("/", verify, async (req, res) => {
   try {
   // const  dbRolesId = "6159a45cdc7ce0db11feea7d";
   const roles = await Role.find();
-    console.log(roles);
+    // console.log(roles);
     return res.status(200).json(roles);
   } catch (err) {
     return res.status(401).json("Can't find role");

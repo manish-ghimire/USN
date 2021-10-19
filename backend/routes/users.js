@@ -12,7 +12,7 @@ router.get('/:id', verify, async (req, res) => {
       if (user._doc) {
         const updatedUser = user._doc
         delete updatedUser.password
-        console.log('updatedUser', updatedUser)
+        // console.log('updatedUser', updatedUser)
 
         res.status(200).json(updatedUser)
       } else {
@@ -117,7 +117,7 @@ router.delete('/:id', verify, async (req, res) => {
 router.get('/:id/followers', verify, async (req, res) => {
   // try {
     const user = await User.findById(req.user.id);
-    console.log("userfff", user)
+    // console.log("userfff", user)
     const followers = await Promise.all(
       user.followers.map((followerID) => {
         return User.findById(followerID);
@@ -137,7 +137,7 @@ router.get('/:id/followers', verify, async (req, res) => {
 router.get('/:id/followings', verify, async (req, res) => {
   // try {
     const user = await User.findById(req.user.id)
-    console.log("userfff2", user)
+    // console.log("userfff2", user)
     const following = await Promise.all(
       user.following.map((followingID) => {
         return User.findById(followingID);

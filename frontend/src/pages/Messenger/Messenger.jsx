@@ -32,6 +32,7 @@ const Messenger = (props) => {
     const [conversations, setConversations] = useState([])
     const [currentChat, setCurrentChat] = useState(null)
     const [newChat, setNewChat] = useState(null)
+    const [chatUser, setChatUser] = useState(null)
     const [messages, setMessages] = useState([])
     const [newMessage, setNewMessage] = useState("")
     const [arrivalMessage, setArrivalMessage] = useState(null)
@@ -61,6 +62,7 @@ useEffect(() => {
 }, [arrivalMessage, currentChat]);
 
 useEffect(() => {
+  console.log("userrr", user)
   socket.current.emit("addUser", user._id);
   socket.current.on("getUsers", (users) => {
     setOnlineUsers(
@@ -135,13 +137,34 @@ useEffect(() => {
   scrollRef.current?.scrollIntoView({ behavior: "smooth" });
 }, [messages]);
 
+useEffect(()=>{
+  if(currentChat){
+  const followId2 =  currentChat.members.find((m) => m !== currentUser.user._id)
+  console.log("followIdd", followId2)
+  const getFollowId2 = async () => {
+    try {
+      const res = await axios(`/user/${followId2}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      setChatUser(res.data.username);
+      console.log("setuser", res.data.username)
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  getFollowId2();
+}
+}, [conversations, currentChat, currentUser])
           return (
             <>
             <Navbar / >
             <div className = "messenger" >
             <div className = "chatMenu" >
             <div className = "chatMenuWrapper" >
-            <input placeholder = "Search for friends" className = "chatMenuInput" / >
+            <div className = "conversations chatMenuInput" >Conversations</div>
+            {/*<input placeholder = "Search for friends" className = "chatMenuInput" / >*/}
             {
               conversations.map((c, index) => (
                 <div key={index} onClick = {() => setCurrentChat(c)} >
@@ -156,11 +179,18 @@ useEffect(() => {
             { console.log("currentChat", currentChat)}
             { console.log("newChat", newChat)}
             <div className = "chatBoxWrapper" > {
-
-
               currentChat ? (
+
                 <>
+                {
+                // chatUser.map((cc) => (
+                <div className = "user-center" >
+                {chatUser}
+                  </div >
+                // ))
+              }
                 <div className = "chatBoxTop" >
+
                 {
                   messages.map((m) => (
                     <div ref={scrollRef}>
@@ -177,7 +207,7 @@ useEffect(() => {
                    messages ? (
                 <textarea className = "chatMessageInput"
 
-                placeholder = "Say Hi..."
+                placeholder = "Send a message..."
 
 
                 onChange = {(e) => setNewMessage(e.target.value)}
@@ -186,7 +216,7 @@ useEffect(() => {
               ) :(
                 <textarea className = "chatMessageInput"
 
-                placeholder = "Send a message..."
+                placeholder = "Say Hi..."
 
 
                 onChange = {(e) => setNewMessage(e.target.value)}
