@@ -48,8 +48,8 @@ const Club = ({ setCircle }) => {
 
   const history = useHistory()
   const [club, setClub] = useState([])
-  const [uni, setUni] = useState([])
   const [roles, setRoles] = useState([])
+  const [members, setMembers] = useState([])
   const [selectedRoles, setSelectedRoles] = useState([])
   const { clubId } = useParams()
   const [posts, setPosts] = useState([])
@@ -80,18 +80,37 @@ const Club = ({ setCircle }) => {
           })
           setRoles(successRoles.data[0].roles)
 
-          const successUni = await axios.get(`/uni/${successClub.data.uniId}`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-          setUni(successUni.data)
-
           const successPost = await axios.get(`/post?club=${clubId}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
           })
+
+          let membersLists = []
+          for (var i = 0; i < successClub.data.clubAdmin.length; i++) {
+            console.log(successClub.data.clubAdmin[0])
+            const successUser = await axios.get(
+              `/user/${successClub.data.clubAdmin[i]}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            )
+            membersLists.push({ ...successUser.data, position: 'Admin' })
+          }
+          for (var i = 0; i < successClub.data.clubMembers.length; i++) {
+            const successUser = await axios.get(
+              `/user/${successClub.data.clubMembers[i]}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            )
+            membersLists.push({ ...successUser.data, position: 'Member' })
+          }
+          setMembers(membersLists)
 
           let postLists = []
           for (var i = 0; i < successPost.data.length; i++) {
@@ -107,8 +126,6 @@ const Club = ({ setCircle }) => {
           }
           setPosts(
             postLists.sort((p1, p2) => {
-              console.log('p1', p1[0].createdAt)
-              console.log('p2', p2[0].createdAt)
               return new Date(p2[0].createdAt) - new Date(p1[0].createdAt)
             })
           )
@@ -122,7 +139,10 @@ const Club = ({ setCircle }) => {
       history.push('/login', { text: 'hellooooooo' })
     }
     setCircle(false)
-  }, [history, setCircle, setUni, accessToken])
+  }, [history, setCircle, accessToken])
+
+  console.log('CLUB', club)
+  console.log('MEMBERS', members)
 
   const drawer = (
     <>
@@ -183,7 +203,7 @@ const Club = ({ setCircle }) => {
             <ListItemText
               primary={`${
                 club.clubMembers
-                  ? club.clubMembers.length + 'Club members in total'
+                  ? club.clubMembers.length + ' Club members'
                   : 'No club members yet'
               } `}
             />
@@ -202,15 +222,21 @@ const Club = ({ setCircle }) => {
             <ListItemIcon>
               <LocalLibraryIcon />
             </ListItemIcon>
-            <ListItemText primary={'Members'} />
+            <ListItemText primary={'Club Members'} />
           </ListItem>
           <Divider />
-          <ListItem button>
-            <ListItemIcon>
-              <ArrowRightIcon />
-            </ListItemIcon>
-            <ListItemText primary={`Member's names will be listed here`} />
-          </ListItem>
+          {members.map((member) => (
+            <ListItem key={member._id} button>
+              <ListItemIcon>
+                <ArrowRightIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={`${member.fName} ${member.lName}`}
+                secondary={`${member.position}`}
+                onClick={() => history.push(`/user/${member._id}`)}
+              />
+            </ListItem>
+          ))}
         </List>
       </Card>
     </>
@@ -281,7 +307,11 @@ const Club = ({ setCircle }) => {
           </Hidden>
           <Grid item xs={8}>
             <Hidden mdDown>
-              <PostingBox roles={roles} postToId={clubId} />
+              <PostingBox
+                roles={roles}
+                postToId={clubId}
+                setPosts={(v) => setPosts([v, ...posts])}
+              />
               {posts.map((p, index) => (
                 <Post key={index} posts={p} />
               ))}
@@ -289,7 +319,11 @@ const Club = ({ setCircle }) => {
           </Grid>
           <Grid item xs={12}>
             <Hidden mdUp>
-              <PostingBox roles={roles} postToId={clubId} />
+              <PostingBox
+                roles={roles}
+                postToId={clubId}
+                setPosts={(v) => setPosts([v, ...posts])}
+              />
               {posts.map((p, index) => (
                 <Post key={index} posts={p} />
               ))}

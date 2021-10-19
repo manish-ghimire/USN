@@ -5,7 +5,7 @@ import './PostingBox.scss'
 import { Autocomplete, Button, TextField } from '@mui/material'
 import Card from '../../components/Card/Card'
 
-const PostingBox = ({ roles, postToId }) => {
+const PostingBox = ({ roles, postToId, setPosts }) => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser')).user
   const token = localStorage.getItem('accessToken')
   const [content, setContent] = useState('')
@@ -28,12 +28,15 @@ const PostingBox = ({ roles, postToId }) => {
           },
         })
         console.log('Success from Posting component', successPosting)
+        console.log('Success posting', successPosting)
+        setPosts([successPosting.data, currentUser])
       } catch (error) {
         console.log(error)
       }
     }
     pushData()
-    window.location.reload()
+
+    // window.location.reload()
   }
 
   return (

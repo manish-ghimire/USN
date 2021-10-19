@@ -43,6 +43,7 @@ const UserProfile = ({ setCircle }) => {
   const [totalUnis, setTotalUnis] = useState([])
   const [selectedUni, setSelectedUni] = useState([])
   const [clubs, setClubs] = useState([])
+  const [studyGroups, setStudyGroups] = useState([])
   const [posts, setPosts] = useState([])
   const [roles, setRoles] = useState([])
   const [position, setPosition] = useState([])
@@ -146,6 +147,7 @@ const UserProfile = ({ setCircle }) => {
           },
         })
         console.log(success)
+        setStudyGroups([...studyGroups, success.data])
       } catch (error) {
         console.log('error', error)
       }
@@ -156,6 +158,7 @@ const UserProfile = ({ setCircle }) => {
   }
   //******* CREATE A STUDY GROUP ********************/
 
+  console.log(studyGroups)
   // USE-EFFECTS
   useEffect(() => {
     if (accessToken) {
@@ -203,7 +206,6 @@ const UserProfile = ({ setCircle }) => {
                 position: successUser.data.study[i].position,
               })
             }
-            console.log('THIS IS AFFECTING')
             setUnis(uniLists)
           }
 
@@ -220,6 +222,20 @@ const UserProfile = ({ setCircle }) => {
             clubLists.push(successClub.data)
           }
           setClubs(clubLists)
+
+          let studyGroupLists = []
+          for (var k = 0; k < successUser.data.studyGroups.length; k++) {
+            const successStudyGroups = await axios.get(
+              `/study/${successUser.data.studyGroups[k]}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            )
+            studyGroupLists.push(successStudyGroups.data)
+          }
+          setStudyGroups(studyGroupLists)
 
           const successPost = await axios.get(`/post?user=${userId}`, {
             headers: {
@@ -326,6 +342,34 @@ const UserProfile = ({ setCircle }) => {
     )
   }
 
+  //Study Group RELATED
+  let ifStudyGroups
+  if (studyGroups.length > 0) {
+    ifStudyGroups = studyGroups.map((studyGroup) => (
+      <List key={studyGroup._id}>
+        <ListItem button>
+          <ListItemIcon>
+            <GroupsIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={studyGroup.studyName}
+            secondary={studyGroup.desc}
+            onClick={() => history.push(`/study/${studyGroup._id}`)}
+          />
+        </ListItem>
+      </List>
+    ))
+  } else {
+    ifStudyGroups = (
+      <ListItem button>
+        <ListItemIcon>
+          <GroupsIcon />
+        </ListItemIcon>
+        <ListItemText primary={'No Study Groups yet'} secondary={''} />
+      </ListItem>
+    )
+  }
+
   // NO POSTS RELATED
   let ifNoPosts
   if (posts.length < 1) {
@@ -366,6 +410,7 @@ const UserProfile = ({ setCircle }) => {
       </Card>
       <Card>{ifUnis}</Card>
       <Card>{ifClubs}</Card>
+      <Card>{ifStudyGroups}</Card>
       <Card>
         <List>
           <ListItem button>
@@ -527,43 +572,41 @@ const UserProfile = ({ setCircle }) => {
   )
 
   const createStudyGroupDialog = (
-    <>
-      <Dialog
-        open={openCreateStudyGroup}
-        onClose={() => setOpenCreateStudyGroup(false)}
-      >
-        <DialogTitle>Study Group</DialogTitle>
-        <Divider />
-        <DialogContent>
-          <DialogContentText>Enter New Study Group Details</DialogContentText>
+    <Dialog
+      open={openCreateStudyGroup}
+      onClose={() => setOpenCreateStudyGroup(false)}
+    >
+      <DialogTitle>Study Group</DialogTitle>
+      <Divider />
+      <DialogContent>
+        <DialogContentText>Enter New Study Group Details</DialogContentText>
 
-          <TextField
-            autoFocus
-            margin='dense'
-            id='studyName'
-            inputRef={studyName}
-            label='Study Group Name'
-            type='text'
-            fullWidth
-            variant='standard'
-          />
-          <TextField
-            autoFocus
-            margin='dense'
-            id='studyDesc'
-            inputRef={studyDesc}
-            label='Study Description'
-            type='text'
-            fullWidth
-            variant='standard'
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenCreateStudyGroup(false)}>Cancel</Button>
-          <Button onClick={handleCreateStudyGroup}>Create</Button>
-        </DialogActions>
-      </Dialog>
-    </>
+        <TextField
+          autoFocus
+          margin='dense'
+          id='studyName'
+          inputRef={studyName}
+          label='Study Group Name'
+          type='text'
+          fullWidth
+          variant='standard'
+        />
+        <TextField
+          autoFocus
+          margin='dense'
+          id='studyDesc'
+          inputRef={studyDesc}
+          label='Study Description'
+          type='text'
+          fullWidth
+          variant='standard'
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setOpenCreateStudyGroup(false)}>Cancel</Button>
+        <Button onClick={handleCreateStudyGroup}>Create</Button>
+      </DialogActions>
+    </Dialog>
   )
 
   const sidebarSkeleton = (

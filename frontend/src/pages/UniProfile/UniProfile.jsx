@@ -21,6 +21,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import ControlPointIcon from '@mui/icons-material/ControlPoint'
 import LocalLibraryIcon from '@mui/icons-material/LocalLibrary'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
+import AlarmOnIcon from '@mui/icons-material/AlarmOn'
 import {
   Autocomplete,
   Avatar,
@@ -63,13 +64,6 @@ const UniProfile = ({ setCircle }) => {
     if (accessToken) {
       const fetchData = async () => {
         try {
-          const successTotalCourses = await axios.get(`/course`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-          setTotalCourses(successTotalCourses.data)
-
           const successUni = await axios.get(`/uni/${uniId}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -119,8 +113,6 @@ const UniProfile = ({ setCircle }) => {
           }
           setPosts(
             postLists.sort((p1, p2) => {
-              console.log('p1', p1[0].createdAt)
-              console.log('p2', p2[0].createdAt)
               return new Date(p2[0].createdAt) - new Date(p1[0].createdAt)
             })
           )
@@ -163,9 +155,31 @@ const UniProfile = ({ setCircle }) => {
     }
   }, [history, setCircle, setUni, accessToken])
 
-  console.log(posts)
+  // Follow me function
+  const followMe = async (uniId) => {
+    const body = { ...uni, followers: currentUser._id }
+
+    const success = await axios.put(`/uni/${uniId}/follow`, body, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    // setUni(success.data)
+    console.log(success.data)
+  }
+
   // ***************** CREATE A COURSE *******************************
   const [openCreateCourse, setOpenCreateCourse] = useState(false)
+
+  const handleOpenCreateCourse = async () => {
+    const successTotalCourses = await axios.get(`/course`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    setTotalCourses(successTotalCourses.data)
+    setOpenCreateCourse(true)
+  }
 
   const handleUpdateCoursesToUni = () => {
     let idOfSelectedCourses = []
@@ -223,33 +237,28 @@ const UniProfile = ({ setCircle }) => {
   }
   //******* CREATE A CLUB ********************/
   const dialogAddCourse = (
-    <>
-      <Dialog
-        open={openCreateCourse}
-        onClose={() => setOpenCreateCourse(false)}
-      >
-        <DialogTitle>Please select courses</DialogTitle>
-        <Divider />
-        <DialogContent>
-          <Autocomplete
-            multiple
-            style={{ width: 350 }}
-            id='tags-outlined'
-            onChange={(event, value) => setSelectedCourses(value)}
-            options={totalCourses}
-            getOptionLabel={(option) => option.courseName}
-            filterSelectedOptions
-            renderInput={(params) => (
-              <TextField {...params} label='Select select courses' />
-            )}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenCreateCourse(false)}>Cancel</Button>
-          <Button onClick={handleUpdateCoursesToUni}>Update</Button>
-        </DialogActions>
-      </Dialog>
-    </>
+    <Dialog open={openCreateCourse} onClose={() => setOpenCreateCourse(false)}>
+      <DialogTitle>Please select courses</DialogTitle>
+      <Divider />
+      <DialogContent>
+        <Autocomplete
+          multiple
+          style={{ width: 350 }}
+          id='tags-outlined'
+          onChange={(event, value) => setSelectedCourses(value)}
+          options={totalCourses}
+          getOptionLabel={(option) => option.courseName}
+          filterSelectedOptions
+          renderInput={(params) => (
+            <TextField {...params} label='Select select courses' />
+          )}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setOpenCreateCourse(false)}>Cancel</Button>
+        <Button onClick={handleUpdateCoursesToUni}>Update</Button>
+      </DialogActions>
+    </Dialog>
   )
 
   const dialogCreateClub = (
@@ -311,6 +320,15 @@ const UniProfile = ({ setCircle }) => {
             sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
           />
           <h3>{uni.uniName}</h3>
+          <Button
+            variant='contained'
+            size='small'
+            sx={{ marginTop: 2 }}
+            onClick={() => followMe(uni._id)}
+          >
+            <AlarmOnIcon sx={{ marginRight: 2 }} />
+            Follow !
+          </Button>
         </Box>
       </Card>
       <Card>
@@ -362,7 +380,7 @@ const UniProfile = ({ setCircle }) => {
             <ListItemText
               // primary={`Add another faculty`}
               secondary={`Add a course`}
-              onClick={() => setOpenCreateCourse(true)}
+              onClick={() => handleOpenCreateCourse()}
             />
           </ListItem>
         </List>
@@ -470,7 +488,11 @@ const UniProfile = ({ setCircle }) => {
           </Hidden>
           <Grid item xs={8}>
             <Hidden mdDown>
-              <PostingBox roles={roles} postToId={uniId} />
+              <PostingBox
+                roles={roles}
+                postToId={uniId}
+                setPosts={(v) => setPosts([v, ...posts])}
+              />
               {posts.map((p, index) => (
                 <Post key={index} posts={p} />
               ))}
@@ -478,7 +500,11 @@ const UniProfile = ({ setCircle }) => {
           </Grid>
           <Grid item xs={12}>
             <Hidden mdUp>
-              <PostingBox roles={roles} postToId={uniId} />
+              <PostingBox
+                roles={roles}
+                postToId={uniId}
+                setPosts={(v) => setPosts([v, ...posts])}
+              />
               {posts.map((p, index) => (
                 <Post key={index} posts={p} />
               ))}
