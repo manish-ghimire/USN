@@ -17,6 +17,7 @@ import MoreIcon from '@mui/icons-material/MoreVert'
 import { Link } from 'react-router-dom'
 import { Avatar, Divider } from '@mui/material'
 import { Message } from '@mui/icons-material'
+import "./Navbar.scss";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
