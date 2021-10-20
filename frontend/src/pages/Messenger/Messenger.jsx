@@ -65,8 +65,16 @@ useEffect(() => {
   console.log("userrr", user)
   socket.current.emit("addUser", user._id);
   socket.current.on("getUsers", (users) => {
+
+  const following1  = user.following.filter((f) => users.some((u) => u.userId === f))
+    const followers1 =  user.followers.filter((f) => users.some((u) => u.userId === f))
+    console.log("following111", following1)
+    console.log("followers111", followers1)
+    const newData = [...following1, ...followers1]
+      const follow = [...new Set(newData.map(u => u))];
+      console.log("followz", follow)
     setOnlineUsers(
-      user.following.filter((f) => users.some((u) => u.userId === f))
+    follow
     );
   });
 }, []);
@@ -204,7 +212,7 @@ useEffect(()=>{
                  <div className = "chatBoxBottom" >
                  <>
                  {
-                   messages ? (
+                   messages !== "" ? (
                 <textarea className = "chatMessageInput"
 
                 placeholder = "Send a message..."

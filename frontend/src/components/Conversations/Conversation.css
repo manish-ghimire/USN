@@ -26,4 +26,10 @@
   .conversationName {
     display: none;
   }
+  .conversationImg{
+    width: 85%;
+    margin: 0 auto;
+    height: auto;
+    margin-right: auto;
+  }
 }
