@@ -48,39 +48,37 @@ console.log("currentChatfollowers2", currentChatfollowers)
 
 
 const handleUserChatClick = async (user) => {
-  console.log('insidechatclick');
-  try {
-    const res = await axios.get(`/conversation/find/${currentId}/${user._id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    if(!res.data){
-      const body = {
-        senderId: currentId,
-        receiverId: user._id
-        }
-      const res = await axios.post(`/conversation`, body, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      console.log("res1", res)
-    setNewChat(res);
-  }
-  else{
-    console.log("res2")
-    const res2 = await axios.get(`/conversation/find/${currentId}/${user._id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    setCurrentChat(res2.data);
-  }
-  } catch (err) {
-    console.log(err);
-  }
+console.log("here-ChatClick", user)
+  const res = await axios.get(`/conversation/find/${currentId}/${user._id}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+  console.log("here-res", res.data)
+  if(res.data){
+ setCurrentChat(res.data)
+}else {
+  const body = {
+    senderId: currentId,
+    receiverId: user._id
+    }
+  const res2 = await axios.post(`/conversation`, body, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+  // console.log("res2", res2.data)
+  setNewChat(res2.data);
+  const res3 = await axios.get(`/conversation/find/${currentId}/${user._id}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+  console.log("here-res", res3.data)
+ setCurrentChat(res3.data)
 }
+}
+
 
 useEffect(() => {
 console.log("cconlineUsersz", onlineUsers)

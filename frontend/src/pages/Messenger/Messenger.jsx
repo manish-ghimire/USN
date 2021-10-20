@@ -49,6 +49,7 @@ useEffect(()=>{
 
 }, [setUser, userID])
     useEffect(()=>{
+      console.log("setChatUser", currentChat)
       if(currentChat){
       const followId2 =  currentChat.members.find((m) => m !== currentUser.user._id)
       console.log("followIdd", followId2)
@@ -60,14 +61,14 @@ useEffect(()=>{
             },
           })
           setChatUser(res.data.username);
-          // console.log("setuser", res.data.username)
+          console.log("here-setuser", res.data.username)
         } catch (err) {
           console.log(err);
         }
       }
       getFollowId2();
     }
-    }, [conversations, currentChat, currentUser])
+  }, [conversations, currentChat, setChatUser, currentUser])
     useEffect(() => {
   socket.current = io("ws://localhost:4000");
   socket.current.on("getMessage", (data) => {
@@ -144,18 +145,19 @@ useEffect(() => {
 }, [currentChat]);
 
 const handleSubmit = async () => {
+  console.log("here-currentChat", currentChat)
   const message = {
-    sender: user._id,
+    sender: userID,
     text: newMessage,
     conversationId: currentChat._id,
   };
 
   const receiverId = currentChat.members.find(
-    (member) => member !== user._id
+    (member) => member !== userID
   );
 
   socket.current.emit("sendMessage", {
-    senderId: user._id,
+    senderId: userID,
     receiverId,
     text: newMessage,
   });
@@ -182,18 +184,15 @@ useEffect(() => {
             <>
             <Navbar / >
             <div className = "messenger" >
-            <div className = "chatMenu" >
-            <div className = "chatMenuWrapper" >
-            <div className = "conversations chatMenuInput" >Conversations</div>
-            {/*<input placeholder = "Search for friends" className = "chatMenuInput" / >*/}
-            {
-              conversations.map((c, index) => (
-                <div key={index} onClick = {() => setCurrentChat(c)} >
-                <Conversation conversation = {c} currentUser = {currentUser} accessToken = {accessToken } />
-                </div>
-              )
-            )
-            }
+            <div className = "chatOnline">
+            <div className = "chatOnlineWrapper" >
+            <ChatOnline
+            onlineUsers = {onlineUsers}
+            currentId = {userID}
+            setCurrentChat = {setCurrentChat}
+              setNewChat = {setNewChat}
+            accessToken={accessToken}
+            />
             </div>
             </div>
             <div className = "chatBox" >
@@ -262,8 +261,7 @@ useEffect(() => {
       </div>
     ))
 
-  }
-
+}
   </div>
    <div className = "chatBoxBottom" >
   <textarea className = "chatMessageInput"
@@ -289,17 +287,7 @@ useEffect(() => {
 
             </div>
             </div>
-            <div className = "chatOnline">
-            <div className = "chatOnlineWrapper" >
-            <ChatOnline
-            onlineUsers = {onlineUsers}
-            currentId = {userID}
-            setCurrentChat = {setCurrentChat}
-              setNewChat = {setNewChat}
-            accessToken={accessToken}
-            />
-            </div>
-            </div>
+
             </div>
             </>
           )
