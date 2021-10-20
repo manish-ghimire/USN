@@ -46,20 +46,7 @@ const Messenger = (props) => {
     const socket = useRef()
 console.log("userz", user)
 useEffect(()=>{
-  const getUserStuff = async () => {
-    try {
-      const res = await axios(`/user/${userID}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      setUser(res.data);
-      console.log("setuser", res.data)
-    } catch (err) {
-      console.log(err);
-    }
-  }
-  getUserStuff();
+
 }, [setUser, userID])
     useEffect(()=>{
       if(currentChat){
@@ -73,7 +60,7 @@ useEffect(()=>{
             },
           })
           setChatUser(res.data.username);
-          console.log("setuser", res.data.username)
+          // console.log("setuser", res.data.username)
         } catch (err) {
           console.log(err);
         }
@@ -97,69 +84,31 @@ useEffect(() => {
     currentChat?.members.includes(arrivalMessage.sender) &&
     setMessages((prev) => [...prev, arrivalMessage]);
 }, [arrivalMessage, currentChat]);
-
-// useEffect(() => {
-  // const getUserID = async () => {
-  //   try {
-  //     const res = await axios(`/user/${userID}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //     })
-      // setUserI(res.data);
-      // console.log("setuser", res.data)
-      // socket.current.emit("addUser", userID);
-
-      // socket.current.on("getUsers", (users) => {
-
-
-      // console.log("userssz", users)
-      // const following1 = res.data.map(m => m.following.filter((f) => users.some((u) => u.userId === f)))
-        // const followers1 = res.data.map(m => m.followers.filter((f) => users.some((u) => u.userId === f)))
-        // console.log("following111", following1)
-        // console.log("followers111", followers1)
-        // const newData = [...following1, ...followers1]
-        //   const follow = [...new Set(newData.map(u => u))];
-        //
-        // setOnlineUsers(
-          // user.followings.filter((f) => users.some((u) => u.userId === f))
-        // )
-      // });
-    // } catch (err) {
-    //   console.log(err);
-    // }
-  // }
-  // getUserID();
-  // console.log("userrr", user)
-
-// }, [setOnlineUsers, setUserI]);
-// }, [user]);
-
+//
 useEffect(() => {
   socket.current.emit("addUser", userID)
-
-
-  socket.current.on("getUsers", (users) => {
-    // console.log("followaz", user.following.filter((ff) => users.some((uu) => uu.userId === ff)))
-    //     console.log("followazz", user.followers.filter((g) => users.some((i) => i.userId === g)))
-    //
-    // if (user.followers || user.following){
-  let checkFollowers = user.followers.filter((f) => users.some((u) => u.userId === f))
-let checkFollowings = user.following.filter((ff) => users.some((uu) => uu.userId === ff))
-let newData = [...checkFollowings, ...checkFollowers]
-      const follow = [...new Set(newData.map(u =>{ return u}))]
-console.log("newData1111", follow)
-  setOnlineUsers(follow)
-                // }
-      //
-      // let following1 = user.following.filter((ff) => users.some((uu) => uu.userId === ff))
-
-      // let followers1 = user.followers.map((f) => users.includes(f))
-
-
-      // console.log("followz", follow)
-
-
+    socket.current.on("getUsers", (users) => {
+  const getUserStuff = async () => {
+    try {
+      const res = await axios(`/user/${userID}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      setUser(res.data);
+      let user = res.data
+      let checkFollowers =  user.followers.filter((f) => users.some((u) => u.userId === f))
+        let checkFollowings = user.following.filter((ff) => users.some((uu) => uu.userId === ff))
+      let newData = [...checkFollowings, ...checkFollowers]
+            const follow = [...new Set(newData.map(u =>{ return u}))]
+      console.log("newData1111", follow)
+        setOnlineUsers(follow)
+      // console.log("setuser", res.data)
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  getUserStuff();
   });
 }, [setOnlineUsers]);
 useEffect(() => {
