@@ -185,6 +185,7 @@ useEffect(() => {
             <Navbar / >
             <div className = "messenger" >
             <div className = "chatOnline">
+            <div className="online">Online</div>
             <div className = "chatOnlineWrapper" >
             <ChatOnline
             onlineUsers = {onlineUsers}
