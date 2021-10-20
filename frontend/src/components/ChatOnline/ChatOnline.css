@@ -52,6 +52,27 @@ font-weight: bold;
 border-bottom: 1px solid gray;
 padding: 10px 0;
 }
+
+
+.chatBoxTop::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+.chatBoxTop::-webkit-scrollbar
+{
+	width: 12px;
+	background-color: #F5F5F5;
+}
+
+.chatBoxTop::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
 @media only screen and (max-width: 768px) {
   /* .messenger {
     flex-direction: column;
