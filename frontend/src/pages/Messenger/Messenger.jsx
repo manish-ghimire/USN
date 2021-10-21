@@ -34,16 +34,41 @@ const Messenger = (props) => {
     const [newChat, setNewChat] = useState(null)
     const [chatUser, setChatUser] = useState(null)
     const [messages, setMessages] = useState([])
+    const [user, setUser] = useState([])
     const [newMessage, setNewMessage] = useState("")
     const [arrivalMessage, setArrivalMessage] = useState(null)
     const [onlineUsers, setOnlineUsers] = useState([])
     const accessToken = localStorage.getItem('accessToken')
     const currentUser = JSON.parse(localStorage.getItem('currentUser'))
     const userID = currentUser.user._id
-    const user = currentUser.user
+    // const user = currentUser.user
     const scrollRef = useRef()
     const socket = useRef()
+console.log("userz", user)
+useEffect(()=>{
 
+}, [setUser, userID])
+    useEffect(()=>{
+      console.log("setChatUser", currentChat)
+      if(currentChat){
+      const followId2 =  currentChat.members.find((m) => m !== currentUser.user._id)
+      console.log("followIdd", followId2)
+      const getFollowId2 = async () => {
+        try {
+          const res = await axios(`/user/${followId2}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          setChatUser(res.data.username);
+          console.log("here-setuser", res.data.username)
+        } catch (err) {
+          console.log(err);
+        }
+      }
+      getFollowId2();
+    }
+  }, [conversations, currentChat, setChatUser, currentUser])
     useEffect(() => {
   socket.current = io("ws://localhost:4000");
   socket.current.on("getMessage", (data) => {
@@ -60,25 +85,33 @@ useEffect(() => {
     currentChat?.members.includes(arrivalMessage.sender) &&
     setMessages((prev) => [...prev, arrivalMessage]);
 }, [arrivalMessage, currentChat]);
-
+//
 useEffect(() => {
-  console.log("userrr", user)
-  socket.current.emit("addUser", user._id);
-  socket.current.on("getUsers", (users) => {
-
-  const following1  = user.following.filter((f) => users.some((u) => u.userId === f))
-    const followers1 =  user.followers.filter((f) => users.some((u) => u.userId === f))
-    console.log("following111", following1)
-    console.log("followers111", followers1)
-    const newData = [...following1, ...followers1]
-      const follow = [...new Set(newData.map(u => u))];
-      console.log("followz", follow)
-    setOnlineUsers(
-    follow
-    );
+  socket.current.emit("addUser", userID)
+    socket.current.on("getUsers", (users) => {
+  const getUserStuff = async () => {
+    try {
+      const res = await axios(`/user/${userID}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      setUser(res.data);
+      let user = res.data
+      let checkFollowers =  user.followers.filter((f) => users.some((u) => u.userId === f))
+        let checkFollowings = user.following.filter((ff) => users.some((uu) => uu.userId === ff))
+      let newData = [...checkFollowings, ...checkFollowers]
+            const follow = [...new Set(newData.map(u =>{ return u}))]
+      console.log("newData1111", follow)
+        setOnlineUsers(follow)
+      // console.log("setuser", res.data)
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  getUserStuff();
   });
-}, []);
-
+}, [setOnlineUsers]);
 useEffect(() => {
   const getConversations = async () => {
     try {
@@ -112,18 +145,19 @@ useEffect(() => {
 }, [currentChat]);
 
 const handleSubmit = async () => {
+  console.log("here-currentChat", currentChat)
   const message = {
-    sender: user._id,
+    sender: userID,
     text: newMessage,
     conversationId: currentChat._id,
   };
 
   const receiverId = currentChat.members.find(
-    (member) => member !== user._id
+    (member) => member !== userID
   );
 
   socket.current.emit("sendMessage", {
-    senderId: user._id,
+    senderId: userID,
     receiverId,
     text: newMessage,
   });
@@ -145,42 +179,21 @@ useEffect(() => {
   scrollRef.current?.scrollIntoView({ behavior: "smooth" });
 }, [messages]);
 
-useEffect(()=>{
-  if(currentChat){
-  const followId2 =  currentChat.members.find((m) => m !== currentUser.user._id)
-  console.log("followIdd", followId2)
-  const getFollowId2 = async () => {
-    try {
-      const res = await axios(`/user/${followId2}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      setChatUser(res.data.username);
-      console.log("setuser", res.data.username)
-    } catch (err) {
-      console.log(err);
-    }
-  }
-  getFollowId2();
-}
-}, [conversations, currentChat, currentUser])
+
           return (
             <>
             <Navbar / >
             <div className = "messenger" >
-            <div className = "chatMenu" >
-            <div className = "chatMenuWrapper" >
-            <div className = "conversations chatMenuInput" >Conversations</div>
-            {/*<input placeholder = "Search for friends" className = "chatMenuInput" / >*/}
-            {
-              conversations.map((c, index) => (
-                <div key={index} onClick = {() => setCurrentChat(c)} >
-                <Conversation conversation = {c} currentUser = {currentUser} accessToken = {accessToken } />
-                </div>
-              )
-            )
-            }
+            <div className = "chatOnline">
+            <div className="online">Online</div>
+            <div className = "chatOnlineWrapper" >
+            <ChatOnline
+            onlineUsers = {onlineUsers}
+            currentId = {userID}
+            setCurrentChat = {setCurrentChat}
+              setNewChat = {setNewChat}
+            accessToken={accessToken}
+            />
             </div>
             </div>
             <div className = "chatBox" >
@@ -249,8 +262,7 @@ useEffect(()=>{
       </div>
     ))
 
-  }
-
+}
   </div>
    <div className = "chatBoxBottom" >
   <textarea className = "chatMessageInput"
@@ -276,17 +288,7 @@ useEffect(()=>{
 
             </div>
             </div>
-            <div className = "chatOnline">
-            <div className = "chatOnlineWrapper" >
-            <ChatOnline
-            onlineUsers = {onlineUsers}
-            currentId = {userID}
-            setCurrentChat = {setCurrentChat}
-              setNewChat = {setNewChat}
-            accessToken={accessToken}
-            />
-            </div>
-            </div>
+
             </div>
             </>
           )

@@ -48,39 +48,72 @@ console.log("currentChatfollowers2", currentChatfollowers)
 
 
 const handleUserChatClick = async (user) => {
-  console.log('insidechatclick');
-  try {
-    const res = await axios.get(`/conversation/find/${currentId}/${user._id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    if(!res.data){
-      const body = {
-        senderId: currentId,
-        receiverId: user._id
-        }
-      const res = await axios.post(`/conversation`, body, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      console.log("res1", res)
-    setNewChat(res);
-  }
-  else{
-    console.log("res2")
-    const res2 = await axios.get(`/conversation/find/${currentId}/${user._id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    setCurrentChat(res2.data);
-  }
-  } catch (err) {
-    console.log(err);
-  }
-};
+console.log("here-ChatClick", user)
+  const res = await axios.get(`/conversation/find/${currentId}/${user._id}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+  console.log("here-res", res.data)
+  if(res.data){
+ setCurrentChat(res.data)
+}else {
+  const body = {
+    senderId: currentId,
+    receiverId: user._id
+    }
+  const res2 = await axios.post(`/conversation`, body, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+  // console.log("res2", res2.data)
+  setNewChat(res2.data);
+  const res3 = await axios.get(`/conversation/find/${currentId}/${user._id}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+  console.log("here-res", res3.data)
+ setCurrentChat(res3.data)
+}
+}
+
+
+useEffect(() => {
+console.log("cconlineUsersz", onlineUsers)
+console.log("currentChatfollowerszz", currentChatfollowers)
+console.log("currentChatfollowingszz", currentChatfollowings)
+  const followers = currentChatfollowers.filter((f) => onlineUsers.includes(f._id))
+    const followings = currentChatfollowings.filter((f) => onlineUsers.includes(f._id))
+    console.log("followerss", currentChatfollowers.filter((f) => onlineUsers.includes(f._id)))
+  console.log("followingss",  currentChatfollowings.filter((f) => onlineUsers.includes(f._id)))
+const datas = [...followers,...followings]
+  const followw = [...new Set(datas.map(u => {return u._id}))];
+  const followw2 = [...new Set(datas.map(u => {return u.username}))];
+
+
+  const followw3 = followw.map(u=>{
+return {_id:u}
+})
+const followw4 = followw2.map(u2=>{
+return {username:u2}
+})
+
+
+
+const data = [...followw3, ...followw4]
+let data2 = []
+for(let x = 0; x < data.length/2; x++) {
+data2.push({...data[x + data.length/2], ...data[x]})
+}
+
+
+console.log("data22z", data2)
+console.log("datass", data)
+    setUserOnline(data2)
+}, [onlineUsers, setUserOnline]);
+
 useEffect(() => {
   const followers = currentChatfollowers.filter((f) => !onlineUsers.includes(f._id))
     const followings = currentChatfollowings.filter((f) => !onlineUsers.includes(f._id))
@@ -88,7 +121,7 @@ useEffect(() => {
       const follow = [...new Set(datas.map(u => {return u._id}))];
       const follow2 = [...new Set(datas.map(u => {return u.username}))];
             // const follow3 = [...new Set(datas.map(u => {return u.profilePicture}))];
-          console.log("follow3", follow2)
+          console.log("followrz", followers)
       const follow4 = follow.map(u=>{
     return {_id:u}
     })
@@ -106,7 +139,7 @@ useEffect(() => {
     }
     const data3 = [...new Set([...data2])]
 // const followCurrent = [...new Set([...currentChatfollowers, ...currentChatfollowings])]
-console.log("dataaa", datas)
+console.log("data222", data2)
 console.log("dataaaaz", data3)
 
 
@@ -117,46 +150,17 @@ console.log("dataaaaz", data3)
 setFollows(data3)
 // console.log("followCurrentfil", followCurrentFiltered)
 }, [setFollows, currentChatfollowers, currentChatfollowings, userOnline])
-useEffect(() => {
-console.log("cconlineUsers", onlineUsers)
-  const followers = currentChatfollowers.filter((f) => onlineUsers.includes(f._id))
-    const followings = currentChatfollowings.filter((f) => onlineUsers.includes(f._id))
-  console.log("followerss", followers)
-  console.log("followingss", followings)
-const datas = [...followers,...followings]
-  const follow = [...new Set(datas.map(u => {return u._id}))];
-  const follow2 = [...new Set(datas.map(u => {return u.username}))];
 
-
-  const follow3 = follow.map(u=>{
-return {_id:u}
-})
-const follow4 = follow2.map(u2=>{
-return {username:u2}
-})
-
-
-
-const data = [...follow3, ...follow4]
-let data2 = []
-for(let x = 0; x < data.length/2; x++) {
-data2.push({...data[x + data.length/2], ...data[x]})
-}
-
-
-console.log("data2", data2)
-console.log("datass", data)
-    setUserOnline(data2)
-}, [onlineUsers, setUserOnline]);
 console.log("currentChatfollowings", currentChatfollowings)
 console.log("currentChatfollowers", currentChatfollowers)
 console.log("userOnline", userOnline)
-console.log("onlineUsers", onlineUsers)
+console.log("onlineUsersa", onlineUsers)
 console.log("follows", follows)
   return (
     <>
+    
     <div className="chatOnline">
-        <div className="online">Online</div>
+
     {console.log("here-userOnlineee", userOnline)}
       {console.log("here-follows", follows)}
     { follows.map((o)=>(
@@ -175,7 +179,7 @@ console.log("follows", follows)
         </div>
       ))
     }
-      {userOnline.map((p)=>(
+      { userOnline.map((p)=>(
           <div className="chatOnlineFollowing"  onClick={()=>handleUserChatClick(p)}>
             <div className="chatOnlineImgContainer">
               <img
