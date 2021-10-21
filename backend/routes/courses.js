@@ -10,25 +10,25 @@ const verify = require('./verify')
 //localhost:5000/api/course/
 router.post('/register', verify, async (req, res) => {
   // try {
-    const uniName = await Uni.findOne({
-      uniAdmin: {$in : req.user.id}
-    })
-    if (!req.user.isAdmin || !uniName.uniAdmin.includes(req.user.id)) {
-      console.log({
-        errors: 'Admin only!',
-      })
-      return res.status(422).json({
-        error: 'Admin only!',
-      })
-    } else {
-      if (!req.body.courseName || !req.body.facultyId) {
-        console.log({
-          errors: 'courseName or facultyId field is required',
-        })
-        return res.status(422).json({
-          error: 'courseName or facultyId field is required',
-        })
-      } else {
+    // const uniName = await Uni.findOne({
+    //   uniAdmin: {$in : req.user.id}
+    // })
+    // if (!req.user.isAdmin || !uniName.uniAdmin.includes(req.user.id)) {
+    //   console.log({
+    //     errors: 'Admin only!',
+    //   })
+    //   return res.status(422).json({
+    //     error: 'Admin only!',
+    //   })
+    // } else {
+      // if (!req.body.courseName || !req.body.facultyId) {
+      //   console.log({
+      //     errors: 'courseName or facultyId field is required',
+      //   })
+      //   return res.status(422).json({
+      //     error: 'courseName or facultyId field is required',
+      //   })
+      // } else {
         const courseDisplayName = req.body.courseName.replace(/\s+/g, '')
 
         const course = await Course.findOne({
@@ -72,8 +72,8 @@ console.log("course", course);
           return res.status(200).json(savedCourse)
           console.log(savedCourse)
         }
-      }
-    }
+      // }
+    // }
   // } catch (err) {
   //   res.status(500).json(err)
   // }
