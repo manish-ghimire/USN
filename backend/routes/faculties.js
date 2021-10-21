@@ -11,25 +11,78 @@ const verify = require('./verify')
 
 router.post('/register', verify, async (req, res) => {
   // try {
-    const uniName = await Uni.findOne({
-      uniAdmin: {$in : req.user.id}
-    })
-    if (!req.user.isAdmin || !uniName.uniAdmin.includes(req.user.id)) {
-      console.log({
-        errors: 'Admin only!',
-      })
-      return res.status(422).json({
-        error: 'Admin only!',
-      })
-    } else {
-      if (!req.body.facultyName || req.body.courseId) {
-        console.log({
-          errors: 'facultyName or courseId field is required',
-        })
-        return res.status(422).json({
-          error: 'facultyName or courseId field is required',
-        })
-      } else {
+
+    // console.log(uniName)
+    // if(!req.user.isAdmin){
+    //   const uniName = await Uni.findOne({
+    //     uniAdmin: {$in : req.user.id}
+    //   })
+    //   if (uniName){
+    //   if (!uniName.uniAdmin.includes(req.user.id)) {
+    //     console.log({
+    //       errors: 'Admin only!',
+    //     })
+    //     return res.status(422).json({
+    //       error: 'Admin only!',
+    //     })
+    //   }
+    // else{
+      // if (!req.body.facultyName || !req.body.courseId) {
+      //   console.log({
+      //     errors: 'facultyName or courseId field is required',
+      //   })
+      //   return res.status(422).json({
+      //     error: 'facultyName or courseId field is required',
+      //   })
+      // }
+  //     else {
+  //       const facultyDisplayName = req.body.facultyName.replace(/\s+/g, '')
+  //
+  //       const faculty = await Uni.findOne({
+  //         facultyDisplayName: facultyDisplayName,
+  //       })
+  //
+  //       if (faculty) {
+  //
+  //         let errors = {}
+  //         if (facultyDisplayName === faculty.facultyDisplayName) {
+  //           errors.uniName = 'Faculty name already exists'
+  //         }
+  //
+  //         console.log({
+  //           errors: errors,
+  //         })
+  //         return res.status(403).json(errors)
+  //       } else {
+  //         // try{
+  //         console.log({ facultyName: req.body.facultyName })
+  //
+  //         const facultyDisplayName = await req.body.facultyName.replace(/\s+/g, '')
+  //
+  //
+  //         const newFaculty = new Faculty({
+  //           facultyName: req.body.facultyName,
+  //           facultyDisplayName: facultyDisplayName,
+  //           facultyDesc: req.body.facultyDesc,
+  //         })
+  //         const savedFaculty = await newFaculty.save()
+  //         return res.status(200).json(savedFaculty)
+  //         console.log(savedFaculty)
+  //   }
+  // }
+// }
+// }
+// }
+//
+  // else {
+      // if (!req.body.facultyName || !req.body.courseId) {
+      //   console.log({
+      //     errors: 'facultyName or courseId field is required',
+      //   })
+      //   return res.status(422).json({
+      //     error: 'facultyName or courseId field is required',
+      //   })
+      // } else {
         const facultyDisplayName = req.body.facultyName.replace(/\s+/g, '')
 
         const faculty = await Uni.findOne({
@@ -66,8 +119,8 @@ router.post('/register', verify, async (req, res) => {
      //      res.status(500).json(err)
      //    }
       }
-    }
-  }
+    // }
+  // }
 
 })
 
