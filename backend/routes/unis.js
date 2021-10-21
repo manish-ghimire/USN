@@ -61,6 +61,9 @@ router.post('/register', verify, async (req, res) => {
             uniName: req.body.uniName,
             uniDisplayName: uniDisplayName,
             email: req.body.email,
+            desc: req.body.desc,
+            profilePicture: req.body.profilePicture,
+            coverPicture: req.body.coverPicture,
           })
           const savedUni = await newUni.save()
 

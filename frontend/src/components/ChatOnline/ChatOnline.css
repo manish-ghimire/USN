@@ -46,12 +46,7 @@
   background-color: gray;
 }
 
-.online{
-  text-align: center;
-font-weight: bold;
-border-bottom: 1px solid gray;
-padding: 10px 0;
-}
+
 
 
 .chatBoxTop::-webkit-scrollbar-track
@@ -74,8 +69,6 @@ padding: 10px 0;
 	background-color: #0C6170;
 }
 @media only screen and (max-width: 768px) {
-  /* .messenger {
-    flex-direction: column;
-} */
+
 
 }
