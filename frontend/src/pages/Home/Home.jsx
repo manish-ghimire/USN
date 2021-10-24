@@ -5,6 +5,7 @@ import {
   CardContent,
   CardMedia,
   Container,
+  Divider,
   Grid,
   Paper,
   Typography,
@@ -64,6 +65,11 @@ const Home = () => {
             </Grid>
           ))}
         </Grid>
+        <br />
+        <Divider />
+        <Divider />
+        <Divider />
+        <br />
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant='h4'>Top Uni clubs in Australia</Typography>
         </Box>
@@ -76,6 +82,12 @@ const Home = () => {
             </Grid>
           ))}
         </Grid>
+
+        <br />
+        <Divider />
+        <Divider />
+        <Divider />
+        <br />
       </Container>
     </>
   )

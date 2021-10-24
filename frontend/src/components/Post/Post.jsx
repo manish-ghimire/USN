@@ -48,7 +48,7 @@ const Post = ({ posts }) => {
     <Card key={posts[0]._id}>
       <div className='avatar-area'>
         <img
-          src='https://picsum.photos/200/200'
+          src={posts[1].profilePicture}
           alt='User'
           onClick={() => history.push(`/user/${posts[1]._id}`)}
         />

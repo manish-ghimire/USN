@@ -48,7 +48,7 @@ const Market = () => {
         <Grid container spacing={2} justifyContent={'center'} padding={3}>
           {items.map((item, index) => (
             <Grid item xs={6} sm={4} md={3}>
-              <Card sx={{ maxWidth: 345, minHeight: 350, height: 350 }}>
+              <Card>
                 <CardMedia component='img' Height='150' image={item.img} />
                 <CardContent>
                   <Typography gutterBottom variant='h5' component='div'>
@@ -61,7 +61,7 @@ const Market = () => {
                 <CardActions className='amount-cta'>
                   <Button size='small'>A${item.itemPrice}</Button>
                   <Button variant='contained' size='small'>
-                    Buy!
+                    Interested !
                   </Button>
                 </CardActions>
               </Card>
