@@ -21,6 +21,7 @@ import {
 } from '@mui/material'
 import { ThemeProvider } from '@emotion/react'
 import Home from './pages/Home/Home'
+import Faculty from './pages/Faculty/Faculty'
 
 const custom_theme = createTheme({
   palette: {
@@ -91,6 +92,16 @@ function App() {
               path='/uni/:uniId'
               component={() => (
                 <UniProfile
+                  setCircle={(value) => setCircle(value)}
+                  setSnackbar={(value) => setSnackbar(value)}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/faculty/:facultyId'
+              component={() => (
+                <Faculty
                   setCircle={(value) => setCircle(value)}
                   setSnackbar={(value) => setSnackbar(value)}
                 />

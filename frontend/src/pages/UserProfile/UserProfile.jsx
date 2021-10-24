@@ -70,19 +70,24 @@ const UserProfile = ({ setCircle }) => {
     }
     const putData = async () => {
       try {
-        const successUser = await axios.put(`/user/${userId}`, body, {
+        const successPut = await axios.put(`/user/${userId}`, body, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         })
-        console.log(successUser)
+        const successGet = await axios.get(`/user/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        setUser(successGet.data)
       } catch (error) {
         console.log('error', error)
       }
     }
     putData()
     setOpenUpdateUser(false)
-    window.location.reload()
+    // window.location.reload()
   }
   //******* UPDATE USER ENDS ******************* */
 
@@ -428,7 +433,7 @@ const UserProfile = ({ setCircle }) => {
             sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
           />
           <h3>
-          {user.fName} {user.lName}
+            {user.fName} {user.lName}
           </h3>
           <h5>{user.followers ? user.followers.length : '0'} Followers</h5>
           {currentUser._id === userId ? (

@@ -39,7 +39,7 @@ import {
 
 const drawerWidth = 350
 
-const UniProfile = ({ setCircle }) => {
+const Faculty = ({ setCircle }) => {
   const [mobileOpen, setMobileOpen] = React.useState(false)
 
   const handleDrawerToggle = () => {
@@ -71,86 +71,6 @@ const UniProfile = ({ setCircle }) => {
           })
           setUni(successUni.data)
           localStorage.setItem('currentUni', JSON.stringify(successUni.data))
-
-          const successRoles = await axios.get('/role', {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-          setRoles(successRoles.data[0].roles)
-
-          let clubLists = []
-          for (var i = 0; i < successUni.data.clubs.length; i++) {
-            const successClub = await axios.get(
-              `/club/${successUni.data.clubs[i]}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              }
-            )
-            clubLists.push(successClub.data)
-          }
-          setClubs(clubLists)
-
-          const successPost = await axios.get(`/post?uni=${uniId}`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-
-          let postLists = []
-          for (var i = 0; i < successPost.data.length; i++) {
-            const successUser = await axios.get(
-              `/user/${successPost.data[i].userId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              }
-            )
-            postLists.push([successPost.data[i], successUser.data])
-          }
-          setPosts(
-            postLists.sort((p1, p2) => {
-              return new Date(p2[0].createdAt) - new Date(p1[0].createdAt)
-            })
-          )
-
-          const totalCourses = await axios.get(`/course/`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-          setTotalCourses(totalCourses.data)
-
-          let coursesLists = []
-          for (var i = 0; i < successUni.data.courseId.length; i++) {
-            const successCourses = await axios.get(
-              `/course/${successUni.data.courseId[i]}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              }
-            )
-            coursesLists.push(successCourses.data)
-          }
-          setCourses(coursesLists)
-
-          let facultiesLists = []
-          for (var i = 0; i < coursesLists.length; i++) {
-            const successFaculties = await axios.get(
-              `/faculty/${coursesLists[i].facultyId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              }
-            )
-            facultiesLists.push(successFaculties.data)
-          }
-          setFaculties(facultiesLists)
         } catch (error) {
           console.log('Error fetching data', error)
         }
@@ -181,18 +101,9 @@ const UniProfile = ({ setCircle }) => {
     setUni(successGet.data)
   }
 
-  // Handle onFacultyClick
-  const handleFacultyClick = (facultyId) => {
-    console.log('faculty clicked', facultyId)
-    setOpenShowCourses(true)
-    const filteredCourses = courses.filter(
-      (course) => course.facultyId === facultyId
-    )
-    console.log(filteredCourses)
-  }
-
   // ***************** CREATE A COURSE *******************************
   const [openCreateCourse, setOpenCreateCourse] = useState(false)
+
   const handleUpdateCoursesToUni = () => {
     let idOfSelectedCourses = []
     selectedCourses.map((selectedCourse, index) => {
@@ -219,10 +130,6 @@ const UniProfile = ({ setCircle }) => {
     window.location.reload()
   }
   // ***************** CREATE A COURSE ENDS *******************************
-
-  // ***************** SHOW COURSES *******************************
-  const [openShowCourses, setOpenShowCourses] = useState(false)
-  // ***************** SHOW COURSES ENDS *******************************
 
   // ***** CREATE A CLUB ************
   const clubName = useRef()
@@ -251,8 +158,7 @@ const UniProfile = ({ setCircle }) => {
     setOpenCreateClub(false)
     window.location.reload()
   }
-  //******* CREATE A CLUB ends ********************/
-
+  //******* CREATE A CLUB ********************/
   const dialogAddCourse = (
     <Dialog open={openCreateCourse} onClose={() => setOpenCreateCourse(false)}>
       <DialogTitle>Please select courses</DialogTitle>
@@ -275,25 +181,6 @@ const UniProfile = ({ setCircle }) => {
         <Button onClick={() => setOpenCreateCourse(false)}>Cancel</Button>
         <Button onClick={handleUpdateCoursesToUni}>Update</Button>
       </DialogActions>
-    </Dialog>
-  )
-
-  const dialogViewCourses = (
-    <Dialog open={openShowCourses} onClose={() => setOpenShowCourses(false)}>
-      <DialogTitle>Available courses</DialogTitle>
-      <Divider />
-      <DialogContent>
-        {courses.map((course) => (
-          <Chip
-            sx={{ marginX: 1 }}
-            avatar={<Avatar alt='Uni' src={uni.profilePicture} />}
-            label={course.courseName}
-            variant='outlined'
-            onClick={() => console.log(course._id)}
-          />
-        ))}
-      </DialogContent>
-      <DialogActions></DialogActions>
     </Dialog>
   )
 
@@ -376,43 +263,34 @@ const UniProfile = ({ setCircle }) => {
             <ListItemIcon>
               <LocalLibraryIcon />
             </ListItemIcon>
-            <ListItemText primary={'Faculties'} />
+            <ListItemText primary={'Courses offered'} />
           </ListItem>
           <Divider />
-          {faculties.map((faculty, index) => (
+          {courses.map((courses, index) => (
             <ListItem key={index} button>
               <ListItemIcon>
                 <ArrowRightIcon />
               </ListItemIcon>
               <ListItemText
-                primary={faculty.facultyName}
-                onClick={() => handleFacultyClick(faculty._id)}
+                primary={courses.courseName}
+                // onClick={() => alert('Go to course page')}
               />
             </ListItem>
           ))}
+          <ListItem button>
+            <ListItemIcon>
+              <ControlPointIcon />
+            </ListItemIcon>
+            <ListItemText
+              // primary={`Add another faculty`}
+              secondary={`Add a course`}
+              onClick={() => setOpenCreateCourse(true)}
+            />
+          </ListItem>
         </List>
       </Card>
-
-      {uni.uniAdmin && uni.uniAdmin.includes(currentUser._id) ? (
-        <Card color='#e8fcc2'>
-          <List>
-            <ListItem button>
-              <ListItemIcon>
-                <ControlPointIcon />
-              </ListItemIcon>
-              <ListItemText
-                // primary={`Add another faculty`}
-                secondary={`Add a course`}
-                onClick={() => setOpenCreateCourse(true)}
-              />
-            </ListItem>
-          </List>
-        </Card>
-      ) : (
-        ''
-      )}
       {currentUser.isAdmin && (
-        <Card color='#e8fcc2'>
+        <Card color='#498994'>
           <List>
             <ListItem>
               <ListItemIcon>
@@ -483,12 +361,8 @@ const UniProfile = ({ setCircle }) => {
     <>
       <Navbar />
       {sidebarSkeleton}
-      {/* {uni.uniAdmin && uni.uniAdmin.includes(currentUser._id)
-        ? { dialogAddCourse }
-        : ''} */}
       {dialogAddCourse}
       {dialogCreateClub}
-      {dialogViewCourses}
       <Container disableGutters maxWidth='xl' className='container'>
         <Grid container>
           <Hidden mdDown>
@@ -548,4 +422,4 @@ const UniProfile = ({ setCircle }) => {
   )
 }
 
-export default UniProfile
+export default Faculty

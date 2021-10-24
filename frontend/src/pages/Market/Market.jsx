@@ -30,6 +30,7 @@ const Market = () => {
             },
           })
           setItems(successMarket.data)
+          console.log(successMarket.data)
         } catch (error) {
           console.log('Error fetching data', error)
         }
@@ -48,11 +49,7 @@ const Market = () => {
           {items.map((item, index) => (
             <Grid item xs={6} sm={4} md={3}>
               <Card sx={{ maxWidth: 345, minHeight: 350, height: 350 }}>
-                <CardMedia
-                  component='img'
-                  Height='150'
-                  image={`https://picsum.photos/id/${index + 0}/150/345`}
-                />
+                <CardMedia component='img' Height='150' image={item.img} />
                 <CardContent>
                   <Typography gutterBottom variant='h5' component='div'>
                     {item.itemName.substring(0, 18)}

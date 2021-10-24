@@ -164,7 +164,7 @@ const Club = ({ setCircle }) => {
         >
           <Avatar
             alt='Memy Sharp'
-            src='https://picsum.photos/400/400'
+            src={club.profilePicture}
             sx={{ width: 100, height: 100, margin: '25px 0 15px 0' }}
           />
           <h3>{club.clubName}</h3>

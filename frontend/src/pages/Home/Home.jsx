@@ -1,23 +1,81 @@
-import React, { useEffect } from 'react'
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Container,
+  Grid,
+  Paper,
+  Typography,
+} from '@mui/material'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import './Home.scss'
 import Navbar from '../../components/Navbar/Navbar'
-import { Container } from '@mui/material'
+import axios from 'axios'
+import './Home.scss'
+import { Box, textAlign } from '@mui/system'
 
 const Home = () => {
   const history = useHistory()
+  const accessToken = localStorage.getItem('accessToken')
+  const [unis, setUnis] = useState([])
+  const [clubs, setClubs] = useState([])
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken')
-    if (!accessToken) {
-      history.push('/login')
+    if (accessToken) {
+      const fetchData = async () => {
+        try {
+          const successUni = await axios.get(`/uni`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          setUnis(successUni.data)
+          const successClub = await axios.get(`/club`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+          setClubs(successClub.data)
+        } catch (error) {
+          console.log('Error fetching data', error)
+        }
+      }
+      fetchData()
+    } else {
+      history.push('/login', { text: 'hellooooooo' })
     }
-  }, [history])
+  }, [])
+
   return (
     <>
       <Navbar />
-      <Container disableGutters maxWidth='xl'>
-        <div className='container'>This is Home page</div>
+      <Container maxWidth='xl' className='container'>
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography variant='h4'>Top universities in Australia</Typography>
+        </Box>
+        <Grid container spacing={2} justifyContent={'center'} padding={3}>
+          {unis.slice(0, 6).map((uni, index) => (
+            <Grid key={index} item xs={6} sm={4} md={2}>
+              <Card onClick={() => history.push(`/uni/${uni._id}`)}>
+                <CardMedia component='img' image={uni.profilePicture} />
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography variant='h4'>Top Uni clubs in Australia</Typography>
+        </Box>
+        <Grid container spacing={2} justifyContent={'center'} padding={3}>
+          {clubs.slice(0, 6).map((club, index) => (
+            <Grid key={index} item xs={6} sm={4} md={2}>
+              <Card onClick={() => history.push(`/club/${club._id}`)}>
+                <CardMedia component='img' image={club.profilePicture} />
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
       </Container>
     </>
   )
